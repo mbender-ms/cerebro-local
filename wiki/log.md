@@ -101,3 +101,20 @@ Pages created (7):
 
 Pages updated (1):
 - `wiki/index.md`
+
+## [2026-04-07] ingest | Remaining 18 Azure Networking service areas (1,155 articles)
+
+Batch ingest of all remaining service areas from `raw/articles/`.
+
+Service areas: application-gateway (126), bastion (41), cdn (49), expressroute (92),
+firewall (85), firewall-manager (27), frontdoor (78), ip-services (52),
+load-balancer (94), network-watcher (64), networking (17), private-link (48),
+route-server (21), traffic-manager (44), virtual-network-manager (52),
+virtual-wan (133), vpn-gateway (122), web-application-firewall (9).
+
+Pages created (36):
+- 18 entity pages in `wiki/entities/`
+- 18 source summary pages in `wiki/sources/`
+
+All 21 service areas now ingested. Total wiki: 59 pages.
+All cross-linked with existing nat-gateway, dns, and virtual-network pages.

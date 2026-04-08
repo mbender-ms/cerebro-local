@@ -242,3 +242,23 @@ Major upstream cleanup — 390 support articles deleted:
 
 8 support entity pages updated with upstream removal notes.
 qmd re-indexed: 82 documents re-embedded (526 chunks).
+
+## [2026-04-08] feat | Downloaded 2,076 include files from 8 repos
+
+Scanned 15,322 articles — found 12,467 include references across 5,545 files,
+pointing to 2,914 unique include files.
+
+Downloaded includes from:
+- azure-docs/includes/ (root): 995 files + 15 from subdirs
+- azure-compute-docs per-article includes: 431 files
+- azure-aks-docs per-article includes: 36 files  
+- azure-management-docs per-article includes: 59 files
+- azure-docs per-service includes (67 services): 984 files
+
+Total: 2,076 include files (10 MB) stored in raw/includes/
+Coverage: 63.6% of referenced includes (remaining are in ~/reusable-content/ or nested subdirs)
+Indexed via raw collection — searchable with qmd query/search.
+
+These includes contain: service limits, prerequisites, shared code snippets,
+deprecation notices, feature flags, and reusable content blocks that were
+previously invisible to search.

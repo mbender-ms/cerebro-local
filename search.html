@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cerebro — Knowledge Base Search</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
   :root {
     --bg: #0d1117;
@@ -247,6 +248,12 @@
     margin-top: 8px;
   }
 
+  .file-viewer-btns {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
   .view-file-btn {
     font-size: 13px;
     color: var(--accent);
@@ -259,22 +266,94 @@
   }
 
   .view-file-btn:hover { border-color: var(--accent); background: rgba(88,166,255,0.1); }
+  .view-file-btn.active { border-color: var(--accent); background: rgba(88,166,255,0.15); }
 
   .file-content {
     margin-top: 10px;
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 16px;
+    padding: 16px 20px;
+    font-size: 14px;
+    line-height: 1.65;
+    max-height: 700px;
+    overflow-y: auto;
+    color: var(--text);
+  }
+
+  .file-content.raw-view {
     font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
     font-size: 13px;
     line-height: 1.5;
     white-space: pre-wrap;
     word-break: break-word;
-    max-height: 600px;
-    overflow-y: auto;
-    color: var(--text);
   }
+
+  /* Rendered markdown styles */
+  .file-content h1 { font-size: 22px; font-weight: 600; margin: 20px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--text); }
+  .file-content h2 { font-size: 18px; font-weight: 600; margin: 18px 0 10px; padding-bottom: 4px; border-bottom: 1px solid var(--border); color: var(--text); }
+  .file-content h3 { font-size: 15px; font-weight: 600; margin: 14px 0 8px; color: var(--text); }
+  .file-content h4 { font-size: 14px; font-weight: 600; margin: 12px 0 6px; color: var(--text-muted); }
+  .file-content p { margin: 8px 0; }
+  .file-content ul, .file-content ol { margin: 8px 0; padding-left: 24px; }
+  .file-content li { margin: 4px 0; }
+  .file-content a { color: var(--accent); text-decoration: none; }
+  .file-content a:hover { text-decoration: underline; }
+  .file-content strong { color: var(--text); font-weight: 600; }
+  .file-content em { color: var(--text-muted); }
+  .file-content blockquote {
+    border-left: 3px solid var(--accent);
+    margin: 10px 0;
+    padding: 8px 16px;
+    background: rgba(88,166,255,0.05);
+    color: var(--text-muted);
+  }
+  .file-content blockquote strong { color: var(--orange); }
+  .file-content code {
+    background: var(--surface2);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 13px;
+  }
+  .file-content pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin: 10px 0;
+    overflow-x: auto;
+  }
+  .file-content pre code {
+    background: none;
+    padding: 0;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .file-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 13px;
+  }
+  .file-content th {
+    background: var(--surface2);
+    font-weight: 600;
+    text-align: left;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+  }
+  .file-content td {
+    padding: 7px 12px;
+    border: 1px solid var(--border);
+  }
+  .file-content tr:hover td { background: rgba(88,166,255,0.04); }
+  .file-content hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 16px 0;
+  }
+  .file-content img { max-width: 100%; border-radius: 4px; }
 
   .empty-state {
     text-align: center;
@@ -450,7 +529,10 @@ async function doSearch() {
           <div class="result-body" id="${cardId}">
             <div class="result-content">${escapeHtml(r.content || '(click "View full file" to read)')}</div>
             <div class="file-viewer">
-              <button class="view-file-btn" onclick="loadFile('${escapeHtml(r.filePath)}', '${cardId}-file')">📄 View full file</button>
+              <div class="file-viewer-btns">
+                <button class="view-file-btn" onclick="loadFile('${escapeHtml(r.filePath)}', '${cardId}-file', 'rendered')">📄 View rendered</button>
+                <button class="view-file-btn" onclick="loadFile('${escapeHtml(r.filePath)}', '${cardId}-file', 'raw')">🔤 View source</button>
+              </div>
               <div id="${cardId}-file"></div>
             </div>
           </div>
@@ -477,12 +559,15 @@ function toggleCard(id) {
   if (el) el.classList.toggle('open');
 }
 
-async function loadFile(filePath, targetId) {
+async function loadFile(filePath, targetId, viewMode) {
   const target = document.getElementById(targetId);
   if (!target) return;
 
-  if (target.innerHTML) {
+  // Toggle off if same content is showing
+  if (target.dataset.path === filePath && target.dataset.mode === viewMode && target.innerHTML) {
     target.innerHTML = '';
+    target.dataset.path = '';
+    target.dataset.mode = '';
     return;
   }
 
@@ -497,7 +582,23 @@ async function loadFile(filePath, targetId) {
       return;
     }
 
-    target.innerHTML = `<pre class="file-content">${escapeHtml(data.content)}</pre>`;
+    target.dataset.path = filePath;
+    target.dataset.mode = viewMode;
+
+    if (viewMode === 'rendered' && typeof marked !== 'undefined') {
+      // Strip YAML frontmatter before rendering
+      let md = data.content;
+      if (md.startsWith('---')) {
+        const endIdx = md.indexOf('---', 3);
+        if (endIdx !== -1) {
+          md = md.substring(endIdx + 3).trim();
+        }
+      }
+      const html = marked.parse(md);
+      target.innerHTML = `<div class="file-content">${html}</div>`;
+    } else {
+      target.innerHTML = `<pre class="file-content raw-view">${escapeHtml(data.content)}</pre>`;
+    }
   } catch (err) {
     target.innerHTML = `<div class="error-msg">${escapeHtml(err.message)}</div>`;
   }

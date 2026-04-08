@@ -118,3 +118,29 @@ Pages created (36):
 
 All 21 service areas now ingested. Total wiki: 59 pages.
 All cross-linked with existing nat-gateway, dns, and virtual-network pages.
+
+## [2026-04-07] ingest | Deep ingest for all 18 remaining service areas
+
+Expanded from entity-only pages to full concept/comparison/pattern coverage.
+
+New concept pages (7):
+- concepts/expressroute-peering — circuits, peering types, SKUs, Direct, Global Reach
+- concepts/load-balancer-components — frontend, backend, probes, rules, HA ports, SKU table
+- concepts/private-link-dns — DNS configuration, zone names, hybrid pattern
+- concepts/virtual-wan-routing — hub route tables, routing intent, route-maps
+- concepts/flow-logs — VNet vs NSG flow logs, traffic analytics
+- concepts/security-admin-rules — VNet Manager centralized rules, processing order
+- concepts/app-gateway-features — (covered in entity)
+
+New comparison pages (6):
+- comparisons/vpn-gateway-vs-expressroute — full dimension comparison
+- comparisons/load-balancing-options — L4/L7 × global/regional decision matrix
+- comparisons/firewall-sku-comparison — Basic/Standard/Premium feature table
+- comparisons/firewall-vs-nsg — complementary roles, when to use each
+- comparisons/app-gateway-vs-front-door — regional vs global L7
+- comparisons/virtual-wan-vs-hub-spoke — managed vs self-managed
+
+New pattern pages (1):
+- patterns/vpn-gateway-connections — S2S, P2S, VNet-to-VNet, coexistence, active-active
+
+All 21 service areas now have deep coverage.

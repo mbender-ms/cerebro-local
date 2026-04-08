@@ -14,179 +14,111 @@ updated: 2026-04-07
 
 Created directory structure, schema (AGENTS.md), index, log.
 Set up qmd collections (wiki + raw), Obsidian vault config.
-Installed qmd globally via npm.
 
 ## [2026-04-07] ingest | LLM Wiki by Andrej Karpathy
 
 Source: `raw/articles/karpasky.md` (GitHub Gist, April 2026)
-
-12 wiki pages created: andrej-karpathy, obsidian, qmd (entities);
-llm-wiki-pattern, three-layer-architecture, ingest, query, lint,
-write-back, memex (concepts); karpathy-wiki-setup (pattern);
-karpathy-llm-wiki (source).
+12 wiki pages created (methodology, entities, concepts, pattern).
 
 ## [2026-04-07] feat | MS Learn article chunking strategy
 
-Created `scripts/chunk-article.js` — splits MS Learn articles at H2
-boundaries, separates tab groups (Portal/PS/CLI), handles zone pivots,
-propagates YAML frontmatter. Updated AGENTS.md with chunking rules.
+Created `scripts/chunk-article.js`. Updated AGENTS.md with chunking rules.
 
 ## [2026-04-07] ingest | Azure NAT Gateway documentation (27 articles)
 
 Source: `MicrosoftDocs/azure-docs/articles/nat-gateway/`
-27 articles (~60K words). Deep ingest.
-
-9 pages: azure-nat-gateway (entity); snat, default-outbound-access,
-availability-zones-nat, troubleshooting-nat-gateway (concepts);
-nat-gateway-standard-vs-standardv2 (comparison); nat-gateway-hub-spoke,
-nat-gateway-with-load-balancer (patterns); nat-gateway-docs (source).
+9 deep pages: entity, SNAT, default-outbound, AZ zones, troubleshooting,
+SKU comparison, hub-spoke patterns, LB patterns, source summary.
 
 ## [2026-04-07] ingest | Azure DNS documentation (73 articles)
 
 Source: `MicrosoftDocs/azure-docs/articles/dns/`
-73 articles. Deep ingest.
-
-11 pages: azure-dns, azure-public-dns, azure-private-dns,
-azure-dns-private-resolver (entities); dns-zones-and-records,
-dns-alias-records, dnssec, dns-security-policy, reverse-dns (concepts);
-dns-hybrid-resolution (pattern); dns-docs (source).
+11 deep pages: 4 entities (DNS, Public, Private, Resolver), 5 concepts,
+1 pattern, 1 source summary.
 
 ## [2026-04-07] ingest | Azure Virtual Network documentation (76 articles)
 
 Source: `MicrosoftDocs/azure-docs/articles/virtual-network/`
-76 articles. Deep ingest.
-
-7 pages: azure-virtual-network (entity); network-security-groups,
-user-defined-routes, vnet-peering, service-endpoints (concepts);
-private-endpoints-vs-service-endpoints (comparison);
-virtual-network-docs (source).
+7 deep pages: entity, NSGs, UDRs, peering, service endpoints,
+PE vs SE comparison, source summary.
 
 ## [2026-04-07] raw | Download all Azure networking docs (1,331 articles)
 
-Downloaded all 21 networking service areas from MicrosoftDocs/azure-docs
-via GitHub API. 1,331 articles, 16MB.
+Downloaded all 21 networking service areas from MicrosoftDocs/azure-docs.
 
 ## [2026-04-07] ingest | Remaining 18 networking service areas (1,155 articles)
 
-Batch ingest: application-gateway, bastion, cdn, expressroute, firewall,
-firewall-manager, frontdoor, ip-services, load-balancer, network-watcher,
-networking, private-link, route-server, traffic-manager, virtual-network-manager,
-virtual-wan, vpn-gateway, web-application-firewall.
-
-36 pages created (18 entities + 18 source summaries).
+Batch ingest: 36 pages (18 entities + 18 source summaries).
 
 ## [2026-04-07] deep | Expand all networking with concept/comparison/pattern pages
 
-13 additional pages: expressroute-peering, load-balancer-components,
-private-link-dns, virtual-wan-routing, flow-logs, security-admin-rules
-(concepts); vpn-vs-expressroute, load-balancing-options, firewall-sku,
-firewall-vs-nsg, app-gw-vs-front-door, vwan-vs-hub-spoke (comparisons);
-vpn-gateway-connections (pattern).
+13 additional deep pages: ExpressRoute peering, LB components,
+Private Link DNS, vWAN routing, flow logs, security admin rules,
+VPN vs ER, load balancing options, firewall SKU, firewall vs NSG,
+App GW vs Front Door, vWAN vs hub-spoke, VPN connections pattern.
 
-## [2026-04-07] raw | Add 125 Azure service areas from local azure-docs-pr (7,340 articles)
+## [2026-04-07] raw | Add 125 Azure service areas from azure-docs-pr (7,340 articles)
 
-Copied from ~/github/azure-docs-pr/articles/ to raw/articles/.
-125 non-networking service areas. Total: 8,671 articles, 114MB.
-qmd: 44,703 embedded chunks.
+Copied from local clone. Total: 8,671 articles, 114MB.
 
 ## [2026-04-07] deep | Complete all 146 MS Learn service areas
 
-Created entity + source summary pages for all 125 non-networking services.
-Created 10 cross-cutting comparison pages: compute-options, messaging-options,
-storage-options, iot-services, security-services, migration-services,
-hybrid-edge-options, integration-api-services, data-analytics-services,
-developer-services.
-
-Added 2,180 articles from nested service directories (storage, ARM,
-defender-for-iot, governance, spring-apps, etc.).
-
-Total: 308 wiki pages, 10,752 raw articles.
+Entity + source pages for all 125 non-networking services.
+10 cross-cutting comparison pages: compute, messaging, storage, IoT,
+security, migration, hybrid/edge, integration/API, data/analytics, developer.
+Added 2,180 articles from nested subdirectories.
 
 ## [2026-04-07] ingest | Microsoft Support articles (902 articles, 29 service areas)
 
-Source: `SupportArticles-docs-pr/support/azure/` (copied from local clone)
-902 troubleshooting articles (Symptom/Cause/Solution format).
-
-5 deep troubleshooting wiki pages: troubleshooting-virtual-machines (292 articles),
-troubleshooting-aks (189), troubleshooting-azure-monitor (73),
-troubleshooting-storage (29), troubleshooting-networking-support (53 across
-5 networking areas).
-
-29 source summary pages for all support service areas.
+Source: `SupportArticles-docs-pr/support/azure/`
+5 deep troubleshooting pages: VMs (292), AKS (189), Monitor (73),
+storage (29), networking (53). 29 source summary pages.
 
 ## [2026-04-07] feat | Sync scripts updated for both repos
 
-sync-raw.sh updated to support both MicrosoftDocs/azure-docs (MS Learn)
-and MicrosoftDocs/SupportArticles-docs (Support articles).
-`support-` prefix routes to the SupportArticles repo with recursive fetch.
-sync-all.sh updated with --learn and --support flags.
+sync-raw.sh supports MicrosoftDocs/azure-docs + MicrosoftDocs/SupportArticles-docs.
+sync-all.sh with --learn and --support flags.
 
 ## [2026-04-07] docs | Comprehensive documentation
 
-README.md rewritten. Created docs/: new-machine-setup.md,
-workflow.md, chunking-strategy.md, syncing.md, wiki-conventions.md.
+README.md rewritten. docs/: new-machine-setup, workflow, chunking-strategy,
+syncing, wiki-conventions.
 
 ## [2026-04-07] maintain | Updated ingest tracker and operations log
 
-Brought ingest-tracker.md and log.md up to date with all operations
-performed during initial build-out.
+Brought log.md and ingest-tracker.md up to date.
 
-Final state: 342 wiki pages, 11,652 raw articles, 176 service areas,
-68,464 qmd vectors.
+## [2026-04-07] fix | Query workflow uses qmd instead of index.md
+
+Index too large (100+ lines). All configs updated to use qmd for retrieval.
 
 ## [2026-04-07] ingest | Azure Compute docs (1,788 articles, 5 service areas)
 
-Source: `azure-compute-docs-pr/articles/` (copied from local clone)
-Syncs from: `MicrosoftDocs/azure-compute-docs` (public)
-
-Service areas: virtual-machines (1,166), service-fabric (422),
-virtual-machine-scale-sets (97), container-instances (89),
-azure-impact-reporting (14).
-
-Deep wiki pages created (7):
-- entities/azure-virtual-machines — size families, disk types, availability options
-- entities/azure-vmss — orchestration modes (Flexible vs Uniform), features
-- entities/azure-container-instances — features, when to use vs AKS/Container Apps
-- entities/azure-service-fabric — stateful services, programming models
-- concepts/managed-disks — disk type comparison (Ultra/PremiumV2/Premium/Standard)
-- concepts/vm-availability — zones, VMSS, availability sets, decision guide
-- comparisons/container-compute-options — AKS vs Container Apps vs ACI vs Service Fabric
-
-5 source summary pages created.
-
-Sync scripts updated: sync-raw.sh routes VM/VMSS/ACI/ServiceFabric/ImpactReporting
-to MicrosoftDocs/azure-compute-docs. sync-all.sh has --compute flag.
-
-Totals: 352 wiki pages, 13,389 raw articles, 181 service areas.
+Source: `azure-compute-docs-pr/articles/`
+Syncs from: `MicrosoftDocs/azure-compute-docs`
+7 deep pages: VMs (sizes, disks, availability), VMSS (orchestration),
+ACI, Service Fabric, managed-disks concept, vm-availability concept,
+container-compute-options comparison.
+Sync scripts updated for 3 repos.
 
 ## [2026-04-07] ingest | Azure AKS docs (620 articles, 3 service areas)
 
-Source: `azure-aks-docs-pr/articles/` (copied from local clone)
-Syncs from: `MicrosoftDocs/azure-aks-docs` (public)
-
-Service areas: aks (551), kubernetes-fleet (58), application-network (11).
-
-Deep wiki pages created (5):
-- entities/azure-aks — features table, networking models, security layers, storage options
-- entities/azure-kubernetes-fleet — multi-cluster management, update orchestration
-- entities/azure-application-network — preview app networking for AKS
-- concepts/aks-networking — CNI models (overlay/flat/kubenet/BYO), egress control, DNS, network policies
-
-3 source summary pages. Sync scripts updated for 4 repos.
-
-Totals: 362 wiki pages, 14,009 raw articles, 184 service areas.
+Source: `azure-aks-docs-pr/articles/`
+Syncs from: `MicrosoftDocs/azure-aks-docs`
+5 deep pages: AKS (features, networking, security, storage),
+Fleet Manager, Application Network, aks-networking concept.
+Sync scripts updated for 4 repos.
 
 ## [2026-04-07] deep | Deep analysis for remaining 58 service areas
 
-Created 7 new cross-cutting concept/comparison pages:
-- concepts/azure-rbac — RBAC, ABAC, role assignments, built-in roles
-- concepts/backup-and-dr — Azure Backup vs Site Recovery, RPO/RTO comparison
-- comparisons/caching-options — Azure Cache for Redis vs Managed Redis (Enterprise)
-- concepts/azure-operations-management — Automation, Update Manager, Grafana, App Config, SRE Agent
-- comparisons/operator-edge-services — telecom/edge services matrix
-- concepts/azure-data-services — Maps, Planetary Computer, AgriFood, Data Share, Energy
-- concepts/azure-realtime-services — Web PubSub vs SignalR vs Communication Services
+7 new concept/comparison pages: RBAC, backup & DR, caching options,
+operations management, operator/edge services, data services,
+real-time services.
 
-Updated 36 entity pages with cross-links to new deep pages.
+## [2026-04-07] deep | 100% entity coverage — all 129 entities cross-linked
 
-All 125+ service areas now have deep analysis coverage.
+Updated all 129 entity pages with bidirectional links to concept/comparison
+pages. Every entity now links to at least one deep analysis page.
+
+Final state: 368 wiki pages, 14,009 raw articles, 184 service areas,
+81,198 qmd vectors. 4 sync repos configured.

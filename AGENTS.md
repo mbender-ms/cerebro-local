@@ -16,6 +16,10 @@ maintains the wiki; the human curates sources, directs analysis, and asks questi
 cerebro-local/
 ├── raw/                    # Layer 1: Immutable source material
 │   ├── articles/           # Web clips, PDFs, papers, markdown articles
+│   │   ├── nat-gateway/    # MS Learn articles organized by service area
+│   │   ├── virtual-network/
+│   │   ├── load-balancer/
+│   │   └── ...             # Other service areas or standalone articles
 │   └── assets/             # Images referenced by sources
 ├── wiki/                   # Layer 2: LLM-generated and maintained
 │   ├── index.md            # Content catalog — read FIRST on every query
@@ -25,7 +29,8 @@ cerebro-local/
 │   ├── comparisons/        # Cross-document analysis and side-by-side pages
 │   ├── patterns/           # Recurring solutions, deployment patterns, workflows
 │   └── sources/            # Per-source summary pages
-├── scripts/                # Helper scripts (sync, maintenance)
+├── scripts/                # Helper scripts (chunker, sync, maintenance)
+│   └── chunk-article.js    # MS Learn article chunker
 ├── AGENTS.md               # Layer 3: This schema file
 └── .gitignore
 ```
@@ -122,6 +127,128 @@ When new information contradicts existing wiki content, flag it explicitly:
 - Be precise and concise. Prefer tables and bullet points over prose for reference content.
 - Use code blocks for commands, configurations, and API examples.
 
+## MS Learn Article Chunking Strategy
+
+Azure documentation articles from Microsoft Learn have a specific structure that
+requires pre-processing before wiki ingest. A chunking script at
+`scripts/chunk-article.js` handles this automatically.
+
+### Why chunk before ingest
+
+MS Learn articles are often 300-600 lines with multiple H2 sections, tabbed
+deployment methods (Portal/PowerShell/CLI), and zone-pivot variants. Ingesting
+an entire article as one unit produces wiki pages that are too broad for precise
+retrieval. Chunking at the H2 boundary with tab/pivot separation produces
+focused chunks that map cleanly to wiki concepts and are individually retrievable
+by qmd.
+
+### Article anatomy
+
+```
+---
+title: Create an Azure NAT Gateway          ← YAML frontmatter (propagated to every chunk)
+ms.service: azure-nat-gateway
+ms.topic: quickstart
+ms.date: 04/30/2025
+---
+# Quickstart: Create a NAT gateway           ← H1 (article title, becomes header-path root)
+
+Intro paragraph...                           ← Overview chunk
+
+## Prerequisites                             ← H2 = primary chunk boundary
+### [Portal](#tab/portal)                    ← Tab group: 3 chunks (portal, powershell, cli)
+### [PowerShell](#tab/powershell)
+### [CLI](#tab/cli)
+---                                          ← Tab group terminator
+
+## Create the NAT gateway                    ← H2 with tabs → 3 more chunks
+### [Portal](#tab/portal)
+...
+---
+
+::: zone pivot="azure-portal"               ← Zone pivot (alternative to tabs)
+[!INCLUDE [file](path)]                      ← Include reference
+::: zone-end
+
+## Next steps                                ← Skipped (boilerplate)
+```
+
+### Chunking rules
+
+| Rule | Description |
+|------|-------------|
+| **Primary split: H2** | Every `## Section` becomes its own chunk |
+| **Tab separation** | If an H2 section contains `### [Label](#tab/id)` groups, emit one chunk per tab with the tab label appended to the title |
+| **Zone pivot separation** | If the article uses `::: zone pivot="x"` blocks, emit one chunk per pivot |
+| **Frontmatter propagation** | Every chunk inherits `ms.service`, `ms.topic`, `ms.date`, `title` from the article frontmatter |
+| **Header path** | Every chunk records its position: `H1 > H2` (e.g., "Quickstart: Create a NAT gateway > Create the NAT gateway") |
+| **Deployment method tag** | Tab chunks get a `deployment-method` field (`portal`, `powershell`, `cli`) for filtering |
+| **Intro chunk** | Content between H1 and first H2 becomes an `-overview` chunk |
+| **Skip boilerplate** | Sections titled "Next steps", "Clean up resources", "Related content", "See also" are dropped |
+| **Include references** | `[!INCLUDE [...](path)]` lines are preserved as-is (context may be incomplete) |
+
+### Using the chunker
+
+```bash
+# Preview what chunks an article produces
+node scripts/chunk-article.js raw/articles/nat-overview.md --summary
+
+# Write chunks to a temp directory for review
+node scripts/chunk-article.js raw/articles/quickstart-nat.md --output-dir /tmp/chunks
+
+# Dry run — shows first 8 lines of each chunk
+node scripts/chunk-article.js raw/articles/article.md --dry-run
+```
+
+### Chunk output format
+
+Each chunk is a standalone markdown file with enriched frontmatter:
+
+```yaml
+---
+title: "Create the NAT gateway (CLI)"        # Section heading + tab label
+chunk-of: "Create an Azure NAT Gateway"       # Parent article title
+ms.service: "azure-nat-gateway"               # Propagated from article
+ms.topic: "quickstart"                        # Propagated from article
+article-date: "04/30/2025"                    # Propagated from article
+header-path: "Quickstart: Create a NAT gateway > Create the NAT gateway"
+tags:
+  - azure-nat-gateway
+  - quickstart
+  - cli
+deployment-method: "cli"                      # Only on tab chunks
+---
+```
+
+### Ingest workflow for MS Learn articles
+
+1. Place the raw article in `raw/articles/<service>/` (preserve the original filename).
+2. Run the chunker: `node scripts/chunk-article.js raw/articles/<service>/article.md --summary`
+3. Review the chunk summary — confirm sections and tab splits look right.
+4. The LLM then processes **chunks**, not the raw article, for wiki page creation:
+   - Each chunk informs entity, concept, comparison, and pattern pages.
+   - The source summary page (`wiki/sources/`) references the original article, not individual chunks.
+   - Chunks are **working artifacts** — they feed the wiki but are NOT stored in `wiki/` themselves.
+5. After ingest, run `qmd update && qmd embed` to refresh the search index.
+
+### Batch ingest for a service area
+
+```bash
+# 1. Copy articles for a service into raw/
+mkdir -p raw/articles/nat-gateway
+cp ~/github/azure-docs-pr/articles/nat-gateway/*.md raw/articles/nat-gateway/
+
+# 2. Preview all chunks
+for f in raw/articles/nat-gateway/*.md; do
+  echo "=== $(basename $f) ==="
+  node scripts/chunk-article.js "$f" --summary
+  echo ""
+done
+
+# 3. Tell the LLM to ingest the service area
+#    "Ingest all articles in raw/articles/nat-gateway/"
+```
+
 ## Core Operations
 
 ### 1. Ingest
@@ -130,16 +257,20 @@ Triggered when: a new source is added to `raw/` and the human says to process it
 
 Workflow:
 1. Read the source document fully.
-2. Discuss key takeaways with the human (unless batch mode is requested).
-3. Identify key facts, configurations, limitations, gotchas, and novel information.
-4. Write or update a source summary page in `wiki/sources/`.
-5. Update ALL affected entity, concept, comparison, and pattern pages in the wiki.
+2. **For MS Learn articles**: Run `node scripts/chunk-article.js <file> --summary`
+   to understand the article structure and chunk boundaries. Use chunks to guide
+   which wiki pages to create or update. Process one H2 section at a time.
+3. **For other sources**: Read the full document.
+4. Discuss key takeaways with the human (unless batch mode is requested).
+5. Identify key facts, configurations, limitations, gotchas, and novel information.
+6. Write or update a source summary page in `wiki/sources/`.
+7. Update ALL affected entity, concept, comparison, and pattern pages in the wiki.
    A single source may touch 10-15 pages. Be thorough.
-6. If a referenced entity or concept doesn't have a page yet, create one.
-7. Update `wiki/index.md` with any new pages (link + one-line summary).
-8. Append an entry to `wiki/log.md` in the format:
+8. If a referenced entity or concept doesn't have a page yet, create one.
+9. Update `wiki/index.md` with any new pages (link + one-line summary).
+10. Append an entry to `wiki/log.md` in the format:
    `## [YYYY-MM-DD] ingest | Source Title`
-9. Commit message suggestion: `ingest: <source-title>`
+11. Commit message suggestion: `ingest: <source-title>`
 
 ### 2. Query
 

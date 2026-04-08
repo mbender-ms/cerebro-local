@@ -1,39 +1,36 @@
 ---
-title: Design review checklist for Reliability
-description: Use this checklist for Reliability to identify the best infrastructure and application design for your workload.
-author: claytonsiemens77
-ms.author: csiemens
-ms.date: 11/15/2023
+title: Design review checklist for Security
+description: Use this checklist for Security to identify the best infrastructure and application design for your workload.
+author: PageWriter-MSFT
+ms.author: prwilk
+ms.date: 11/14/2023
 ms.topic: concept-article
-ms.update-cycle: 1095-days
+ms.update-cycle: 1095-days  
 ---
 
-# Design review checklist for Reliability
+# Design review checklist for Security
 
-This checklist presents a set of recommendations for you to use to evaluate the reliability, resiliency, and failure recovery strategies in your architecture design. To ensure reliability, identify the best infrastructure and application design for your workload. Make these decisions based on your business requirements that are mapped to availability and recoverability target metrics.
-
-To implement a reliable design, thoroughly consider decision points in your design and be aware of how those decisions affect your workload. This checklist and the accompanying guides provide resources to help you make those decisions. Make workload reliability a central consideration throughout the workload design, development, and operation lifecycle.
+This checklist presents a set of security recommendations to help you ensure your workload is secure and aligned with the Zero Trust model. If you haven't checked the following boxes and considered the tradeoffs, then your design might be at risk. Carefully consider all of the points covered in the checklist to gain confidence in your workload's security.
 
 ## Checklist
-
-Approach your design with a focus on reliability to help ensure that you design a workload that's resilient, manageable, and repeatable. If you don't include reliability practices and consider the tradeoffs, your design is potentially at risk. Carefully consider all the points covered in the checklist to instill confidence in your system's success.
-
-|&nbsp; |Code  |Recommendation  |
-|-|-|-|
-| &#9744; |[RE:01](simplify.md)     |  **Focus your workload design on simplicity and efficiency.** Use a practical approach to avoid unnecessary complexity while meeting your business goals and requirements. |
-| &#9744; |[RE:02](identify-flows.md)    |  **Identify and rate user and system flows.** Use a criticality scale based on your business requirements to prioritize the flows. |
-| &#9744; |[RE:03](failure-mode-analysis.md)     |  **Use failure mode analysis (FMA) to identify potential failures in your workload.** Identify dependencies and failure points, and develop mitigation strategies for those failures.|
-| &#9744; |[RE:04](metrics.md)     |   **Define reliability and recovery targets** for your workload. Use the targets to inform your design and as the foundation of your health model.|
-| &#9744; |[RE:05](redundancy.md)   | **Add redundancy at different levels, especially for critical flows**, to help meet your reliability targets. Consider redundant infrastructure components such as compute and network, and multiple instances of your solution. |
-| &#9744; |[RE:06](scaling.md)    | **Implement a timely and reliable scaling strategy at the application, data, and infrastructure levels**. Base the scaling strategy on actual or predicted usage patterns and minimize manual intervention.|
-| &#9744; |[RE:07](self-preservation.md)        |  **Strengthen the resiliency of your workload by implementing self-preservation and self-healing measures**. Use built-in features and well-established cloud patterns to help your workload remain functional during and recover from incidents.   |
-| &#9744; |[RE:08](testing-strategy.md)      |  **Test for resiliency and availability scenarios by applying the principles of chaos engineering**. Ensure that your graceful degradation implementation and scaling strategies are effective by performing active malfunction and simulated load testing.       |
-| &#9744; |[RE:09](disaster-recovery.md)     |  **Implement structured, tested, and documented disaster recovery (DR) plans** that align with the recovery targets. Plans must cover all components and the system as a whole.       |
-| &#9744; |[RE:10](monitoring-alerting-strategy.md)     |  **Measure and model the solution's health signals**. Continuously capture uptime and other reliability data from across the workload and also from individual components and key flows.       |
+|&nbsp;|Code|Recommendation|
+|---|---|---|
+|&#9744;|[SE:01](./establish-baseline.md)|**Establish a security baseline** that's aligned to compliance requirements, industry standards, and platform recommendations. Regularly measure your workload architecture and operations against the baseline to sustain or improve your security posture over time.|
+|&#9744;|[SE:02](./secure-development-lifecycle.md)<br>[SE:02](./threat-model.md)|**Align secure development lifecycle (SDL) throughout the software development lifecycle** to ensure confidentiality, integrity, and availability of software and adopt a security-first mindset.|
+|&#9744;|[SE:03](./data-classification.md)|**Classify and consistently apply sensitivity and information type labels** on all workload data and systems involved in data processing. Use classification to influence workload design, implementation, and security prioritization.|
+|&#9744;|[SE:04](./segmentation.md)|**Create intentional segmentation and perimeters** in your architecture design and in the workload's footprint on the platform. The segmentation strategy must include networks, roles and responsibilities, workload identities, and resource organization.|
+|&#9744;|[SE:05](./identity-access.md)|**Implement strict, conditional, and auditable identity and access management (IAM)** across all workload users, team members, and system components. Limit access exclusively to *as necessary*. Use modern industry standards for all authentication and authorization implementations. Restrict and rigorously audit access that's not based on identity.|
+|&#9744;|[SE:06](./networking.md)|**Isolate, filter, and control network traffic** across both ingress and egress flows. Apply defense-in-depth principles by using localized network controls at all available network boundaries across both east-west and north-south traffic.|
+|&#9744;|[SE:07](./encryption.md)|**Encrypt data by using modern, industry-standard methods** to guard confidentiality and integrity. Align the encryption scope with data classifications, and prioritize native platform encryption methods.|
+|&#9744;|[SE:08](./harden-resources.md)|**Harden all workload components** by reducing extraneous surface area and tightening configurations to increase attacker cost.|
+|&#9744;|[SE:09](./application-secrets.md)|**Protect application secrets** by hardening their storage and restricting access and manipulation and by auditing those actions. Run a reliable and regular rotation process that can improvise rotations for emergencies.|
+|&#9744;|[SE:10](./monitor-threats.md)|**Implement a holistic monitoring strategy** that relies on modern threat detection mechanisms that can be integrated with the platform. Mechanisms should reliably alert for triage and send signals into existing SecOps processes.|
+|&#9744;|[SE:11](./test.md)|**Establish a comprehensive testing regimen** that combines approaches to prevent security issues, validate threat prevention implementations, and test threat detection mechanisms.|
+|&#9744;|[SE:12](./incident-response.md)|**Define and test effective incident response procedures** that cover a spectrum of incidents, from localized issues to disaster recovery. Clearly define which team or individual runs a procedure.|
 
 ## Next steps
 
-We recommend that you review the Reliability tradeoffs to explore other concepts.
+We recommend that you review the Security tradeoffs to explore other concepts.
 
 > [!div class="nextstepaction"]
-> [Reliability tradeoffs](tradeoffs.md)
+> [Security tradeoffs](tradeoffs.md)

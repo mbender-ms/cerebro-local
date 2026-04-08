@@ -1,141 +1,78 @@
 ---
-title: Identity and access management for Azure Arc-enabled servers
-description: Learn how to secure Azure Arc-enabled servers with managed identities, role-based access control, and service principals.
-author: chintalavr
-ms.author: vchintala
-ms.date: 09/02/2025
+title: Identity and access management for SAP on Azure
+description: Learn more about design considerations and recommendations that relate to identity and access management in an SAP deployment on Microsoft Azure.
+author: PmeshramPM
+ms.author: pameshra
+ms.date: 06/30/2023
 ms.topic: concept-article
-ms.custom:
-  - e2e-hybrid
-  - think-tank
-  - sfi-image-nochange
+ms.subservice: caf-scenario-sap
+ms.custom: think-tank, e2e-sap, UpdateFrequency2
 ---
 
-# Identity and access management for Azure Arc-enabled servers
+<!-- docutune:casing LMS -->
 
-This article provides actionable guidance to secure Azure Arc-enabled servers through proper identity and access management. You learn to configure managed identities, implement role-based access controls, and deploy service principals securely to protect your hybrid infrastructure. Identity management systems are critical for securing Azure Arc-enabled servers. The following reference architecture shows how identities, roles, and permissions work together:
+# Identity and access management for SAP
 
-[![Reference architecture diagram for Azure Arc-enabled servers showing identities, roles, permissions, and action flows.](./media/arc-enabled-servers-iam.png)](./media/arc-enabled-servers-iam.png#lightbox)
-
-## Configure managed identities
-
-System-assigned managed identities provide secure authentication for Azure Arc-enabled servers without storing credentials. The Azure Connected Machine agent creates these identities automatically during server onboarding, but they have no permissions by default and require explicit Azure RBAC role assignments to access Azure resources.
-
-> [!TIP]
-> **Start here**: If you're new to managed identities, review the [managed identity authentication guide](/azure/azure-arc/servers/managed-identity-authentication) for step-by-step implementation instructions.
-
-1. **Identify legitimate use cases for managed identity access.** Applications on your servers need specific access tokens to call Azure resources like Key Vault or Storage. Plan access control for these resources before granting permissions to avoid security gaps.
-
-2. **Control privileged user access to managed identity endpoints.** Members of local administrators or the [Hybrid Agent Extensions Applications group](/azure/azure-arc/servers/agent-overview#windows-agent-installation-details) on Windows and the [himds](/azure/azure-arc/servers/agent-overview#agent-component-details) group on Linux can request access tokens. Limit membership in these groups to prevent unauthorized access to Azure resources.
-
-3. **Implement role-based access control for managed identities.** Use Azure RBAC to grant only the minimum required permissions to managed identities. Perform periodic access reviews to ensure permissions remain appropriate and remove unused access.
-
-## Apply role-based access control
-
-Role-based access control limits user privileges and reduces security risks. Users with broad roles like Contributor or Owner can deploy extensions and gain administrative access to Azure Arc-enabled servers, creating potential security vulnerabilities.
-
-> [!WARNING]
-> **Security risk**: Avoid granting broad permissions like Owner or Contributor roles for Arc server access. These roles can provide root-level access to your servers through extension deployment.
-
-1. **Apply the least privilege principle to role assignments.** Users, groups, and applications should receive only the minimum permissions needed for their tasks. Roles like Contributor, Owner, or Azure Connected Machine Resource Administrator grant extensive access that can effectively delegate root access to servers.
-
-2. **Use the Azure Connected Machine Onboarding role for server registration.** This role allows users to onboard servers to Azure Arc without granting broader management permissions. The role provides only the permissions needed to create and read Arc resources, not to manage extensions or delete servers.
-
-   > [!div class="nextstepaction"]
-   > [Create a service principal with onboarding role](/azure/azure-arc/servers/onboard-service-principal#create-a-service-principal-for-onboarding-at-scale)
-
-3. **Secure access to monitoring data.** Read access to Azure Arc-enabled servers can expose log data collected by the Log Analytics agent. Apply RBAC controls to Log Analytics workspaces to limit who can view sensitive operational data.
-
-Also consider sensitive data sent to the workspace; apply the same RBAC principle to the data itself. Read access to Azure Arc-enabled servers can provide access to log data collected by the Log Analytics agent and stored in the Log Analytics workspace.
-
-> [!TIP]
-> Learn how to implement granular workspace access controls in the [Azure Monitor Logs deployment guide](/azure/azure-monitor/logs/design-logs-deployment#access-control-overview) to secure your monitoring data.
-
-## Plan identity and access responsibilities
-
-Organizational clarity prevents security gaps and operational conflicts. Clear role definitions ensure the right people have appropriate access to onboard and manage Azure Arc-enabled servers.
-
-> [!div class="checklist"]
->
-> - **Who** can onboard new servers to Azure Arc?
-> - **Who** manages servers after they're onboarded?
-> - **What** Azure permissions do these roles need?
-> - **How** will you separate onboarding from ongoing management?
-
-1. **Define server onboarding responsibilities.** Identify who can onboard servers and set required permissions on both the servers and in Azure. This role requires local administrator access on servers and appropriate Azure permissions.
-
-2. **Assign ongoing management responsibilities.** Determine who manages Azure Arc-enabled servers after onboarding and who can view operational data from Azure services. Separate these responsibilities based on operational needs and security requirements.
-
-3. **Plan service principal distribution.** Create multiple Arc onboarding service principals when different business teams own and operate server groups. Scope each principal to the minimum resource groups to limit security exposure.
-
-4. **Assess enterprise-scale impact.** Review the [identity and access management design area](../../../ready/landing-zone/design-area/identity-access.md) to understand how Azure Arc-enabled servers integrate with your overall Azure landing zone identity strategy.
+This article builds on several considerations and recommendations defined in the article [Azure landing zone design area for identity and access management](../../ready/landing-zone/design-area/identity-access.md). This article describes the identity and access-management recommendations for deploying an SAP platform on Microsoft Azure. SAP is a mission-critical platform, so you should include the Azure landing zone design area guidance in your design.
 
 > [!IMPORTANT]
-> Proper role separation is essential for security. Consider your organization's structure when assigning onboarding vs. management responsibilities.
+> SAP SE has [sunset](https://community.sap.com/t5/technology-blogs-by-sap/preparing-for-sap-identity-management-s-end-of-maintenance-in-2027/ba-p/13596101) the SAP Identity Management (IDM) product and recommends all its customers to migrate to [Microsoft Entra ID Governance](/entra/id-governance/scenarios/migrate-from-sap-idm).
 
-## Implement security controls
+## Design considerations
 
-Security controls protect Azure Arc-enabled servers and the resources they can access. Proper implementation reduces attack surface and ensures compliance with security policies.
+- Review the required Azure administration and management activities for your team. Consider your SAP on Azure landscape. Determine the best possible distribution of responsibilities within your organization.
 
-> [!div class="nextstepaction"]
-> [Review Arc-enabled servers security overview](/azure/azure-arc/servers/security-overview)
+- Determine the Azure resource administration boundaries versus the SAP Basis administration boundaries between the infrastructure and SAP Basis teams. Consider providing the SAP Basis team with elevated Azure resource administration access in an SAP non-production environment. For example, give them a [Virtual Machine Contributor](/azure/role-based-access-control/built-in-roles#virtual-machine-contributor) role. You can also give them partially elevated administration access, like partial Virtual Machine Contributor in a production environment. Both options achieve a good balance between the separation of duties and operational efficiency.
 
-**Configure secure server onboarding.** Use security groups to assign local administrator rights to identified users or service accounts for Azure Arc onboarding at scale. This approach provides consistent access control across your server fleet.
+- For central IT and SAP Basis teams, consider using Privileged Identity Management (PIM) and multifactor authentication to access SAP Virtual Machine resources from the Azure portal and the underlying infrastructure.
 
-### Certificate-based authentication (Recommended)
+Here are common administration and management activities of SAP on Azure:
 
-**Deploy service principals with certificates.** Use a [Microsoft Entra service principal](/azure/azure-arc/servers/onboard-service-principal#create-a-service-principal-for-onboarding-at-scale) with certificate authentication for server onboarding. Certificates are the recommended authentication method over client secrets because they provide stronger security, support conditional access policies, and reduce credential exposure risk. Scope each principal to the minimum required resource group or subscription.
+| Azure resource | Azure resource provider | Activities |
+|---|---|---|
+| Virtual machines | Microsoft.Compute/virtualMachines | Start, stop, restart, deallocate, deploy, redeploy, change, resize, extensions, availability sets, proximity placement groups |
+| Virtual machines | Microsoft.Compute/disks | Read and write to disk |
+| Storage | Microsoft.Storage | Read, change on storage accounts (for example, boot diagnostics) |
+| Storage | Microsoft.NetApp | Read, change on NetApp capacity pools and volumes |
+| Storage | Microsoft.NetApp | ANF snapshots |
+| Storage | Microsoft.NetApp | ANF cross-region replication |
+| Networking | Microsoft.Network/networkInterfaces | Read, create, and change network interfaces |
+| Networking | Microsoft.Network/loadBalancers | Read, create, and change load balancers |
+| Networking | Microsoft.Network/networkSecurityGroups | Read NSG |
+| Networking | Microsoft.Network/azureFirewalls | Read firewall |
 
-### Alternative authentication methods
+- Secure Network File System (NFS) communication between Azure NetApp Files and Azure Virtual Machines with [NFS client encryption using Kerberos](/azure/azure-netapp-files/configure-kerberos-encryption). Azure NetApp Files supports Active Directory Domain Services (AD DS) and Microsoft Entra Domain Services for Microsoft Entra connections. Consider the [performance effect of Kerberos on NFS v4.1](/azure/azure-netapp-files/configure-kerberos-encryption#kerberos_performance).
 
-**Secure client secrets when certificates are not available.** If you use client secrets for service principals, make them short-lived, rotate them regularly, and restrict the principal's scope and permissions to reduce security exposure.
+- Secure Remote Function Call (RFC) connections between SAP systems with secure network communications (SNC) by using appropriate protection levels, like quality of protection (QoP). SNC protection generates some performance overhead. To protect RFC communication between application servers of the same SAP system, SAP recommends using network security instead of SNC. The following Azure services support SNC-protected RFC connections to an SAP target system: Providers of Azure Monitor for SAP Solutions, the self-hosted integration runtime in Azure Data Factory, and the on-premises data gateway in case of Power BI, Power Apps, Power Automate, Azure Analysis Services, and Azure Logic Apps. SNC is required to configure single sign-on (SSO) in these cases.
 
-### Role assignments and access control
+### SAP user governance and provisioning
 
-1. **Apply appropriate role assignments.** Assign the [Azure Connected Machine Onboarding](/azure/azure-arc/servers/onboard-service-principal#create-a-service-principal-for-onboarding-at-scale) role at the resource group level for onboarding operations. Grant the [Azure Connected Machine Resource Administrator](/azure/role-based-access-control/built-in-roles/management-and-governance#azure-connected-machine-resource-administrator) role to teams who manage server resources in Azure.
+- Consider that a migration to Azure might be an opportunity to review and realign identity and access management processes. Review the processes in your SAP landscape and the processes at your enterprise level:
+  - Review the SAP dormant user lockout policies.
+  - Review the SAP user password policy and align it with Microsoft Entra ID.
+  - Review the leavers, movers, and starters (LMS) procedures and align them with Microsoft Entra ID governance capabilities. If you're using SAP Human Capital Management (HCM), SAP HCM can drive the LMS process.
 
-2. **Control managed identity access.** Use [managed identities](/azure/azure-arc/servers/managed-identity-authentication) for applications on servers to access Microsoft Entra protected resources. Restrict access to only authorized applications using Microsoft Entra application permissions.
+- Consider using [SAP principal propagation](/power-platform/sap/connect/entra-id-apim-oauth) to forward a Microsoft identity to your SAP landscape.
 
-3. **Manage local access to identity endpoints.** Use the [`Hybrid agent extension applications`](/azure/azure-arc/servers/security-overview#using-a-managed-identity-with-azure-arc-enabled-servers) security group on Windows or the *himds* group on Linux to control which users can request Azure resource access tokens from Arc-enabled servers.
+- Consider Microsoft Entra provisioning service to automatically provision and deprovision users and groups to [SAP Analytics Cloud](/entra/identity/saas-apps/sap-analytics-cloud-provisioning-tutorial), [SAP Identity Authentication](/entra/identity/saas-apps/sap-cloud-platform-identity-authentication-provisioning-tutorial), and more SAP services.
 
-> [!NOTE]
-> Ready to implement these security controls? Start with the [Azure Arc-enabled servers prerequisites](/azure/azure-arc/servers/agent-overview#prerequisites) to ensure your environment is properly configured.
+- Consider provisioning users from [SuccessFactors](/entra/identity/saas-apps/sap-successfactors-inbound-provisioning-cloud-only-tutorial) into Microsoft Entra ID, with optional write-back of email address to SuccessFactors.
 
-## Azure tools and resources
+## Design recommendations
 
-This reference helps you implement identity and access management for Azure Arc-enabled servers. Use these tools to configure secure authentication, role-based access control, and monitoring.
+- [Migrate](/entra/id-governance/scenarios/migrate-from-sap-idm) your SAP Identity Management (IDM) solution to Microsoft Entra ID Governance.
 
-| Category | Tool | Description | Quick Start |
-|----------|------|-------------|-------------|
-| Identity | [Microsoft Entra managed identities](/azure/azure-arc/servers/managed-identity-authentication) | Provides secure authentication for applications without storing credentials | [Configure managed identity access](/azure/azure-arc/servers/managed-identity-authentication#prerequisites) |
-| Security | [Azure Role-Based Access Control](/security/benchmark/azure/baselines/arc-enabled-security-baseline#pa-7-follow-just-enough-administration-least-privilege-principle) | Controls access to resources based on least privilege principle | [Assign RBAC roles](/azure/role-based-access-control/role-assignments-portal) |
-| Onboarding | [Microsoft Entra service principal](/azure/azure-arc/servers/onboard-service-principal#create-a-service-principal-for-onboarding-at-scale) | Enables automated server onboarding at scale | [Create service principal](/azure/azure-arc/servers/onboard-service-principal#create-a-service-principal-for-onboarding-at-scale) |
-| Security | [Azure Arc-enabled servers security overview](/azure/azure-arc/servers/security-overview) | Comprehensive security guidance for Arc-enabled servers | [Review security controls](/azure/azure-arc/servers/security-overview#security-controls) |
-| Monitoring | [Azure Monitor Logs deployment guide](/azure/azure-monitor/logs/design-logs-deployment#access-control-overview) | Implements granular access control for log data | [Configure workspace access](/azure/azure-monitor/logs/manage-access) |
-| Architecture | [Identity and access management design area](../../../ready/landing-zone/design-area/identity-access.md) | Enterprise-scale landing zone identity guidance | [Review design principles](../../../ready/landing-zone/design-area/identity-access.md#design-area-review) |
-| Permissions | [Microsoft Entra application permissions](/entra/identity-platform/permissions-consent-overview) | Controls application access to managed identities | [Configure app permissions](/entra/identity-platform/quickstart-configure-app-access-web-apis) |
-| Prerequisites | [Azure Arc-enabled servers prerequisites](/azure/azure-arc/servers/agent-overview#prerequisites) | Requirements for deploying Arc-enabled servers | [Check prerequisites](/azure/azure-arc/servers/prerequisites) |
-| Deployment | [At-scale deployment planning](/azure/azure-arc/servers/plan-at-scale-deployment) | Guidance for large-scale Arc server deployments | [Plan your deployment](/azure/azure-arc/servers/plan-at-scale-deployment#planning-for-at-scale-deployment) |
-| Learning | [Azure Arc learning path](/training/paths/manage-hybrid-infrastructure-with-azure-arc/) | Comprehensive training for Azure Arc management | [Start learning module](/training/modules/intro-to-azure-arc/) |
+- Implement SSO by using Windows AD, Microsoft Entra ID, or AD FS, depending on the access type, so that the end users can connect to SAP applications without a user ID and password once the central identity provider successfully authenticates them.
+  - Implement SSO to SAP SaaS applications like [SAP Analytics Cloud](/entra/identity/saas-apps/sapboc-tutorial), [SAP Business Technology Platform (BTP)](/entra/identity/saas-apps/sap-hana-cloud-platform-tutorial), [Business by design](/entra/identity/saas-apps/sapbusinessbydesign-tutorial), [SAP Qualtrics](/entra/identity/saas-apps/qualtrics-tutorial) and [SAP C4C](/entra/identity/saas-apps/sap-customer-cloud-tutorial) with Microsoft Entra ID using SAML.
+  - Implement SSO to [SAP NetWeaver](/entra/identity/saas-apps/sap-netweaver-tutorial)-based web applications like [SAP Fiori](/entra/identity/saas-apps/sap-fiori-tutorial) and SAP Web GUI by using SAML.
+  - You can implement SSO to SAP GUI by using SAP NetWeaver SSO or a partner solution.
+  - For SSO for SAP GUI and web browser access, implement SNC – Kerberos/SPNEGO (simple and protected GSSAPI negotiation mechanism) due to its ease of configuration and maintenance. For SSO with X.509 client certificates, consider the SAP Secure Login Server, which is a component of the SAP SSO solution.
+  - Implement [SSO by using OAuth for SAP NetWeaver](/entra/identity/saas-apps/sap-netweaver-tutorial#configure-sap-netweaver-for-oauth) to allow third-party or custom applications to access SAP NetWeaver OData services.
+  - Implement [SSO to SAP HANA](/entra/identity/saas-apps/saphana-tutorial)
 
-## Next steps
+- Implement Microsoft Entra ID as an identity provider for SAP systems hosted on RISE. For more information, see [Integrating the Service with Microsoft Entra ID](https://help.sap.com/docs/identity-authentication/identity-authentication/integrating-service-with-microsoft-azure-ad).
+- For applications that access SAP, use [principal propagation to establish SSO](https://github.com/azuredevcollege/SAP/blob/master/sap-oauth-saml-flow/README.md).
 
-Ready to secure your Azure Arc environment? Continue with network security configuration to complete your hybrid infrastructure protection:
+- If you're using SAP BTP services or SaaS solutions that require SAP Cloud Identity Service, Identity Authentication (IAS), [implement SSO between SAP Cloud Identity Authentication Services and Microsoft Entra ID](/entra/fundamentals/scenario-azure-first-sap-identity-integration) to access those SAP services. This integration lets SAP IAS act as a proxy identity provider and forwards authentication requests to Microsoft Entra ID as the central user store and identity provider.
 
-> [!div class="nextstepaction"]
-> [Configure network topology and connectivity for Azure Arc-enabled servers](eslz-arc-servers-connectivity.md)
-
-### Continue your Azure Arc journey
-
-| Topic | Description | Action |
-|-------|-------------|---------|
-| **Network Security** | Secure network connectivity and topology | [Configure Arc networking](eslz-arc-servers-connectivity.md) |
-| **Deployment Planning** | Plan large-scale Arc server deployment | [Review deployment guide](/azure/azure-arc/servers/plan-at-scale-deployment) |
-| **Hands-on Learning** | Build practical Arc management skills | [Start learning path](/training/paths/manage-hybrid-infrastructure-with-azure-arc/) |
-| **Security Baseline** | Implement comprehensive security controls | [Apply security baseline](/security/benchmark/azure/baselines/arc-enabled-security-baseline) |
-
-### More resources
-
-- [Azure Arc-enabled servers overview](/azure/azure-arc/servers/overview)
-- [Troubleshooting guide](/azure/azure-arc/servers/troubleshoot-agent-onboard)
-- [Azure Hybrid Cloud documentation](/azure/cloud-adoption-framework/scenarios/hybrid/)
+- If you're using SAP SuccessFactors, use Microsoft Entra ID [automated user provisioning](/entra/identity/saas-apps/sap-successfactors-inbound-provisioning-cloud-only-tutorial). With this integration, as you add new employees to SAP SuccessFactors, you can automatically create their user accounts in Microsoft Entra ID. Optionally, you can create user accounts in Microsoft 365 or other SaaS applications that are supported by Microsoft Entra ID. Use write-back of the email address to SAP SuccessFactors.

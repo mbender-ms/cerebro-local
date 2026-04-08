@@ -1,109 +1,177 @@
 ---
-title: "Azure Arc-enabled Kubernetes system requirements"
-ms.date: 10/08/2024
+title: Azure Arc resource bridge system requirements
+description: Learn about system requirements for Azure Arc resource bridge.
 ms.topic: concept-article
-ms.custom: devx-track-azurepowershell
-description: Learn about the system requirements to connect Kubernetes clusters to Azure Arc.
-# Customer intent: "As a cloud architect, I want to understand the system requirements for connecting Kubernetes clusters to Azure Arc, so that I can ensure my infrastructure meets the necessary criteria for effective integration and management."
+ms.date: 05/22/2024
+# Customer intent: "As an IT administrator, I want to understand the system requirements for deploying Azure Arc resource bridge, so that I can ensure proper configuration and prevent errors during deployment."
 ---
 
-# Azure Arc-enabled Kubernetes system requirements
+# Azure Arc resource bridge system requirements
 
-This article describes the basic requirements for [connecting a Kubernetes cluster to Azure Arc](quickstart-connect-cluster.md), along with system requirement information related to various Arc-enabled Kubernetes scenarios.
+This article describes the system requirements for deploying Azure Arc resource bridge.
 
-## Cluster requirements
+Arc resource bridge is used with other partner products, such as [Azure Local](/azure/azure-local/manage/azure-arc-vm-management-overview), [Arc-enabled VMware vSphere](../vmware-vsphere/index.yml), and [Arc-enabled System Center Virtual Machine Manager (SCVMM)](../system-center-virtual-machine-manager/index.yml). These products may have additional requirements.  
 
-Azure Arc-enabled Kubernetes works with any Cloud Native Computing Foundation (CNCF) certified Kubernetes clusters. This includes clusters running on other public cloud providers (such as GCP or AWS) and clusters running on your on-premises data center (such as VMware vSphere or Azure Local).
+## Required Azure permissions
 
-You must also have a [kubeconfig file](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) and context pointing to your cluster.
+- To onboard Arc resource bridge, you must have the [Contributor](/azure/role-based-access-control/built-in-roles) role for the resource group.
 
-The cluster must have at least one node with operating system and architecture type `linux/amd64` and/or `linux/arm64`.
-
-> [!IMPORTANT]
-> Many Arc-enabled Kubernetes features and scenarios are supported on ARM64 nodes, such as [cluster connect](cluster-connect.md) and [viewing Kubernetes resources in the Azure portal](kubernetes-resource-view.md). However, if using Azure CLI to enable these scenarios, [Azure CLI must be installed](/cli/azure/install-azure-cli) and run from an AMD64 machine. Azure RBAC on Arc-enabled Kubernetes is currently not supported on ARM64 nodes. For access to ARM64 nodes, use [Kubernetes RBAC](identity-access-overview.md#kubernetes-rbac-authorization).
->
-> Currently, Azure Arc-enabled Kubernetes [cluster extensions](conceptual-extensions.md) aren't supported on ARM64-based clusters, except for [Flux (GitOps)](conceptual-gitops-flux2.md). To [install and use other cluster extensions](extensions.md), the cluster must have at least one node of operating system and architecture type `linux/amd64`.
-
-## Compute and memory requirements
-
-The [Arc agents deployed on the cluster](conceptual-agent-overview.md) require:
-
-- At least 850 MB of free memory
-- Capacity to use approximately 7% of a single CPU
-
-For a multi-node Kubernetes cluster environment, pods can get scheduled on different nodes.
+- To read, modify, and delete Arc resource bridge, you must have the [Contributor](/azure/role-based-access-control/built-in-roles) role for the resource group.
 
 ## Management tool requirements
 
-To connect a cluster to Azure Arc, you'll need to use either Azure CLI or Azure PowerShell.
+[Azure CLI](/cli/azure/install-azure-cli) is required to deploy the Azure Arc resource bridge on supported private cloud environments.
 
-For Azure CLI:
+If deploying Arc resource bridge on VMware, Azure CLI 64-bit is required to be installed on the management machine to run the deployment commands.
 
-- [Install or upgrade Azure CLI](/cli/azure/install-azure-cli) to the latest version.
-- Install the latest version of **connectedk8s** Azure CLI extension:
+If deploying on Azure Local, then Azure CLI 32-bit should be installed on the management machine.
 
-  ```azurecli
-  az extension add --name connectedk8s
-  ```
+The Arc appliance CLI extension, `arcappliance`, needs to be installed by running this command: `az extension add --name arcappliance`
 
-For Azure PowerShell:
+## Minimum resource requirements
 
-- Install [Azure PowerShell version 6.6.0 or later](/powershell/azure/install-azure-powershell).
-- Install the **Az.ConnectedKubernetes** PowerShell module:
+Arc resource bridge has the following minimum resource requirements:
 
-    ```azurepowershell-interactive
-    Install-Module -Name Az.ConnectedKubernetes
-    ```
+- 200 GB disk space
+- 4 vCPUs
+- 8 GB memory
+- supported storage configuration - hybrid storage (flash and HDD) or all-flash storage (SSDs or NVMe)
 
-> [!NOTE]
-> When you deploy the Azure Arc agents to a cluster,  Helm v. 3.6.3 will be installed in the `.azure` folder of the deployment machine. This [Helm 3](https://helm.sh/docs/) installation is only used for Azure Arc, and it doesn't remove or change any previously installed versions of Helm on the machine.
+These minimum requirements enable most scenarios for products that use Arc resource bridge. Review the product's documentation for specific resource requirements. Failure to provide sufficient resources may cause errors during deployment or upgrade. 
 
-<a name='azure-ad-identity-requirements'></a>
+## IP address prefix (subnet) requirements
 
-## Microsoft Entra identity requirements
+The IP address prefix (subnet) where Arc resource bridge will be deployed requires a minimum prefix of /29. The IP address prefix must have enough available IP addresses for the gateway IP, control plane IP, appliance VM IP, and reserved appliance VM IP. Arc resource bridge only uses the IP addresses assigned to the IP pool range (Start IP, End IP) and the Control Plane IP. We recommend that the End IP immediately follow the Start IP. Ex: Start IP = 192.168.0.2, End IP = 192.168.0.3. Work with your network engineer to ensure that there is an available subnet with the required available IP addresses and IP address prefix for Arc resource bridge.
 
-To connect your cluster to Azure Arc, you must have a Microsoft Entra identity (user or service principal) which can be used to log in to [Azure CLI](/cli/azure/authenticate-azure-cli) or [Azure PowerShell](/powershell/azure/authenticate-azureps) and connect your cluster to Azure Arc.
+The IP address prefix is the subnet's IP address range for the virtual network and subnet mask (IP Mask) in CIDR notation, for example `192.168.7.1/29`. You provide the IP address prefix (in CIDR notation) during the creation of the configuration files for Arc resource bridge.
 
-This identity must have **Read** and **Write** permissions on the Azure Arc-enabled Kubernetes resource type (`Microsoft.Kubernetes/connectedClusters`). If connecting the cluster to an existing resource group (rather than a new one created by this identity), the identity must have **Read** permission for that resource group.
+Consult your network engineer to obtain the IP address prefix in CIDR notation. An IP Subnet CIDR calculator may be used to obtain this value.
 
-The [Kubernetes Cluster - Azure Arc Onboarding built-in role](/azure/role-based-access-control/built-in-roles#kubernetes-cluster---azure-arc-onboarding) can be used for this identity. This role is useful for at-scale onboarding, as it has only the granular permissions required to connect clusters to Azure Arc, and doesn't have permission to update, delete, or modify any other clusters or other Azure resources.
+## Static IP configuration
 
-## Azure resource provider requirements
+If deploying Arc resource bridge to a production environment, static configuration must be used when deploying Arc resource bridge. Static IP configuration is used to assign three static IPs (that are in the same subnet) to the Arc resource bridge control plane, appliance VM, and reserved appliance VM.
 
-To use Azure Arc-enabled Kubernetes, the following [Azure resource providers](/azure/azure-resource-manager/management/resource-providers-and-types) must be registered in your subscription:
+DHCP is only supported in a test environment for testing purposes only for VM management on Azure Local. It should not be used in a production environment. DHCP isn't supported on any other Arc-enabled private cloud, including Arc-enabled VMware, Arc for AVS, or Arc-enabled SCVMM.
 
-- **Microsoft.Kubernetes**
-- **Microsoft.KubernetesConfiguration**
-- **Microsoft.ExtendedLocation**
+If using DHCP, you must reserve the IP addresses used by the control plane and appliance VM. In addition, these IPs must be outside of the assignable DHCP range of IPs. Ex: The control plane IP should be treated as a reserved/static IP that no other machine on the network will use or receive from DHCP. If the control plane IP or appliance VM IP changes, this impacts the resource bridge availability and functionality.
 
-You can register the resource providers using the following commands:
+## Management machine requirements
 
-Azure PowerShell:
+The machine used to run the commands to deploy and maintain Arc resource bridge is called the *management machine*.
 
-```azurepowershell-interactive
-Connect-AzAccount
-Set-AzContext -SubscriptionId [subscription you want to onboard]
-Register-AzResourceProvider -ProviderNamespace Microsoft.Kubernetes
-Register-AzResourceProvider -ProviderNamespace Microsoft.KubernetesConfiguration
-Register-AzResourceProvider -ProviderNamespace Microsoft.ExtendedLocation
-```
+Management machine requirements:
 
-Azure CLI:
+- [Azure CLI x64](/cli/azure/install-azure-cli-windows?tabs=azure-cli) installed
+- Communication to Control Plane IP (SSH TCP port 22, Kubernetes API port 6443)
 
-```azurecli-interactive
-az account set --subscription "{Your Subscription Name}"
-az provider register --namespace Microsoft.Kubernetes
-az provider register --namespace Microsoft.KubernetesConfiguration
-az provider register --namespace Microsoft.ExtendedLocation
-```
+- Communication to Appliance VM IPs (SSH TCP port 22, Kubernetes API port 6443)
 
-You can also register the resource providers in the [Azure portal](/azure/azure-resource-manager/management/resource-providers-and-types#azure-portal).
+- Communication to the reserved Appliance VM IPs (SSH TCP port 22, Kubernetes API port 6443)
 
-## Network requirements
+- communication over port 443 to the private cloud management console (ex: VMware vCenter machine)
 
-Be sure that you have connectivity to the [required endpoints for Azure Arc-enabled Kubernetes](network-requirements.md).
+- Internal and external DNS resolution. The DNS server must resolve internal names, such as the vCenter endpoint for vSphere or cloud agent service endpoint for Azure Local. The DNS server must also be able to resolve external addresses that are [required URLs](network-requirements.md#outbound-connectivity-requirements) for deployment.
+- Internet access
+  
+## Appliance VM IP address requirements
+
+Arc resource bridge consists of an appliance VM that is deployed on-premises. The appliance VM has visibility into the on-premises infrastructure and can tag on-premises resources (guest management) for projection into Azure Resource Manager (ARM). The appliance VM is assigned an IP address from the `k8snodeippoolstart` parameter in the `createconfig` command. It may be referred to in partner products as Start Range IP, RB IP Start or VM IP 1. The appliance VM IP is the starting IP address for the appliance VM IP pool range, and this IP is initially assigned to your appliance VM when you first deploy Arc resource  bridge. The VM IP pool range requires a minimum of 2 IP addresses.
+
+Appliance VM IP address requirements:
+
+- Communication with the management machine (SSH TCP port 22, Kubernetes API port 6443).
+- Communication with the private cloud management endpoint via Port 443 (such as VMware vCenter).
+- Internet connectivity to [required URLs](network-requirements.md#outbound-connectivity-requirements) enabled in proxy/firewall.
+- Static IP assigned and within the IP address prefix.
+- Internal and external DNS resolution.
+- If using a proxy, the proxy server has to be reachable from this IP and all IPs within the VM IP pool.
+
+## Reserved appliance VM IP requirements
+
+Arc resource bridge reserves an additional IP address to be used for the appliance VM upgrade. The reserved appliance VM IP is assigned an IP address via the `k8snodeippoolend` parameter in the `az arcappliance createconfig` command. This IP address may be referred to as End Range IP, RB IP End, or VM IP 2. The reserved appliance VM IP is the ending IP address for the appliance VM IP pool range. When your appliance VM is upgraded for the first time, the reserved appliance VM IP is assigned to your appliance VM post-upgrade, and the initial appliance VM IP is returned to the IP pool to be used for a future upgrade. If specifying an IP pool range larger than two IP addresses, the additional IPs are reserved.
+
+Reserved appliance VM IP requirements:  
+
+- Communication with the management machine (SSH TCP port 22, Kubernetes API port 6443).
+- Communication with the private cloud management endpoint via Port 443 (such as VMware vCenter).
+- Internet connectivity to [required URLs](network-requirements.md#outbound-connectivity-requirements) enabled in proxy/firewall.
+- Static IP assigned and within the IP address prefix.
+- Internal and external DNS resolution.
+- If using a proxy, the proxy server has to be reachable from this IP and all IPs within the VM IP pool.
+
+## Control plane IP requirements
+
+The appliance VM hosts a management Kubernetes cluster with a control plane that requires a single, static IP address. This IP is assigned from the `controlplaneendpoint` parameter in the `createconfig` command or equivalent configuration files creation command.
+
+Control plane IP requirements:
+
+- Communication with the management machine (SSH TCP port 22, Kubernetes API port 6443).
+- Static IP address assigned and within the IP address prefix.
+- If using a proxy, the proxy server has to be reachable from IPs within the IP address prefix, including the reserved appliance VM IP.
+
+## DNS server
+
+DNS servers must have internal and external endpoint resolution. The appliance VM and control plane need to resolve the management machine and vice versa. All three IPs must be able to reach the required URLs for deployment. Updating the DNS configuration post-deployment is currently unsupported and requires [performing a recovery operation](maintenance.md#recovery-procedure).
+
+## Gateway
+
+The gateway IP is the IP of the gateway for the network where Arc resource bridge is deployed. The gateway IP should be an IP from within the subnet designated in the IP address prefix.
+
+## Example minimum configuration for static IP deployment
+
+The following example shows valid configuration values that can be passed during configuration file creation for Arc resource bridge. 
+
+Notice that the IP addresses for the gateway, control plane, appliance VM and DNS server (for internal resolution) are within the IP address prefix. The VM IP Pool Start/End are sequential. This key detail helps ensure successful deployment of the appliance VM.
+
+   IP Address Prefix (CIDR format): 192.168.0.0/29
+
+   Gateway IP: 192.168.0.1
+
+   VM IP Pool Start (IP format): 192.168.0.2
+
+   VM IP Pool End (IP format): 192.168.0.3
+
+   Control Plane IP: 192.168.0.4
+
+   DNS servers (IP list format): 192.168.0.1, 10.0.0.5, 10.0.0.6
+
+## User account and credentials
+
+Arc resource bridge may require a dedicated user account with the necessary roles to view and manage resources in the on-premises private cloud. If so, during creation of the configuration files, the `username` and `password` parameters are required. The account credentials are then stored as a secret within the appliance VM.  
+
+> [!WARNING]
+> Arc resource bridge can only use a user account that does not have multifactor authentication enabled. If the user account is set to periodically change passwords, [the credentials must be immediately updated on the resource bridge](maintenance.md#update-credentials-in-the-appliance-vm). This user account can also be set with a lockout policy to protect the on-premises infrastructure, in case the credentials aren't updated and the resource bridge makes multiple attempts to use expired credentials to access the on-premises control center.
+
+For example, with Arc-enabled VMware, Arc resource bridge needs a dedicated user account for vCenter with the necessary roles. If the [credentials for the user account change](troubleshoot-resource-bridge.md#insufficient-privileges), then the credentials stored in Arc resource bridge must be immediately updated by running `az arcappliance update-infracredentials` from the [management machine](#management-machine-requirements). Otherwise, the appliance makes repeated attempts to use the expired credentials to access vCenter, which can result in a lockout of the account.
+
+## Internal Certificates
+
+Arc resource bridge contains internal certificates that are required to maintain secure communication to Azure and verify internal components. These certificates require that Arc resource bridge remain online and maintain a persistent connection to Azure. If Arc resource bridge is offline for greater than 45 days, there is a risk that the certificate will expire, requiring a redeployment as the certificate is irrecoverable. Arc resource bridge also requires an upgrade once every six months to ensure that internal certificates are refreshed. If Arc resource bridge is unable to upgrade and the certificates expire, then a redeployment is required. Please review the [Maintenance page](maintenance.md) for important information to maintain your Arc resource bridge.
+
+## Configuration files
+
+Arc resource bridge consists of an appliance VM that is deployed in the on-premises infrastructure. To maintain the appliance VM, the configuration files generated during deployment must be saved in a secure location and available on the management machine.
+
+There are several different types of configuration files, based on the on-premises infrastructure.
+
+### Appliance configuration files
+
+Three configuration files are created when deploying the Arc resource bridge: `<appliance-name>-resource.yaml`, `<appliance-name>-appliance.yaml` and `<appliance-name>-infra.yaml`.
+
+By default, these files are generated in the current CLI directory of where the deployment commands are run. These files should be saved on the management machine because they're required for maintaining the appliance VM. The configuration files reference each other and should be stored in the same location. 
+
+The az arcappliance CLI commands that rely on the YAML configuration files are 'az arcappliance delete' to delete the Arc resource bridge and its Azure backend associations, and 'az arcappliance upgrade' to manually upgrade the Arc resource bridge.
+
+
+### Kubeconfig
+
+The appliance VM hosts a management Kubernetes cluster. The kubeconfig is a low-privilege Kubernetes configuration file that is used to maintain the appliance VM. By default, it's generated in the current CLI directory when the `deploy` command completes. The kubeconfig should be saved in a secure location on the management machine, because it's required for maintaining the appliance VM. If the kubeconfig is lost, it can be retrieved by running the `az arcappliance get-credentials` command.
+
+> [!IMPORTANT]
+> Once the Arc resource bridge VM is created, only the proxy settings can be updated. Other configuration settings, such as DNS and the resource bridge VM location path, can only be updated by [performing a recovery](maintenance.md#recovery-procedure). The Arc resource bridge VM name is a unique GUID that can't be renamed post-deployment.
 
 ## Next steps
 
-- Review the [network requirements for using Arc-enabled Kubernetes](system-requirements.md).
-- Use our [quickstart](quickstart-connect-cluster.md) to connect your cluster.
+- Understand [network requirements for Azure Arc resource bridge](network-requirements.md).
+- Review the [Azure Arc resource bridge overview](overview.md) to understand more about features and benefits.
+- Learn about [security configuration and considerations for Azure Arc resource bridge](security-overview.md).

@@ -1,78 +1,71 @@
 ---
-title: Metadata Security Protocol (MSP)
-description: Get an overview of the Metadata Security Protocol feature.
-author: minnielahoti
+title: Red Hat workloads on Azure overview | Microsoft Docs
+description: Learn about the Red Hat product offerings available on Azure.
+author: cynthn
 ms.service: azure-virtual-machines
-ms.topic: concept-article
-ms.date: 09/04/2025
-ms.author: minnielahoti
-ms.reviewer: azmetadatadev
-# Customer intent: As a cloud administrator, I want to implement the Metadata Security Protocol so that I can enhance the security of instance metadata services against attacks and protect sensitive VM credentials from potential threats.
+ms.subservice: redhat
+ms.custom: linux-related-content
+ms.collection: linux
+ms.topic: overview
+ms.date: 10/28/2024
+ms.author: cynthn
+# Customer intent: As a cloud architect, I want to understand the Red Hat product offerings on Azure, so that I can make informed decisions on deploying RHEL workloads effectively and optimize our resource usage and costs.
 ---
 
-# Metadata Security Protocol (MSP)
+# Red Hat workloads on Azure
 
-Metadata Security Protocol (MSP) is a feature in the Azure Virtual Machines and Azure Virtual Machine Scale Sets services. It enhances the security of the [Azure Instance Metadata Service](https://aka.ms/azureimds) and [WireServer](https://aka.ms/azureWireserver) services. These services are available in Azure infrastructure as a service (IaaS) virtual machines (VMs) or virtual machine scale sets at 169.254.169.254 and 168.63.129.16, respectively.
+**Applies to:** :heavy_check_mark: Linux VMs
 
-Organizations use Instance Metadata Service and WireServer for providing metadata and bootstrapping VM credentials. As a result, threat actors frequently target these services. Common vectors include confused deputy attacks against in-guest workloads and sandbox escapes. These vectors are of particular concern for hosted-on-behalf-of workloads where untrusted code loads into the VM.
+Red Hat workloads are supported through a variety of offerings on Azure. Red Hat Enterprise Linux (RHEL) images are at the core of RHEL workloads, as is the Red Hat Update Infrastructure (RHUI). Red Hat JBoss EAP is also supported on Azure, see [Red Hat JBoss EAP](#red-hat-jboss-eap).
 
-With metadata services, the trust boundary is the VM itself. Any software within the guest is authorized to request secrets from Instance Metadata Service and WireServer. VM owners are responsible for carefully sandboxing any software that they run inside the VM and ensuring that external actors can't exfiltrate data. In practice, the complexity of the problem leads to mistakes at scale, which in turn lead to exploits.
+For more information about running RHEL workloads on Azure, see the following video:
 
-Although numerous defense-in-depth strategies exist, providing secrets over an unauthenticated HTTP API carries inherent risk. Across the industry, this class of vulnerabilities has affected hundreds of companies, affected millions of individuals, and caused financial losses in the hundreds of millions of dollars.
+> [!VIDEO https://www.youtube.com/embed/11arYjecfxU?si=m0X-28xd1-zYUoqG]
 
-MSP closes the most common vulnerabilities by:
+## Red Hat Enterprise Linux images
 
-- Addressing the root cause of these attacks.
-- Introducing strong authentication and authorization concepts to cloud metadata services.
+Azure offers a wide offering of RHEL images on Azure. These images are made available through two different licensing models: pay-as-you-go and bring-your-own-subscription (BYOS). New RHEL images on Azure are published when new RHEL versions are released and updated throughout their lifecycles, as necessary.
 
-## Compatibility
+### Pay-as-you-go images
 
-MSP is supported on Azure IaaS VMs and virtual machine scale sets that run these operating systems:
+Azure offers a variety of RHEL pay-as-you-go images. These images come properly entitled for RHEL and are attached to a source of updates (Red Hat Update Infrastructure). These images charge a premium fee for the RHEL entitlement and updates. RHEL pay-as-you-go image variants include:
 
-- Windows 10 or later (x64)
-- Windows Server 2019 (x64)
-- Windows Server 2022 (x64)
-- Windows Server 2025 (x64)
-- Mariner 2.0 (x64, ARM64)
-- Azure Linux (Mariner 3.0) (x64, ARM64)
-- Ubuntu 20.04+ (x64, ARM64)
+* RHEL
+* RHEL for SAP
+* RHEL for SAP with High Availability (HA) and Update Services
+* RHEL with High Availability (HA) and Update Services
 
-The following items are currently not supported:
+You might want to use the pay-as-you-go images if you don't want to worry about paying separately for the appropriate number of subscriptions.
 
-- Red Hat Enterprise Linux 9+
-- Rocky Linux 9+
-- SUSE Linux Enterprise Server 15 SP4+
-- Ephemeral disks
-- Compatibility with Azure Backup
-- ARM64
+### Red Hat Gold Images
 
-## Enhanced security
+Azure also offers Red Hat Gold Images (`rhel-byos`). These images might be useful to customers who have existing Red Hat subscriptions and want to use them in Azure. You're required to enable your existing Red Hat subscriptions for Red Hat Cloud Access before you can use them in Azure. Access to these images is granted automatically when your Red Hat subscriptions are enabled for Cloud Access and meet the eligibility requirements. Using these images allows a customer to avoid double billing that might be incurred from using the pay-as-you-go images.
+* Learn how to [enable your Red Hat subscriptions for Cloud Access with Azure](https://docs.redhat.com/en/documentation/subscription_central/1-latest/html/getting_started_with_rhel_system_registration/assembly-red-hat-cloud-access-program-overview_assembly-red-hat-cloud-access-program-overview#how_do_i_link_my_cloud_provider_account_to_my_red_hat_account).
+* Learn how to [locate Red Hat Gold Images in the Azure portal, the Azure CLI, or PowerShell cmdlet](./byos.md).
 
-The Guest Proxy Agent (GPA) hardens against these types of attacks by:
+> [!NOTE]
+> Double billing is incurred when a user pays twice for RHEL subscriptions. This scenario usually happens when a customer uses Red Hat Subscription-Manager to attach an entitlement on a RHEL pay-as-you-go VM. For example, a customer who uses Subscription-Manager to attach an entitlement for SAP packages on a RHEL pay-as-you-go image is indirectly double billed because they pay twice for RHEL. They pay once through the pay-as-you-go premium fee and once through their SAP subscription. This scenario doesn't happen to BYOS image users.
 
-- Limiting metadata access to a subset of the VM (applying the principle of least-privileged access).
-- Switching from a *default-open* model to a *default-closed* model.
+### Generation 2 images
 
-  For instance, with nested virtualization, a misconfigured L2 VM that has access to the L1 VM's vNIC can communicate with a metadata service as the L1. With the GPA, a misconfigured L2 could no longer gain access, because it would be unable to authenticate with the service.
+Generation 2 virtual machines (VMs) provide some newer features compared to Generation 1 VMs. For more information, see the [Generation 2 documentation](../../generation-2.md). The key difference from a RHEL image perspective is that Generation 2 VMs use a UEFI instead of BIOS firmware interface. They also use a GUID Partition Table (GPT) instead of a master boot record (MBR) on boot time. Use of a GPT allows for, among other things, OS disk sizes larger than 2 TB. In addition, the [Mv2 series VMs](../../mv2-series.md) run only on Generation 2 images.
 
-At provisioning time, the metadata service establishes a trusted delegate within the guest (the GPA). A long-lived secret is negotiated to authenticate with the trusted delegate. The delegate must endorse all requests to the metadata service by using a [hash-based message authentication code (HMAC)](https://en.wikipedia.org/wiki/HMAC). The HMAC establishes a point-to-point trust relationship with strong authorization.
+RHEL Generation 2 images are available in the Azure Marketplace. Look for "gen2" in the image SKU in the list of all images that appears when you use the Azure CLI. Go to the **Advanced** tab in the VM deploy process to deploy a Generation 2 VM.
 
-The GPA uses [eBPF](https://ebpf.io/what-is-ebpf/) to intercept HTTP requests to the metadata service. eBPF enables the GPA to verify the identity of the in-guest software that made the request. The GPA uses eBPF to intercept requests without requiring an extra kernel module. GPA uses this information to compare the identity of the client against an allowlist defined as a part of the VM model in Azure Resource Manager (ARM). The GPA then endorses requests by adding a signature header. So, you can enable the MSP feature on existing workloads without breaking changes.
+## Red Hat Update Infrastructure
 
-By default, the existing authorization levels are enforced:
+Azure provides Red Hat Update Infrastructure only for pay-as-you-go RHEL VMs. RHUI is effectively a mirror of the Red Hat CDNs but is only accessible to the Azure pay-as-you-go RHEL VMs. You have access to the appropriate packages depending on which RHEL image you've deployed. For example, a RHEL for SAP image has access to the SAP packages in addition to base RHEL packages.
 
-- Instance Metadata Service is open to all users.
-- WireServer is root/admin only.
+### RHUI update behavior
 
-This restriction is currently accomplished with firewall rules in the guest. This is still a default-open mechanism. If that rule can be disabled or bypassed for any reason, the metadata service still accepts the request. The authorization mechanism enabled here is default-closed. Bypassing interception maliciously or by error doesn't grant access to the metadata service.
+RHEL images connected to RHUI update by default to the latest minor version of RHEL when a `yum update` is run. This behavior means that a RHEL 7.4 VM might get upgraded to RHEL 7.7 if a `yum update` operation is run on it. This behavior is by design for RHUI. To mitigate this upgrade behavior, switch from regular RHEL repositories to [Extended Update Support repositories](./redhat-rhui.md#rhel-eus-and-version-locking-rhel-vms).
 
-You can set up an advanced authorization configuration (that is, authorize specific in-guest processes and users to access only specific endpoints) by defining a custom allowlist with role-based access control (RBAC) semantics.
+## Red Hat JBoss EAP
 
-> [!WARNING]
-> Please note that on Windows, the users can enable GuestProxyAgent (GPA) from an ARM template. However, in Linux it's a two-step process. The VM/VMSS is provisioned first and only then can the GPA be configured. 
+Microsoft and Azure have partnered to develop a variety of solutions for running Red Hat Middleware on Azure. Learn more about JBoss EAP on Azure Virtual Machines, Azure App service and Azure Red Hat OpenShift at [Red Hat JBoss EAP on Azure](/azure/developer/java/ee/jboss-on-azure?toc=/azure/virtual-machines/workloads/redhat/toc.json&bc=/azure/virtual-machines/workloads/redhat/breadcrumb/toc.json).
 
-## Related content
+## Next steps
 
-- [MSP feature configuration](./configuration.md)
-- [Deploy a VM or virtual machine scale set with MSP](./greenfield.md)
-- [Enable MSP on an existing VM or virtual machine scale set](./brownfield.md)
+* Learn more about [RHEL images on Azure](./redhat-images.md).
+* Learn more about [Red Hat Update Infrastructure](./redhat-rhui.md).
+* Learn more about the [Red Hat Gold Image (`rhel-byos`) offer](./byos.md).

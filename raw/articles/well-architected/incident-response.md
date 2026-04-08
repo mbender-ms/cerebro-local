@@ -1,153 +1,127 @@
 ---
-title: Architecture strategies for designing an incident management (IcM) process
-description: Learn how to set up emergency response processes and procedures that your team can follow to ensure that an issue is handled in a calm, orderly manner.
-author: claytonsiemens77
-ms.author: csiemens
-ms.date: 02/11/2026
+title: Architecture strategies for security incident response
+description: Learn how to reduce the time that's required to identify, manage, and mitigate security incidents that threaten the confidentiality and integrity of software systems.
+author: PageWriter-MSFT
+ms.author: prwilk 
+ms.date: 10/09/2023
 ms.topic: concept-article
 ---
 
-# Architecture strategies for designing an incident management (IcM) process
+# Architecture strategies for security incident response
 
-**Applies to this Azure Well-Architected Framework Operational Excellence checklist recommendation:**
+**Applies to Azure Well-Architected Framework Security checklist recommendation:**
 
-|**OE:08**| Establish a clear, structured incident management process with defined roles, documented procedures, and architecture designed for rapid detection, diagnosis, and recovery. |
+|**SE:12**|Define and test effective incident response procedures that cover a spectrum of incidents, from localized issues to disaster recovery. Clearly define which team or individual runs a procedure.|
 |---|---|
 
-When incidents occur, the workload team should be prepared with clear, structured procedures.  
+This guide describes the recommendations for implementing a security incident response for a workload. If there's a security compromise to a system, a systematic incident response approach helps to reduce the time that it takes to identify, manage, and mitigate security incidents. These incidents can threaten the confidentiality, integrity, and availability of software systems and data.
 
-There are two key aspects to incident response. The first is architectural, focusing on designing systems that support effective response procedures and prevent failures from cascading across components. The second is procedural, covering detection, containment, and triage to manage issues quickly, followed by root cause analysis and postmortems to prevent recurrence. Regular drills help maintain readiness and ensure the plan can be executed effectively.
+Most enterprises have a central security operation team (also known as Security Operations Center (SOC), or SecOps). The responsibility of the security operation team  is to rapidly detect, prioritize, and triage potential attacks. The team also monitors security-related telemetry data and investigates security breaches. 
 
-This article outlines proven strategies for designing an architecture that helps in response and a plan that keeps the team calm, coordinated, and in control.  For detailed implementation guidance, including stepwise processes and playbooks, see the companion article: [Create an effective incident management plan to manage disruptions](../design-guides/incident-management.md).
+:::image type="content" source="images/incident-response/incident-response.png" alt-text="Conceptual art that shows collaborative approach to mitigate potential and realized risk.":::
 
+However, you also have a responsibility to protect your workload. It's important that any communication, investigation, and hunting activities are a collaborative effort between workload team and SecOps team.
 
-**Definitions**
+This guide provides recommendations for you and your workload team to help you rapidly detect, triage, and investigate attacks.
+
+**Terminology**
 
 | Term | Definition |
-|------|-----------|
-| Chaos Engineering | Deliberately injecting failures or adverse conditions into a system to test its resilience and recovery procedures. |
-| Containment | Limiting the impact of an incident to prevent it from affecting other components or systems. |
-| Detection | Identifying that an incident has occurred or is occurring. |
-| Postmortem | A structured, blameless review of an incident involving all relevant teams, capturing lessons learned and defining actionable improvements to processes, tools, and systems. |
-| RCA (Root Cause Analysis) | Investigation and identification of the underlying cause(s) of an incident, including contributing factors, to prevent recurrence. |
-| RPO (Recovery Point Objective) | The maximum acceptable amount of data loss measured in time. |
-| RTO (Recovery Time Objective) | The maximum acceptable amount of time a system or service can be down after an incident before causing unacceptable impact. |
-| Triage | Assessing and prioritizing incidents to determine the appropriate response. |
+|---|---|
+|Alert |A notification that contains information about an incident. |
+|Alert fidelity|The accuracy of the data that determines an alert. High-fidelity alerts contain the security context that's needed to take immediate actions. Low-fidelity alerts lack information or contain noise.|
+|False positive|An alert that indicates an incident that didn't happen. |
+|Incident |An event that indicates unauthorized access to a system.|
+|Incident response| A process that detects, responds to, and mitigates risks that are associated with an incident.|
+|Triage|An incident response operation that analyzes security issues and prioritizes their mitigation.  |
 
-## Document the incident response plan
 
-An incident might relate to deployment, security, or performance issues. Regardless, create a core incident response plan that covers the entire process. Define supplemental procedures for each incident type that describe distinct detection methods, containment and recovery steps, the involved stakeholders specific to that type of incident. For example, your security incident plan might have processes related to involving Security Operations Center (SOC), which won't be applicable to a deployment incident.
+You and your team perform incident response operations when there's a signal or alert for a potential compromise. High-fidelity alerts contain ample security context that makes it easy for analysts to make decisions. High-fidelity alerts result in a low number of false positives. This guide assumes that an alerting system filters low-fidelity signals and focuses on high-fidelity alerts that might indicate a real incident.
 
-An incident response plan should **define the key roles** involved in managing an incident and the responsibilities of each. Clear ownership reduces confusion and ensures that actions are coordinated from detection through resolution. Identify roles such as incident manager, technical lead, and communications lead to set up accountability and support consistent decision-making.
+## Designate incident notification contacts
 
-The plan must include a **communication and escalation structure** that outlines how incidents are reported, who is notified, and through which channels. This ensures that information moves quickly to the right people and prevents gaps or duplication during critical moments.
+Security alerts need to reach the appropriate people on your team and in your organization. Establish a designated point of contact on your workload team to receive incident notifications. These notifications should include as much information as possible about the resource that's compromised and the system. The alert must include the next steps, so your team can expedite actions.
 
-The plan must also include the **core procedures** the team will follow during detection, triage, containment, and recovery. These steps provide a predictable framework for response and help maintain operational stability. Regular reviews of these procedures keep the plan aligned with system changes and lessons learned from previous incidents.
+We recommend that you log and manage incident notifications and actions by using specialized tooling that keeps an audit trail. By using standard tools, you can preserve evidence that might be required for potential legal investigations. Look for opportunities to implement automation that can send notifications based on the responsibilities of accountable parties. Keep a clear chain of communication and reporting during an incident.
 
-> :::image type="icon" source="../_images/trade-off.svg"::: **Tradeoff.** An overly aggressive response strategy can trigger false alarms or unnecessary escalations.
->
-> Similarly, automatic actions such as scaling or self-healing triggered by threshold breaches can incur extra costs and operational overhead. Since the optimal thresholds may not be obvious, validate them through testing in lower environments and carefully monitored production trials to align actions with your actual requirements.
+Take advantage of security information event management (SIEM) solutions and security orchestration automated response (SOAR) solutions that your organization provides. Alternatively, you can procure incident management tools and encourage your organization to standardize them for all workload teams.
 
-## Allocate sufficient resources for incident response infrastructure, processes, and staff
+## Investigate with a triage team
 
-Plan for enough resources to operate at least two workload configurations simultaneously when fallback is needed to avoid service disruption. Workload teams should be prepared to support both configurations in production when required. This may involve refactoring workloads, such as decoupling components or updating data models.
+The team member that receives an incident notification is responsible for setting up a triage process that involves the appropriate people based on the available data. The triage team, often called the *bridge team*, must agree on the mode and process of communication. Does this incident require asynchronous discussions or bridge calls? How should the team track and communicate the progress of investigations?  Where can the team access incident assets?
 
-From a human resourcing perspective, the team needs to balance their regular responsibilities with incident response work. There may be a need to increase headcount or engage external resources. Those can be platform support from Azure, third-party vendors, or central IT teams, who specialize in incident management and have active support contracts in place. The incident response plan should clearly document what each party covers, exclusions, escalation procedures, and expected response times.
+Incident response is a crucial reason to keep documentation up to date, like the architectural layout of the system, information at a component level, privacy or security classification, owners, and key points of contact. If the information is inaccurate or outdated, the bridge team wastes valuable time trying to understand how the system works, who's responsible for each area, and what the effect of the event might be.
 
-> [!NOTE]
-> Work with your organization to prepare those support contracts in advance so that they are readily available during an incident.
+For further investigations, involve the appropriate people. You might include an incident manager, security officer, or workload-centric leads. To keep the triage focused, exclude people that are outside of the scope of the problem. Sometimes separate teams investigate the incident. There might be a team that initially investigates the issue and tries to mitigate the incident, and another specialized team that might perform forensics for a deep investigation to ascertain wide issues. You can quarantine the workload environment to enable the forensics team to do their investigations. In some cases, the same team might handle the entire investigation.
 
-Even with those external dependencies, expect some team members to work directly with vendors while others continue internal triage and remediation.
+In the initial phase, the triage team is responsible for determining the potential vector and its effect on the confidentiality, integrity, and availability (also called the *CIA*) of the system.
 
-Keep contact information for internal and vendor personnel up to date. Establish secure and simple procedures for authenticating and authorizing external or guest access with appropriate permissions for logs and production environments.
+Within the categories of CIA, assign an initial severity level that indicates the depth of the damage and the urgency of remediation. This level is expected to change over time as more information is discovered in the levels of triage.
 
-> :::image type="icon" source="../_images/ai.svg"::: **AI opportunity**: Before transitioning support to external vendors, AI can role-play as a vendor team using only the documentation, playbooks, health models, and escalation paths the vendor has provided. It tests historical incidents to reveal gaps, such as missing knowledge of systems or misconfigured thresholds, or reliance on tribal knowledge. This allows teams to fix gaps proactively, ensuring smooth handoffs.
+In the discovery phase, it's important to determine an immediate course of action and communication plans. Are there any changes to the running state of the system? How can the attack be contained to stop further exploitation? Does the team need to send out internal or external communication, such as a responsible disclosure? Consider detection and response time. You might be legally obligated to report some types of breaches to a regulatory authority within a specific time period, which is often hours or days.
 
-## Build containment and isolation in the architecture
+If you decide to shut down the system, the next steps lead to the workload's disaster recovery (DR) process.
 
-Incidents are inevitable, so design your architecture to **restrict failures and limit their blast radius**. Ensure that when a component fails, the impact is isolated and doesn't cascade to other parts of the system. 
+If you don't shut down the system, determine how to remediate the incident without affecting the functionality of the system.
 
-Achieve this through techniques such as segmentation of resources, decoupling components with microservices, and applying design patterns like bulkheads or publisher/subscriber in your design. Also consider using external resources, where applicable. For example, instead of hardcoding configuration values inside the application, use an external configuration store to manage settings outside the application code or deployment package.
+## Recover from an incident
 
-## Build monitoring capabilities for rapid detection
+Treat a security incident like a disaster. If the remediation requires complete recovery, use proper DR mechanisms from a security perspective. The recovery process must prevent chances of recurrence. Otherwise, recovery from a corrupted backup reintroduces the issue. Redeploying a system with the same vulnerability leads to the same incident. Validate failover and failback steps and processes.
 
-A strong incident response plan depends on a well-designed monitoring stack. Capabilities such as **structured logging, targeted dashboards, and actionable alerts** help teams respond quickly, minimize noise, and avoid alert fatigue.
+If the system remains functioning, assess the effect on the running parts of the system. Continue to monitor the system to ensure that other reliability and performance targets are met or readjusted by implementing proper degradation processes. Don't compromise privacy due to mitigation.
 
-> :::image type="icon" source="../_images/risk.svg"::: **Risk:** An overly aggressive response or automation strategy such as triggering alerts, escalations, or automatic scaling too frequently can result in false alarms, unnecessary operational disruptions, increased costs due to poorly defined thresholds.
->
-> Mitigate that risk by conducting thorough testing in lower environments and controlled production scenarios to refine alert and scaling thresholds.
+Diagnosis is an interactive process until the vector, and a potential fix and fallback, is identified. After diagnosis, the team works on remediation, which identifies and applies the required fix within an acceptable period.
 
-Effective monitoring has two key dimensions. First, the response process should receive timely notifications from Azure on critical indicators such as service health, dependency status, security breaches, and data integrity. Second, **the solution itself must emit rich, structured telemetry, logs, metrics, and traces**, which enable deep analysis, triage, and root cause identification.
+Recovery metrics measure how long it takes to fix an issue. In the event of a shutdown, there might be an urgency regarding the remediation times. To stabilize the system, it takes time to apply fixes, patches, and tests, and deploy updates. Determine containment strategies to prevent further damage and the spread of the incident. Develop eradication procedures to completely remove the threat from the environment.
 
-The key business **workflows should be traceable end-to-end** so incidents can be reconstructed accurately. For example, in an order-processing system, teams should be able to trace when an order was received, when payment authorization was attempted, and where the failure occurred. Design components to facilitate debugging with configurable log verbosity, memory dumps, and secure sharing of diagnostic data across environments. These capabilities provide the visibility and context required for fast, effective incident response.
+> :::image type="icon" source="../_images/trade-off.svg"::: **Tradeoff**: There's a tradeoff between reliability targets and remediation times. During an incident, it's likely that you don't meet other nonfunctional or functional requirements. For example, you might need to disable parts of your system while you investigate the incident, or you might even need to take the entire system offline until you determine the scope of the incident. Business decision-makers need to explicitly decide what the acceptable targets are during the incident. Clearly specify the person that's accountable for that decision.
 
-> :::image type="icon" source="../_images/ai.svg"::: **AI opportunity**: It's common that investigations have delayed start because of manual data gathering. AI can make incident response faster and easier by automatically collecting context, correlating data, and performing initial triage as soon as an alert fires. Instead of starting from scratch, engineers get a clear picture immediately, incidents are routed to the right experts, and safe, common fixes can be suggested or automated with guardrails. With enough testing, consider building a solution that provides automated initial response with all that correlated context. 
+## Learn from an incident
 
-## Facilitate with  diagnostic data and practices 
+An incident uncovers gaps or vulnerable points in a design or implementation. It's an improvement opportunity that's driven by lessons in technical design aspects, automation, product development processes that include testing, and the effectiveness of the incident response process. Maintain detailed incident records, including actions taken, timelines, and findings.
 
-Design the solution to make diagnosing and resolving issues faster, more reliable. The approach is to embed debuggability and observability into the system's design. 
+We highly recommended that you conduct structured post-incident reviews, such as root-cause analysis and retrospectives. Track and prioritize the outcome of those reviews, and consider using what you learn in future workload designs.
 
-This begins with the proper collection of all relevant diagnostic data, such as crash and memory dumps. Make sure the necessary tooling is in place to securely collect, store, and share this data for effective correlation and analysis. Tools like network tracers and symbol servers should be integrated to support deeper debugging capabilities. Finally, ensure all diagnostic data is protected against tampering through secure storage, restricted access, and proper data governance controls.
+Improvement plans should include updates to security drills and testing, like business continuity and disaster recovery (BCDR) drills. Use security compromise as a scenario for performing a BCDR drill. Drills can validate how the documented processes work. There shouldn't be multiple incident response playbooks. Use a single source that you can adjust based on the size of the incident and how widespread or localized the effect is. Drills are based on hypothetical situations. Conduct drills in a low-risk environment, and include the learning phase in the drills.
 
-The system should also include built-in hooks and toggles that support incident management. Those mechanisms are useful in disabling or isolating faulty components in real time, without redeployments.  Additionally, failed resources should be preserved in a quarantined state for forensic analysis rather than immediately discarded. 
+Conduct post-incident reviews, or postmortems, to identify weaknesses in the response process and areas for improvement. Based on the lessons you learn from the incident, update the incident response plan (IRP) and the security controls.
 
-## Visualize incident data in a single pane of glass
+## Define a communication plan
 
-Build a centralized incident management dashboard or portal for real-time status updates, visibility, and knowledge sharing. The dashboard should act as a shared source of truth, keeping everyone aligned on priorities, current actions, and dependencies. Incidents are stressful situations for teams and having just enough information to maintain focus and help in timely decision making. It also reinforces a culture of accountability and continuous learning.
+Implement a communication plan to notify users of a disruption and to inform internal stakeholders about the remediation and improvements. Other people in your organization need to be notified of any changes to the workload's security baseline to prevent future incidents.
 
-Key components should include observability data, timelines, ownership details, and severity indicators. Visibility should be role-specific, with appropriate security controls such as RBAC, ensuring users can access the information they need without exposing sensitive or customer data. Include links to relevant resources and clear instructions to guide users on next steps and their responsibilities. Optionally, support on-demand subscriptions or alerts to notify stakeholders when incident status changes.
-
-## Capture and store audit trails
-
-Design your solution with auditing as a core requirement to support incident response. While audit trails are often viewed mainly as a security measure, they're equally critical for operational analysis. The system should capture detailed records of configuration changes, administrative actions, and operational procedures such as deployments, backups, and tuning activities.
-
-## Test the plan
-
-Regularly test your incident response processes using dry runs or chaos engineering exercises. **Simulate realistic incidents to validate recoverability**, verify RTO and RPO targets, and ensure communication and escalation plans function under pressure. 
-
-Without these tests, small failures can quickly escalate into prolonged outages or major data loss, leaving teams scrambling and business operations at risk. Testing gives you the ability to identify gaps before a real incident occurs, improve coordination.
-
-## Turn RCA findings into system improvements
-
-After each incident, conduct a thorough RCA to identify underlying causes and contributing factors. Follow this with a **blameless postmortem** led by an impartial facilitator, where each team involved shares observations, successes, and opportunities for improvement. 
-
-Continuously feeding lessons back into the system reduces the chances of repeat incidents. Make sure to capture and classify actionable items in three areas: refinement of the incident response plan, enhancement in observability to detect similar issues earlier, and improvement of workload design. 
-
-> :::image type="icon" source="../_images/ai.svg"::: **AI opportunity**: It's not uncommon for incident managers to manually review logs, tickets, and discussions to understand outages, identify root causes, and draft retrospective questions. This repetitive work can be time consuming and take focus away from recovery efforts.
->
-> AI can improve efficiency by automatically generating analysis questions, summarizing incident context, and uncovering patterns across data sources. It can also analyze retrospective notes and past incident data to suggest prioritized backlog items, reducing manual effort. Implementing this capability requires integrating AI with ICM and SDLC tools. Evaluate tools like PowerAutomate and LogicApps to manage the workflows.
-
-## Bring agility and consistency through automation 
-
-Incorporate automation throughout the incident response workflow to reduce manual effort and accelerate response. Use tools such as Azure Batch, Runbooks, Functions, and Logic Apps to **automate detection, containment, alerting, and communication**, as much as practical. Maintain a library of scripts and infrastructure-as-code (IaC) templates for recovery, validation, troubleshooting, and root cause analysis. Ensure these automations are documented and accessible so teams can reliably execute them during incidents. The more you automate, more consistent your response will be.
-
+Generate incident reports for internal use and, if necessary, for regulatory compliance or legal purposes. Also, adopt a standard format report (a document template with defined sections) that the SOC team uses for all incidents. Ensure that every incident has a report associated with it before you close the investigation.
 
 ## Azure facilitation
 
-[Azure Monitor](/azure/azure-monitor/overview) is a comprehensive solution for collecting, analyzing, and responding to monitoring data from cloud and on-premises environments. It includes a robust alerting platform that you can configure for [automatic notifications and other actions](/azure/azure-monitor/alerts/action-groups), like automatic scaling and other self-healing mechanisms.
+**Microsoft Sentinel** is an SIEM and SOAR solution. It's a single solution for alert detection, threat visibility, proactive hunting, and threat response. For more information, see [What's Microsoft Sentinel?](/azure/sentinel/overview)
 
-Use Monitor to integrate machine learning. Automate and optimize incident triage and proactive measures. For more information, see [AIOps and machine learning in Monitor](/azure/azure-monitor/logs/aiops-machine-learning).
+Ensure that the Azure enrollment portal includes administrator contact information so security operations can be notified directly via an internal process. For more information, see [Update notification settings](/azure/cost-management-billing/manage/ea-portal-administration#update-notification-settings).
 
-[Log Analytics](/azure/azure-monitor/logs/log-analytics-overview) is a robust analytics tool that's built into Monitor. You can use Log Analytics to run queries against aggregated logs and gain insights about your workload.
+To learn more about establishing a designated point of contact that receives Azure incident notifications from Microsoft Defender for Cloud, see [Configure email notifications for security alerts](/azure/security-center/security-center-provide-security-contact-details).
 
-Microsoft offers Azure-related incident readiness training. For more information, see [Introduction to Azure incident readiness](/training/technical-support/intro-to-azure-incident-readiness/) and
-[Incident readiness](/services-hub/unified/health/incident-readiness).
+## Organizational alignment
 
-Use [connection monitor](/azure/network-watcher/connection-monitor-overview) in Azure Network Watcher to continuously track network connectivity and performance across Azure resources. During emergency incidents, custom workbooks in connection monitor provide real-time visibility into connectivity health, latency trends, and alert status. To do an effective RCA and achieve faster resolution, use [connection troubleshoot](/azure/network-watcher/connection-troubleshoot-overview) inside the Network Watcher suite of diagnostics tools.
-
-Use [traffic analytics](/azure/network-watcher/traffic-analytics) to analyze virtual network flow logs and surface insights such as blocked traffic, malicious flows, and exposed ports. Creating workbooks in traffic analytics allows teams to monitor live traffic behavior, receive alerts, and use timeline and topology views to quickly identify affected network segments and respond effectively.
-
-Using Microsoft's AI and DevOps tools, teams can automatically turn retrospective insights into actionable backlog items. Consider Microsoft Foundry for AI model operations, Azure DevOps for backlog management, Power Automate or Logic Apps for automation. 
+Cloud Adoption Framework for Azure provides guidance about incident response planning and security operations. For more information, see [Security operations](/azure/cloud-adoption-framework/secure/overview).
 
 ## Related links
 
-- [Recommendations for designing and creating an observability framework](observability.md)
-- [Recommendations for designing a reliable monitoring and alerting strategy](../reliability/monitoring-alerting-strategy.md)
-- [Recommendations for self-healing and self-preservation](../reliability/self-preservation.md)
+- [Automatically create incidents from Microsoft security alerts](/azure/sentinel/create-incidents-from-alerts)
+- [Conduct end-to-end threat hunting by using the hunts feature](/azure/sentinel/hunts)
+- [Configure email notifications for security alerts](/azure/security-center/security-center-provide-security-contact-details)
+- [Incident response overview](/security/operations/incident-response-overview)
+- [Microsoft Azure incident readiness](/services-hub/unified/health/ir-azure)
+- [Navigate and investigate incidents in Microsoft Sentinel](/azure/sentinel/investigate-incidents)
+- [Security control: Incident response](/security/benchmark/azure/mcsb-incident-response)
+- [SOAR solutions in Microsoft Sentinel](/azure/sentinel/automation)
+- [Training: Introduction to Azure incident readiness](/training/technical-support/intro-to-azure-incident-readiness/)
+- [Update Azure portal notification settings](/azure/cost-management-billing/manage/ea-portal-administration#update-notification-settings)
+- [What's an SOC?](https://www.microsoft.com/security/business/security-101/what-is-a-security-operations-center-soc)
+- [What's Microsoft Sentinel?](/azure/sentinel/overview)
 
-## Operational Excellence checklist  
+## Security checklist
 
-Refer to the complete set of recommendations. 
+Refer to the complete set of recommendations.
 
-> [!div class="nextstepaction"] 
-> [Operational Excellence checklist](checklist.md) 
+> [!div class="nextstepaction"]
+> [Security checklist](checklist.md)

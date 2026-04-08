@@ -1,50 +1,105 @@
 ---
-title: Identity and access management considerations for AKS
-description: This article provides design considerations and recommendations for identity and access management when you use Azure Kubernetes Service.
-author: xuhongl
-ms.author: xuhliu
-ms.date: 11/21/2022
+title: Identity and access management considerations for the Azure Integration Services landing zone accelerator
+description: Learn about design considerations and recommendations for identity and access management in the Azure Integration Services landing zone accelerator.
+author: jordanbean-msft
+ms.author: pnp
+ms.date: 09/12/2025
 ms.topic: concept-article
-ms.custom: think-tank, e2e-aks
 ---
 
-# Identity and access management considerations for AKS
+# Identity and access management considerations for the Azure Integration Services landing zone accelerator
 
 > [!IMPORTANT]
 > **Deprecation notice:** This article is deprecated and is no longer being updated. To ensure only the best guidance is surfaced, this article will be deleted in May 2026.
 >
-> For alternative guidance, see [**Azure Kubernetes Service**](/azure/architecture/reference-architectures/containers/aks-start-here) architecture guidance in the Azure Architecture Center.
+> For alternative guidance, see [**Integration architecture**](/azure/architecture/browse/?filter-products=service&azure_categories=integration) guidance in the Azure Architecture Center.
 >
-> If you would like to save this guidance, you can select **Download a PDF** at the bottom left of this page or download the files from [GitHub](https://github.com/MicrosoftDocs/cloud-adoption-framework/tree/main/docs/scenarios/app-platform/aks).
+> If you would like to save this guidance, you can select **Download a PDF** at the bottom left of this page or download the files from [GitHub](https://github.com/MicrosoftDocs/cloud-adoption-framework/tree/main/docs/scenarios/app-platform/integration-services).
 
-This article provides design considerations and recommendations for identity and access management when you use Azure Kubernetes Service (AKS). There are multiple aspects of identity and access management, including cluster identities, workload identities, and operator access.
+This article builds on the guidance provided in the [Azure landing zone design area for identity and access management](/azure/cloud-adoption-framework/ready/landing-zone/design-area/identity-access) article. The guidance provided in this article helps identify design considerations and recommendations that relate to identity and access management that are specific to the deployment of Azure Integration Services (AIS). If AIS is deployed to support mission-critical platforms, the guidance on the Azure landing zone design areas should also be included in your design.
+
+## Identity and access management (IAM) overview
+
+For the purposes of this article, [Identity and Access Management](/entra/fundamentals/identity-fundamental-concepts) (IAM) refers to the authentication and authorization options available for deploying or maintaining resources within Azure. In practice, this involves identifying which identities have permission to create, update, delete and manage resources either via the Azure portal, or via the [Resource Manager API](/azure/templates/).
+
+IAM is a separate consideration from [endpoint security](/security/benchmark/azure/mcsb-endpoint-security), which defines which identities can call into and access your services. Endpoint security is covered in the separate [Security](./security.md) article in this series. That being said, sometimes the two design areas overlap: for some services in Azure, access to the endpoint is configured via the same Role Based Access Control (RBAC) controls used to manage access to the resources.
 
 ## Design considerations
 
-- Decide which cluster identity to use ([managed identity](/azure/aks/use-managed-identity) or [service principal](/azure/aks/kubernetes-service-principal?tabs=azure-cli)).
-- Decide how to authenticate cluster access: based on client certificates or via [Microsoft Entra ID](/azure/aks/managed-aad).
-- Decide on a [multitenancy cluster](/azure/aks/operator-best-practices-cluster-isolation) and how to set up role-based access control (RBAC) in Kubernetes.
-  - Choose a method for isolation. Methods include namespace, [network policy](/azure/aks/use-network-policies) (Only allowed by [Azure CNI](/azure/aks/azure-cni-overlay)), compute (node pool), and cluster.
-  - Determine the Kubernetes RBAC roles and compute allocation per application team, for isolation.
-  - Decide whether application teams can read other workloads in their clusters or in other clusters.
-- Determine the permissions for custom Azure RBAC roles for your [AKS landing zone](../../../ready/landing-zone/design-area/identity-access.md).
-  - Decide what permissions are needed for the site reliability engineering (SRE) role to enable that role to administer and troubleshoot the whole cluster.
-  - Decide what permissions are needed for SecOps.
-  - Decide what permissions are needed for the landing zone owner.
-  - Decide what permissions the application teams will need to deploy into the cluster.
-- Decide whether you need workload identities ([Microsoft Entra Workload ID](/azure/aks/workload-identity-overview)). You might need them for services like Azure Key Vault integration and Azure Cosmos DB.
+- Determine the Azure resource administration boundaries for the resources you deploy, considering separation of duties and operational efficiency.
+
+- Review the Azure administration and management activities you require your teams to perform. Consider the AIS resources you deploy and how you use them. Determine the best possible distribution of responsibilities within your organization.
 
 ## Design recommendations
 
-- Cluster identities.
-  - Use your own [managed identity](/azure/aks/use-managed-identity) for your AKS cluster.
-  - Define custom Azure RBAC roles for your AKS landing zone to simplify the management of required permissions for cluster-managed identity.
-- Cluster access.
-  - Use Kubernetes RBAC with Microsoft Entra ID to [limit privileges](/azure/aks/azure-ad-rbac) and minimize administrator privileges. Doing so helps to protect configuration and secrets access.
-  - Use [AKS-managed Microsoft Entra integration](/azure/aks/managed-aad) so you can use Microsoft Entra ID for authentication and operator and developer access.
-- Define required RBAC roles and role bindings in Kubernetes.
-  - Use [Kubernetes roles and role bindings](/azure/aks/concepts-identity#kubernetes-role-based-access-control-kubernetes-rbac) to Microsoft Entra groups for site reliability engineering (SRE), SecOps, and developer access.
-  - Consider using [Azure RBAC for Kubernetes](/azure/aks/manage-azure-rbac), which enables unified management and access control across Azure resources, AKS, and Kubernetes resources. When Azure RBAC for Kubernetes is enabled, you don't need to separately manage user identities and credentials for Kubernetes. Microsoft Entra principals will be exclusively validated by Azure RBAC, but regular Kubernetes users and service accounts will be exclusively validated by Kubernetes RBAC.
-- Grant SRE full access just-in-time, as needed.
-  - Use [Privileged Identity Management in Microsoft Entra ID](/entra/id-governance/privileged-identity-management/pim-configure) and [identity and access management in Azure landing zones](../../../ready/landing-zone/design-area/identity-access.md).
-- Use [Microsoft Entra Workload ID for Kubernetes.](/entra/workload-id/workload-identity-federation) When you implement this federation, developers can use native Kubernetes service accounts and federation to access resources managed by Microsoft Entra ID, like Azure and Microsoft Graph.
+- Use [managed identities](/entra/identity/managed-identities-azure-resources/overview) for integration services resources - see the [Security](./security.md) article in this series for a detailed description of this recommendation.
+
+- Use Microsoft Entra ID for authentication to integration services resources.
+
+- Consider the level of access needed by roles within your organization and apply the principle of least privilege by role. These roles can include platform owners, workload owners, DevOps engineers and system administrators, for example.
+
+- Using the principle of least privilege, consider what roles you'll need to manage and maintain your AIS applications. Questions to ask in this regard:
+
+  - Who will need to view log files from sources like Application Insights, Log Analytics, and Storage Accounts?
+
+  - Does anyone need to view original request data (including sensitive data)?
+
+  - Where can original request data be viewed from (for example, only from your corporate network)?
+
+  - Who can view run history for a workflow?
+
+  - Who can resubmit a failed run?
+
+  - Who needs access to API Management subscription keys?
+
+  - Who can view contents of a Service Bus Topic or Subscription, or see queue/topic metrics?
+
+  - Who needs to be able to administer Key Vault?
+
+  - Who needs to be able to add, edit, or delete keys, secrets and certificates in Key Vault?
+
+  - Who needs to be able to view and read keys, secrets or certificates in Key Vault?
+
+  - Will the existing built-in Microsoft Entra roles and groups cover the requirements that you have identified?
+
+- Create [custom roles](/azure/role-based-access-control/custom-roles) to either limit access, or to provide more granularity over permissions when built-in roles won't sufficiently lock down access. For example, access to the callback URL for a Logic App requires a single permission. However, there's no built-in role for that type of access (other than `Contributor` or `Owner`, which are too broad).
+
+- Look at using [Azure Policy](/azure/governance/policy/overview) to restrict access to certain resources or to enforce compliance with company policy. For example, you can create a policy that only allows deployment of API Management APIs that use encrypted protocols.
+
+- Review common activities involved in the administration and management of AIS on Azure and assign RBAC permissions appropriately. For more detail on the permissions available, see [resource provider operations](/azure/role-based-access-control/resource-provider-operations).
+
+Some examples of common Azure administration activities include:
+
+| Azure Resource           | Azure Resource Provider             | Activities                                                                                                                                                         |
+|--------------------------|-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| App Service Plan         | Microsoft.Web/serverfarms           | Read, Join, Restart, Get VNet Connections                                                                                                                          |
+| API Connection           | Microsoft.Web/connections           | Update, Confirm                                                                                                                                                    |
+| Logic Apps and Functions | Microsoft.Web/sites                 | Read, Start, Stop, Restart, Swap, Update Config, Read Diagnostics, Get VNet Connections                                                                            |
+| Integration Account      | Microsoft.Logic/integrationAccounts | Read/Add/Update/Delete Assemblies, Read/Add/Update/Delete Maps, Read/Add/Update/Delete Schemas, Read/Add/Update/Delete Agreements, Read/Add/Update/Delete Partners |
+| Service Bus              | Microsoft.ServiceBus                | Read, Get Connection String, Update DR Config, Read Queues, Read Topics, Read Subscriptions                                                                        |
+| Storage Account          | Microsoft.Storage/storageAccounts   | Read, Change (for example workflow run history)                                                                                                                    |
+| API Management           | Microsoft.ApiManagement             | Register/Delete a User, Read APIs, Manage Authorizations, Manage Cache                                                                                             |
+| KeyVault                 | Microsoft.KeyVault/vaults           | Create a Vault, Edit Access Policies                                                                                                                               |
+
+## Next step
+
+Review the critical design areas to make complete considerations and recommendations for your architecture. 
+
+> [!div class="nextstepaction"]
+> [Network topology and connectivity](./network-topology-and-connectivity.md)
+
+## Recommended content
+
+- [Microsoft Entra identity and access management operations reference guide](/entra/architecture/ops-guide-iam)
+
+- [Azure identity and access management design area](/azure/cloud-adoption-framework/ready/landing-zone/design-area/identity-access)
+
+- [Azure identity and access for landing zones](/azure/cloud-adoption-framework/ready/landing-zone/design-area/identity-access-landing-zones?source=recommendations)
+
+- [Secure access and data in Azure Logic Apps](/azure/logic-apps/logic-apps-securing-a-logic-app?tabs=azure-portal)
+
+- [Create custom roles in Azure](/azure/role-based-access-control/custom-roles)
+
+- [Azure Policy Overview](/azure/governance/policy/overview)
+
+- [Tutorial: Build Azure Policies to enforce compliance](/azure/governance/policy/tutorials/create-and-manage)

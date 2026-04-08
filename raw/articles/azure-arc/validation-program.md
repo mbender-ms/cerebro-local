@@ -1,153 +1,57 @@
 ---
-title: "Azure Arc-enabled data services validation"
-services: azure-arc
-ms.service: azure-arc
-ms.subservice: azure-arc-data
-ms.date: 11/30/2025
-ms.topic: concept-article
-author: MikeRayMSFT
-ms.author: mikeray
-description: "Describes validation program for Kubernetes distributions for Azure Arc-enabled data services."
-keywords: "Kubernetes, Arc, Azure, K8s, validation, data services, SQL Managed Instance"
-# Customer intent: As a data services administrator, I want to validate Kubernetes distributions for Azure Arc-enabled data services, so that I can ensure compatibility and compliance for my data applications in a hybrid cloud environment.
+title: "Azure Arc-enabled Kubernetes validation"
+ms.date: 09/26/2025
+ms.topic: how-to
+description: "Describes Arc validation program for Kubernetes distributions"
+# Customer intent: As a DevOps engineer, I want to understand which Kubernetes distributions have passed conformance tests for Azure Arc, so that I can ensure compatibility and successful integration for managing my clusters across cloud environments.
 ---
 
-# Azure Arc-enabled data services Kubernetes validation
+# Azure Arc-enabled Kubernetes validation
 
-Azure Arc-enabled data services team has worked with industry partners to validate specific distributions and solutions to host Azure Arc-enabled data services. This validation extends the [Azure Arc-enabled Kubernetes validation](../kubernetes/validation-program.md) for the data services. This article identifies partner solutions, versions, Kubernetes versions and SQL engine versions that have been verified to support the data services. 
+The Azure Arc team works with key industry Kubernetes offering providers to validate Azure Arc-enabled Kubernetes with their Kubernetes distributions. Future major and minor versions of Kubernetes distributions released by these providers will be validated for compatibility with Azure Arc-enabled Kubernetes.
 
-To see how all Azure Arc-enabled components are validated, see [Validation program overview](../validation-program/overview.md)
+> [!IMPORTANT]
+> Azure Arc-enabled Kubernetes works with any Kubernetes clusters that are certified by the Cloud Native Computing Foundation (CNCF), even if they are not listed on this page.
 
-> [!NOTE]
-> At the current time, SQL Managed Instance enabled by Azure Arc is generally available in select regions.
->
+## Validated distributions
 
-## Partners
+The following Microsoft-provided Kubernetes distributions and infrastructure providers successfully passed the conformance tests for Azure Arc-enabled Kubernetes:
 
-### DataON
+| Distribution and infrastructure provider | Version |
+| ---------------------------------------- | ------- |
+| Cluster API Provider on Azure            | Release version: [1.20.1](https://github.com/kubernetes-sigs/cluster-api-provider-azure/releases/tag/v1.20.1); API version v1.10.4; Kubernetes version: [v1.33.1](https://github.com/kubernetes/kubernetes/releases/tag/v1.33.1) |
+| AKS Enabled by Azure Arc                 | Release version: [AKS on Azure Local version 2503](/azure/aks/aksarc/aks-whats-new-local#release-2503); Kubernetes version: [1.30.4](https://github.com/kubernetes/kubernetes/releases/tag/v1.30.4); [1.29.9](https://github.com/kubernetes/kubernetes/releases/tag/v1.29.9); [1.28.14](https://github.com/kubernetes/kubernetes/releases/tag/v1.28.14) |
+| K8s on Azure Stack Edge                  | Release version: Azure Stack Edge 2501 (3.3.2501.1176); Kubernetes version: [1.29.4](https://github.com/kubernetes/kubernetes/releases/tag/v1.29.4) |
+| AKS Edge Essentials                      | Release version [1.10.868.0](https://github.com/Azure/AKS-Edge/releases); Kubernetes version [1.29.9](https://github.com/kubernetes/kubernetes/releases/tag/v1.29.9) |
 
-|Solution and version | Kubernetes version | Azure Arc-enabled data services version | SQL engine version |
-|-----|-----|-----|-----|
-|[DataON AZS-6224](https://www.dataonstorage.com/products-solutions/integrated-systems-for-azure-stack-hci/dataon-integrated-system-azs-6224-for-azure-stack-hci/)|1.24.11|    1.20.0_2023-06-13|16.0.5100.7242|
+The following providers and their corresponding Kubernetes distributions successfully passed the conformance tests for Azure Arc-enabled Kubernetes:
 
-### Dell
+| Provider name | Distribution name | Validated versions|
+| ------------ | ----------------- | -------------------- |
+| SUSE Rancher | [Rancher Kubernetes Engine (RKE/RKE2)](https://www.rancher.com/index.php/products/rke)/(https://docs.rke2.io/) | [v1.33.3-rc2+rke2r1](https://github.com/rancher/rke2/releases)<br>v1.32.7-rc2+rke2r1<br>v1.31.11-rc2+rke2r1 |
+| SUSE Rancher      | [K3s](https://rancher.com/products/k3s/) | [K3S version v1.33.2+k3s1](https://github.com/k3s-io/k3s/releases/tag/v1.33.2%2Bk3s1)<br>[K3S version v1.32.3+k3s1](https://github.com/k3s-io/k3s/releases/tag/v1.32.3%2Bk3s1)<br> [K3S version v1.31.5+k3s1](https://github.com/k3s-io/k3s/releases/tag/v1.31.5%2Bk3s1) |
+| Red Hat       | [OpenShift Container Platform](https://www.openshift.com/products/container-platform) | [4.19.4](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/release_notes/ocp-4-19-release-notes), [4.18.9](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/release_notes/ocp-4-18-release-notes),  [4.17.5](https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html/release_notes/ocp-4-17-release-notes),  |
+| VMware       | [Tanzu Kubernetes Grid/vSphere Kubernetes Service](https://tanzu.vmware.com/kubernetes-grid) | VKS 3.3, TKr v1.32.0+vmware.6-fips, Upstream K8s 1.32<br>VKS 3.3, TKr v1.31.4+vmware.1-fips, Upstream K8s 1.31 |
+| Canonical    | [Charmed Kubernetes](https://ubuntu.com/kubernetes/charmed-k8s/docs)| [1.34](https://ubuntu.com/kubernetes/charmed-k8s/docs/1.34/components), [1.33](https://ubuntu.com/kubernetes/docs/1.33/components), [1.32](https://ubuntu.com/kubernetes/charmed-k8s/docs/1.32/components)|
+| Wind River | [Wind River Cloud Platform](https://www.windriver.com/products/cloud-platform) |Wind River Cloud Platform 26.03; Upstream K8s version: 1.34.1|
 
-|Solution and version | Kubernetes version | Azure Arc-enabled data services version | SQL engine version |
-|-----|-----|-----|-----|
-|[PowerStore 4.0](https://www.dell.com/en-us/shop/powerstore/sf/power-store)|1.28.10|1.30.0_2024-06-11|16.0.5349.20214|
-|[Unity XT](https://www.dell.com/en-us/dt/storage/unity.htm) |1.24.3|1.15.0_2023-01-10|16.0.816.19223|
-|[PowerFlex](https://www.dell.com/en-us/dt/storage/powerflex.htm) |1.25.0 |1.21.0_2023-07-11 |16.0.5100.7242 |
+## Scenarios validated
 
-### Hitachi
-|Solution and version |Kubernetes version |Azure Arc-enabled data services version |SQL engine version |
-|-----|-----|-----|-----|
-|[Hitachi UCP with Microsoft AKS-HCI](https://www.hitachivantara.com/en-us/solutions/hybrid-cloud-infrastructure.html)|1.27.3|1.29.0_2024-04-09*|16.0.5290.8214|
-|[Hitachi UCP with Red Hat OpenShift](https://www.hitachivantara.com/en-us/solutions/hybrid-cloud-infrastructure.html)|1.25.11|1.25.0_2023-11-14|16.0.5100.7246|
-|Hitachi Virtual Storage Software Block software-defined storage (VSSB)|1.24.12 |1.20.0_2023-06-13 |16.0.5100.7242 |
-|Hitachi Virtual Storage Platform (VSP) |1.24.12 |1.19.0_2023-05-09 |16.0.937.6221 |
+The conformance tests run as part of the Azure Arc-enabled Kubernetes validation cover the following scenarios:
 
-*: The solution was validated in indirect mode only (learn more about [the different connectivity modes](../data/connectivity.md)).
+1. Connect Kubernetes clusters to Azure Arc:
+    * Deploy Azure Arc-enabled Kubernetes agent Helm chart on cluster.
+    * Agents send cluster metadata to Azure.
 
-### HPE
+2. Configuration:
+    * Create configuration on top of Azure Arc-enabled Kubernetes resource.
+    * [Flux](https://docs.fluxcd.io/), needed for setting up [GitOps workflow](tutorial-use-gitops-flux2.md), is deployed on the cluster.
+    * Flux pulls manifests and Helm charts from demo Git repo and deploys to cluster.
 
-|Solution and version | Kubernetes version | Azure Arc-enabled data services version | SQL engine version |
-|-----|-----|-----|-----|
-|HPE Superdome Flex 280 | 1.25.12 | 1.22.0_2023-08-08 | 16.0.5100.7242 |
-|HPE Apollo 4200 Gen10 Plus | 1.22.6 | 1.11.0_2022-09-13 |16.0.312.4243|
+## Next steps
 
-### Kublr
-
-|Solution and version | Kubernetes version | Azure Arc-enabled data services version | SQL engine version |
-|-----|-----|-----|-----|
-|[Kublr 1.26.0](https://docs.kublr.com/releasenotes/1.26/release-1.26.0/)|1.26.4, 1.25.6, 1.24.13, 1.23.17, 1.22.17|1.21.0_2023-07-11|16.0.5100.7242|
-|Kublr 1.21.2 | 1.22.10 | 1.9.0_2022-07-12 | 16.0.312.4243 |
-
-### Lenovo
-
-|Solution and version | Kubernetes version | Azure Arc-enabled data services version | SQL engine version |
-|-----|-----|-----|-----|
-|[Lenovo ThinkEdge SE455 V3](https://lenovopress.lenovo.com/lp1724-lenovo-thinkedge-se455-v3-server)|1.26.6|1.24.0_2023-10-10|16.0.5100.7246|
-|Lenovo ThinkAgile MX1020 |1.26.6|1.24.0_2023-10-10 |16.0.5100.7246|
-|Lenovo ThinkAgile MX3520 |1.22.6|1.10.0_2022-08-09 |16.0.312.4243| 
-
-### Nutanix
-
-|Solution and version | Kubernetes version | Azure Arc-enabled data services version | SQL engine version |
-|-----|-----|-----|-----|
-| Karbon 2.2<br/>AOS: 5.19.1.5<br/>AHV: 20201105.1021<br/>PC: Version pc.2021.3.02<br/> | 1.19.8-0 | 1.0.0_2021-07-30 | 15.0.2148.140|
-
-
-### PureStorage
-
-|Solution and version | Kubernetes version | Azure Arc-enabled data services version | SQL engine version |
-|-----|-----|-----|-----|
-|[Portworx Enterprise 3.3.1.1](https://www.purestorage.com/products/cloud-native-applications/portworx.html)<br /> [Microsoft Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/purestoragemarketplaceadmin.portworx-enterprise?tab=overview) |1.31.9    | 1.39.0_2025-05-13    | 16.0.5564.41214 |
-|[Portworx Enterprise 3.1](https://www.purestorage.com/products/cloud-native-applications/portworx.html)|1.28.7|1.30.0_2024-06-11|16.0.5349.20214|
-|Portworx Enterprise 2.7    1.22.5 |1.20.7 |1.1.0_2021-11-02 |15.0.2148.140 |
-|Portworx Enterprise 2.9 |1.22.5 |1.1.0_2021-11-02 |15.0.2195.191 |
-
-### Red Hat
-
-|Solution and version |Kubernetes version |Azure Arc-enabled data services version |SQL engine version |
-|-----|-----|-----|-----|
-|[OpenShift 4.15.0](https://docs.openshift.com/container-platform/4.15/release_notes/ocp-4-15-release-notes.html)|1.28.6|1.27.0_2024-02-13|16.0.5100.7246|
-|[OpenShift 4.13.4](https://docs.openshift.com/container-platform/4.13/release_notes/ocp-4-13-release-notes.html) |1.26.5 |1.21.0_2023-07-11 |16.0.5100.7242 |
-|OpenShift 4.10.16 |1.23.5 |1.11.0_2022-09-13 |16.0.312.4243 |
-
-### VMware
-
-|Solution and version | Kubernetes version | Azure Arc-enabled data services version | SQL engine version |
-|-----|-----|-----|-----|
-|TKGs 2.2|1.25.7|1.23.0_2023-09-12|16.0.5100.7246|
-|TKGm 2.3|1.26.5|1.23.0_2023-09-12|16.0.5100.7246|
-|TKGm 2.2|1.25.7|1.19.0_2023-05-09|16.0.937.6223|
-|TKGm 2.1.0|1.24.9|1.15.0_2023-01-10|16.0.816.19223|
-
-
-
-### Wind River
-
-|Solution and version | Kubernetes version | Azure Arc-enabled data services version | SQL engine version |
-|-----|-----|-----|-----|
-|[Wind River Cloud Platform 25.09](https://www.windriver.com/products/cloud-platform)|1.32.2|1.41.0_2025-09-09|17.0.429.2218|
-|[Wind River Cloud Platform 24.09](https://www.windriver.com/products/cloud-platform)|1.30.6|1.37.0_2025-03-11|16.0.5564|
-|[Wind River Cloud Platform 22.12](https://www.windriver.com/products/cloud-platform)|1.24.4|1.26.0_2023-12-12|16.0.5100.7246|
-
-## Data services validation process
-
-The Sonobuoy Azure Arc-enabled data services plug-in automates the provisioning and testing of Azure Arc-enabled data services on a Kubernetes cluster.
-
-### Prerequisites
-v1.22.5+vmware.1
-
-- [Azure Data CLI (`azdata`)](/sql/azdata/install/deploy-install-azdata)
-- [kubectl](https://kubernetes.io/docs/home/)
-
-Create a Kubernetes config file configured to access the target Kubernetes cluster and set as the current context. How this file is generated and brought local to your computer is different from platform to platform. See [Kubernetes.io](https://kubernetes.io/docs/home/).
-
-### Process
-
-The conformance tests run as part of the Azure Arc-enabled Data services validation. A pre-requisite to running these tests is to pass on the Azure Arc-enabled Kubernetes tests for the Kubernetes distribution in use.
-
-These tests verify that the product is compliant with the requirements of running and operating data services. This process helps assess if the product is enterprise ready for deployments.
-
-1. Deploy data controller in both indirect and direct connect modes (learn more about [connectivity modes](/azure/azure-arc/data/connectivity))
-2. Deploy [SQL Managed Instance enabled by Azure Arc](create-sql-managed-instance.md)
-
-More tests will be added in future releases of Azure Arc-enabled data services.
-
-## Additional information
-
-- [Validation program overview](../validation-program/overview.md)
-- [Azure Arc-enabled Kubernetes validation](../kubernetes/validation-program.md)
-- [Azure Arc validation program - GitHub project](https://github.com/Azure/azure-arc-validation/)
-
-## Related content
-
-- [Plan an Azure Arc-enabled data services deployment](plan-azure-arc-data-services.md)
-- [Create a data controller - indirectly connected with the CLI](create-data-controller-indirect-cli.md)
-- To create a directly connected data controller, start with [Prerequisites to deploy the data controller in direct connectivity mode](create-data-controller-direct-prerequisites.md).
-
+* [Learn how to connect an existing Kubernetes cluster to Azure Arc](./quickstart-connect-cluster.md)
+* Learn about the [Azure Arc agents](conceptual-agent-overview.md) deployed on Kubernetes clusters when connecting them to Azure Arc.
 
 
 

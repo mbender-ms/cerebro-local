@@ -1,99 +1,75 @@
 ---
-title: Migrate workloads for Azure VMware Solution
-description: Review how you can migrate VMware workloads from your data center to Azure
-author: stephen-sumner
-ms.author: pnp
-ms.date: 04/22/2022
+title: Migrate an SAP platform to Azure
+description: Understand how to migrate an SAP platform to Azure.
+author: deepakonics
+ms.author: deepakus
+ms.date: 03/01/2021
 ms.topic: concept-article
-ms.custom: e2e-azure-vmware, think-tank
+ms.custom: think-tank, e2e-sap
 ---
 
-# Migrate workloads for Azure VMware Solution
+# Migrate an SAP platform to Azure
 
-Azure VMware Solution lets you seamlessly migrate VMware workloads from your data center to Azure and integrate more Azure services with ease. You can manage your IT environments with the same VMware solution tools you already know at the same time. You have the choice and flexibility to determine what workloads to migrate, and you decide the right time to migrate them. With platform symmetry, you have complete control to transform based on how your organization defines its unique cloud journey.
+SAP is a powerful platform with specific, complex, and strict technical, security, and compliance requirements; this platform is unlikely to move in a standard migration factory. Azure Migrate features tools that can migrate most platforms and workloads, but SAP workloads require different tools and processes to replicate and deploy their assets. Once the core platform is deployed, standard processes and tools help dependent workloads to resume and finish migrating.
 
-Migrating VMware workloads to Azure can accelerate the standard methodology outlined in the Cloud Adoption Framework.
+## SAP process flow
 
-![Diagram of Cloud Adoption Framework migration model.](../../_images/migrate/methodology.png)
-*Figure 1*
+There are a few steps to consider when migrating SAP workloads, some of which deviate from standard migration tasks:
 
-Planning and preparing your environment for Azure VMware Solution deployment is critical for a successful migration. Use your documented plan as a reference during deployment and migration, and make sure you've created a landing zone to host the workloads you plan to build in, or migrate to the cloud. A successful deployment results in a production-ready environment for creating or migrating Azure VMware Solution.
+> [!NOTE]
+> Before you start to migrate your SAP platform, validate that you have [established a compatible Azure landing zone for the SAP platform](./ready.md) and:
 
-## Azure VMware Solution process details
+- Assess the SAP platform and dependent workloads.
+- Evaluate sizing considerations for the SAP platform.
+- Migrate the platform.
+- Migrate the workload.
 
-There are data points outside of a standard Azure Migrate assessment that you need to prepare for build out and migration.
+## Assess the SAP platform and dependent workloads
 
-- Identify the Azure subscription, resource group, region, and resource name
-- Identify the number hosts required for deployment
-- Request a host quota for a subscription with an eligible Azure plan
-- Identify a minimum of a non-overlapping /22 CIDR IP segment for private cloud management
-- Identify or deploy a single Azure Virtual Network
-- Deploy the virtual network gateway in the virtual network to peer with the Azure VMware Solution ExpressRoute
-- Define VMware NSX-T Data Center network segments for various administrative tasks like vMotioning servers from on-premises vSphere into Azure VMware Solution
+Organizations typically don't consider the following questions when assessing an SAP platform and dependent workloads:
 
-From a technical point of view, it's important to get the core foundations right around networking and Migrate methodology.
+- What operating systems and versions are your SAP virtual machines running?
 
-- Use the right IP address space for networking will ensure that you can move workloads seamlessly between on-premises vSphere and Azure VMware Solution.
-- Plan your Migrate methodology up front: live, cold, and bulk.
-- Define the correct firewall rules: the right ports need to be open between on-premises vSphere and Azure VMware Solution before you deploy the service.
+- Do current platform assets run operating systems that are supported in Azure? Unsupported operating systems need to be remediated during or before migration.
 
-## Azure VMware Solution process flow
+- What database management system (DBMS) is your SAP platform running?
 
-Microsoft has a network of Azure VMware Solution certified partners. These partners can help you assess, deploy, and migrate your on-premises workloads into Azure VMware Solution.
+- Is the current DBMS supported in Azure? Unsupported databases need to be remediated during or before migration.
 
-You can deploy Azure VMware Solution by using one of the following options:
+- Will you be upgrading all or part of the SAP solution before or during migration?
 
-- Azure portal, where Azure VMware Solution can be deployed like any other service
-- Azure command line interface
-- Azure Resource Manager template, Bicep template, or Terraform template
+- How will platform assets be configured and sized in Azure?
 
-When you deploy Azure VMware Solution, you get a software-defined data center that has vCenter Server, ESXi, vSAN, and NSX-T Data Center deployed. As a result, you can migrate workloads from your on-premises vSphere environments, deploy new virtual machines (VMs) within Azure VMware Solution, and consume Azure services from your private clouds. Everything you need to set up a successful migration, transformation, data center extension, is included when you deploy Azure VMware Solution.
+- What workloads depend on the SAP platform?
 
-### Example migration process
+- What assets and databases are required to support those workloads?
 
-Azure VMware Solution lets you seamlessly move VMware vSphere workloads from your data center to Azure and integrate more Azure services with ease. All while you continue to manage your IT environments with the same VMware solution tools you already know. You have the choice and flexibility to determine what workloads to migrate, and you decide the right time to migrate them. With platform symmetry, you have complete control to transform based on how your organization defines its unique cloud journey.
+## Evaluate sizing considerations for the SAP platform
 
-You can take the tooling and operational best practices that you're already using and repurpose them in Azure with the Azure VMware Solution platform.
+Several sizing considerations should be made prior to deploying an SAP platform. Organizations typically start by evaluating sizing requirements for current assets and databases, and they should also consider long-term platform operations and feature requirements. The following should be considered at a minimum:
 
-The hardware and software specifications should be familiar if you're a VMware vSphere administrator. If you're deploying Azure VMware Solution, it should match up to the VMware vSphere solution that you have on-premises, or maybe it's a version ahead.
+- Virtual machine (VM) sizing
+- VM storage
+- Uptime factors
+- Licensing factors
+- High-availability/redundancy factors
+- Database high-availability factors
 
-What's important to note is that you'll need a minimum of three nodes per vSphere cluster. There's a maximum of 16 nodes per vSphere cluster, and then a maximum of 96 nodes in an Azure VMware Solution private cloud instance.
+## Migrate the platform
 
-When you deploy Azure VMware Solution, at a minimum, you get three nodes and an ExpressRoute circuit. Because your Azure VMware Solution environment is deployed on bare metal servers, it needs to be peered into Azure for network connectivity. After you deploy Azure VMware Solution, you'll peer the ExpressRoute into an Azure virtual network. Then you can enable Global Reach between the Azure VMware Solution ExpressRoute and on-premises ExpressRoute circuits. Global Reach handles the east-west traffic routing between the two circuits using BGP. This is how you can think about migrating your VMs from on-premises vSphere all the way into the Azure VMware Solution private cloud.
+Based on the kind of SAP workload and requirements, the SAP workload's data points help to choose the appropriate migration approach: classical or an SAP Database Migration Option (DMO). Some of the critical data points to consider include:
 
-![Diagram of the Azure VMware Solution deployment.](./media/azure-vmware-solution-deployment.png)
+- Requirement to perform Unicode conversion (non-Unicode to Unicode).
+- The DBMS that needs to be either changed or the internal format of the same DBMS system needs to change to the little-endian format supported in the Intel world; for example, migrating from the IBM pSeries to Azure.
 
-After you deploy Azure VMware Solution, it will look like any other Azure service in the Azure portal. But when you're building the service, you'll need to provide a management IP address, which is different than the virtual network you're connecting the environment to. The management IP address requires a minimum of `/22` CIDR block. You don't have to worry about subnetting your environment, Azure VMware Solution will do it for you. You can also enable the internet. This is where you might think about using Azure Virtual Network and Application Gateway.
+**Classical migration:** The SAP Software Provisioning Manager is a software logistics tool for database migrations. Classical migration uses a homogeneous or heterogeneous system copy approach, sometimes called a *two-step migration*. This approach is commonly used when the following observations surface in the migration plan:
 
-Once you migrate your on-premises VMware vSphere environment into Azure, you have the opportunity to be closer to the Azure Resource Manager APIs, versus trying to think about it in a hybrid scenario. On the ExpressRoute circuit, you request your authorization keys, but some of the configuration is done for you. You'll also need to configure the HCX environment. That's what does the migrations from on-premises vSphere into Azure. Then configure your public IP and the ExpressRoute Global Reach.
+- The operating systems (OS) and DBMS are compatible with Azure.
+- There aren't other requirements to upgrade or replatform the OS or DBMS systems.
 
-The vCenter Server credentials and the NSX-T Manager credentials are set up for you during deployment. You can add segments to the NSX-T Data Center, and setup DHCP or DNS if you need it.
+**DMO:** DMO uses one tool to upgrade an SAP workload and a database migration to the SAP HANA database, and this process is often called a *one-step migration*. The SAP Software Update Manager tool creates a shadow repository for the current database while creating a target database simultaneously. It eventually copies the shadow repository and switches the SAP database connection to the target database. This approach is commonly used when the following data points are observed in the migration plan:
 
-You can think about Azure VMware Solution as VMware Software-Defined Data Center as a service. The offering is between infrastructure as a service (IaaS) and platform as a service (PaaS). It's not one over the other. You can configure a jump host within the environment to access Azure VMware Solution. The jump host can be behind an Azure Bastion resource or configured with a public IP and just in time access. The Azure Bastion host is a way to provide secure access into that VM without having to expose the RDP port on a public IP address. A VM with just in time configured allows administrators to access an environment on a timed basis, so the RDP port isn't exposed and not a security vulnerability. Configuring everything in this manner allows access to your VM if there's ever an issue with ExpressRoute circuit coming from on-premises vSphere into Azure.
+- The current OS or DBMS isn't supported in Azure, requiring an upgrade or replatform.
+- There's a plan to upgrade to SAP S/4HANA during migration.
 
-When you go into your Azure VMware Solution environment, it should look just like it did when it was running on-premises. You can also integrate with Azure. For example, you can build content libraries on Azure Blob Storage so when you templatize your VMs, you can spin up new VMs quickly.
-
-You can use the vSphere Client interface to manage vCenter Server and VMware's PowerShell command line interface plugin (PowerCLI).
-
-Azure VMware Solution allows you to work in a familiar environment, with familiar tools. It allows you to iterate, innovate, and modernize at your own pace as you work through your digital transformation.
-
-To get more experience migrating VMware vSphere with Azure VMware Solution, try one of these [hands on labs](https://labs.hol.vmware.com/HOL/).
-
-- **Azure VMware Solution private cloud deployment and connectivity:** A guided lab for VMware vSphere administrators, showing how to set up the cloud deployment and connectivity.
-- **Azure VMware Solution workload migration with VMware HCX:** This lab addresses the migration components. It walks through how to create the environment, deploy the environment, and migrate VMs.
-
-More resources:
-
-- [Azure VMware Solution documentation](/azure/azure-vmware/)
-- Learning path: [Run VMware workloads on Azure VMware Solution](/training/paths/run-vmware-workloads-azure-vmware-solution/)
-
-## Azure VMware Solution workload specific activities
-
-An Azure Migrate assessment will provide a way for you to analyze all workloads running in an on-premises VMware vSphere environment. Running the assessment over a period of 30 days (or longer) will provide an opportunity to right size the Azure VMware Solution node size deployment. Additionally, it will help you prioritize the flow for your production migration.
-
-## Next steps
-
-Review how you can extend your governance approach across the Azure VMware Solution. Evaluate and manage risk tolerance by identifying high-risk areas for business, convert risk vectors into governing corporate policies, and extend governance policies across Cost Management, Security Baseline, Identity Baseline, Resource Consistency, and Deployment Acceleration disciplines.
-
-> [!div class="nextstepaction"]
-> [Govern Azure VMware Solution](./govern.md)
+Explore [Migrating an SAP platform to Azure](/training/paths/migrate-sap-workloads-to-azure/) to learn more about each process for migrating the SAP platform.

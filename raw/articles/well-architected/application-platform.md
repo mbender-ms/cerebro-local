@@ -1,242 +1,101 @@
 ---
-title: Application Platform for AI Workloads on Azure
-description: Learn about the Azure resources that you need for running AI workloads. Learn about platforms for EDA, model training and fine-tuning, and inferencing. 
-author: claytonsiemens77
-ms.author: csiemens
-ms.date: 11/15/2024
+title: SAP workload application platform
+description: SAP workload application platform
+author: stephen-sumner
+ms.author: ssumner
+ms.date: 12/19/2022
 ms.topic: concept-article
-ms.update-cycle: 180-days  
+
 ---
 
-# Application platform for AI workloads on Azure
+# SAP workload application platform
 
-You must carefully consider the application hosting platform that your AI workload is deployed on to ensure that you can maximize efficiency, the security of operations, and reliability.
+The application platform refers to the hosting environment, application dependencies, frameworks, and libraries. For an SAP workload, the Azure platform provides opportunities to optimize cost and performance, allowing you to do more with less.
 
-This design area covers several types of applications that might be relevant to your AI workload:
+## Optimize compute costs
 
-- Exploratory data analysis (EDA)
-- Model training and fine-tuning
-- Inferencing
+*Impact: Cost optimization*
 
-This article provides guidance for selecting the best platform for each of these functions to meet your business needs. There are also general recommendations that you can apply to all of these functions.
+ Compute cost optimization is achieved through planning, monitoring, and resizing VMs throughout the SAP workload lifecycle. VMs provide the compute power for the SAP application and have a direct effect on cost and performance. We recommend monitoring the compute costs of an SAP workload to ensure the dollars spent are helping you meet organizational goals. Here are cost-optimization recommendations for SAP workload compute.
 
-## Recommendations
+### Choose the right VM type
 
-Here's the summary of recommendations provided in this article.
+Azure has SAP-certified VMs for your workload. The wrong VM type will require larger sizes to get the performance need, increasing cost without benefit. A smaller VM of the correct type can give you equal or better performance than a large instance of the wrong type. Azure offers a list of SAP-certified configurations to help you understand what VMs work well with your business needs.
 
-|Recommendation|Description|
-|---|---|
-|**Reuse tools**. | Start by evaluating the tools you already use to understand whether they can be reused for your AI workload. If they support the required functionality and can meet your requirements for reliability, security, cost, and performance, bringing in a new tool might not be worth the cost and effort.|
-|**Consider compliance requirements for your data and the regions that you plan to deploy in**. | You might need to limit the regions you deploy in or isolate parts of your workload from each other to meet compliance requirements. Going into your designing phase with this information can help protect you from needing to redesign later.|
-|**Minimize building**. | Consider platform as a service (PaaS) or software as a service (SaaS) solutions to minimize the operational burden that building your own solution introduces, like patching and other maintenance. Minimizing the Day-2 burden required for the new technology simplifies your adoption. Many AI functions are complex, so we don't recommend building your own platform. |
-|**Understand your quotas and limits**.  | When you design for the use of PaaS or SaaS solutions, understand any quotas or limits that apply. Your ability to scale out to meet high traffic demands might be affected by quotas or limits, so you might need to adjust your design to minimize that risk. |
-|**Deploy in the same region**.  | Try to deploy all related resources in the same region to reduce latency and to simplify the design. |
-|**Practice safe deployment**.  | In general, you should treat the APIs for your AI workload the same as any other API in your environment. All APIs should be placed behind a gateway and all code should be handled with the same [safe deployment practices](../operational-excellence/safe-deployments.md) as every other code asset. |
-|**Establish performance benchmarks through experimentation**.  | Every AI workload is different, and the amount of compute that you need depends on your use case. Determine the amount and types of compute that are optimal for your workload by conducting thorough benchmark testing. This guide helps you choose a platform, but you'll only know which SKUs are appropriate for your workload after benchmark testing. |
+For more information, see [SAP certified infrastructure](https://azure.microsoft.com/solutions/sap/azure-solutions/#certified-infrastructure).
 
-## Considerations for the EDA platform
+Memory-optimized VMs can meet the requirements of most SAP applications. An SAP online analytical processing (OLAP) workload and an online transactional processing (OLTP) workload should use M-series VMs. Examples of an OLTP workload include SAP HANA, SAP Business Suite on HANA, and SAP S/4HANA. Examples of OLAP workloads include SAP BW on HANA BW/4HANA. SAP Business One on HANA pairs with M-series VMs.
 
-EDA is a common preliminary function that data scientists perform before modeling or statistical analysis. It can therefore be considered a development phase, which means that targets for reliability and performance might be significantly lower than those for production resources and maintaining productivity is the more important factor.
+SAP NetWeaver, Business All-in-One, Business Suite Software, and BusinessObjects BI have broader alignment with different VM types. They can run on VMs in the D, G, E, and M-series.
 
-This section provides guidance on capabilities to consider when you select an EDA platform solution.
+### Optimize compute cost during migration
 
-### Functional requirements
+Many SAP journeys start on-premises, so it’s important to plan for compute optimization throughout the migration of a workload. Make sure to follow best practices across every SAP migration. You can find process guidance in our [CAF SAP documentation]( /azure/cloud-adoption-framework/scenarios/sap/). With the broader process guidance in place, you’ll still need to customize your compute optimization for each SAP workload. We want you to consider pre-migration and post-migration milestones.
 
-When you evaluate an EDA platform, consider the following questions:
+**Optimize pre-migration.** Pre-migration optimization ensures you have sufficient cloud resources provisioned to support the expected migration runtime of the SAP workload. You need to verify that the Azure VM meets the technical requirements of the on-premises workload. Planning will shorten the migration time of a workload and minimize the time of migration will keep costs lower.
 
-- **Does the platform support transient usage?**
+**Optimize post-migration.** Post-migration optimization focuses on the end-user experience. This step coincides with the hypercare period, a time of elevated customer service to make sure that the workload is performing. You should monitor the workload as users begin to interact with it. The performance metrics might indicate that you need to downsize the VM or switch to a different VM type.
 
-   The platform should support transient workspaces and compute, which means that you should be able to stop the necessary resources when they aren't being used. This capability helps control costs. EDA jobs are typically interactive, so users need to be able to start VMs and stop them as they run jobs.
+## Improve application platform operational excellence
 
-- **Does the platform support compute optionality?**
+It’s important to optimize VMs in operations for the most cost-savings. By VM operations, we're referring to the daily management of an SAP workload. This phase of a workload brings the ability to predict the compute needs. It’s important to see how user demand affects compute needs over time. The VM choice should change along with the SAP workload’s requirements. Here are cost-saving recommendations for operations.
 
-   The platform should enable on-demand access to GPUs as needed and provide various compute options to help right-size the platform.
+**Use Azure Advisor.** We recommend you use Azure Advisor to identify VM usage that needs optimization. For more information, see [Azure Advisor cost optimization](/azure/advisor/advisor-cost-recommendations).
 
-- **Does the platform support MLflow?**
+**Enforce VM governance.** You should enforce VM governance at VM creation as a cost and security best practice. Every VM deployment increases the operational cost and attack surface of the SAP workload. VMs created outside of the governance process tend to create unneeded expense and have more vulnerabilities. We recommend using Azure Policy to enforce VM governance for your SAP workload. For more information, see [Azure Policy for SAP](/azure/cloud-adoption-framework/scenarios/sap/eslz-security-governance-and-compliance#use-azure-policy).
 
-   Your EDA platform should make it possible to choose a technology that enables integration with MLflow for tracking your experiments. We recommend MLflow as a model development, deployment, and management protocol because it provides the following benefits:
+**Stop non-critical workloads.** Each SAP workload has different levels of criticality. Some workloads aren’t needed on nights and weekends. A sandbox environment is a good example of low criticality. We recommend stopping VMs that support non-critical workload environment to reduce costs. You can automate this process for the SAP workload in Azure. For more information, see [automate VM start and stop](/azure/automation/automation-solution-vm-management).
 
-  - *Experiment tracking.* MLflow allows you to track experiments by recording parameters, metrics, and artifacts. This capability is essential during EDA so that you can keep track of different data preprocessing steps and feature engineering techniques and their impacts on model performance.
-  - *Reproducibility.* Because it logs all the details of your experiments, MLflow helps ensure that you can reproduce your results, which is critical for validating findings.
-  - *Data and model versioning.* MLflow helps with versioning datasets and models, which makes it easier to manage different versions of data transformations and tested models.
-  - *Collaborative work.* MLflow provides a centralized platform where data scientists can share their experiments and results, which facilitates collaboration and knowledge sharing.
+**Use Reserved Instances.** Any SAP workload that needs to run continuously should use reserved instances to optimize cost. For budget predictability, you can make an advanced purchase for one or three years in a specified region. For more information, see [Azure Reservations](/azure/cost-management-billing/reservations/save-compute-costs-reservations).
 
-### Nonfunctional requirements
+**Use the Azure Hybrid Benefit.** Azure lets you use on-premises Software Assurance-enabled Windows Server and SQL Server licenses. The benefit applies to Red Hat and SUSE Linux subscriptions. This benefit can generate significant savings for a hybrid SAP workload. For more information, see [hybrid licensing benefit](https://azure.microsoft.com/pricing/hybrid-benefit/#calculator).
 
-Consider these questions as well:
+For more information, see:
 
-- **How can the platform help control costs?**
+- [SAP on Azure](https://azure.microsoft.com/solutions/sap/#overview)
+- [SAP NetWeaver](/azure/virtual-machines/workloads/sap/planning-guide)
+- [SAP HANA install](/azure/virtual-machines/workloads/sap/hana-get-started)
+- [SAP HANA configuration](/azure/virtual-machines/workloads/sap/hana-vm-operations)
 
-   The platform should enable data scientists to perform their work according to their schedule requirements, but it should be right-sized to ensure that cost expectations are met.
+## Configure application server reliability
 
-- **What security requirements must be followed for the platform?**
+*Impact: Reliability*
 
-   The data used during your EDA phase will probably be production data, which requires you to follow production practices to secure that data and monitor the platform. To that end, your platform should support all necessary security controls, including:
+The goal of application server reliability is to have multiple application servers load balance traffic and failover when needed. Resiliency for the SAP application server layer can be achieved through redundancy. You can configure multiple dialog instances on different instances of Azure virtual machines with a minimum of two application servers. Here are application server resiliency recommendations.
 
-   - *Access and authorization*.
-   - *Encryption at rest and in transit*.
-   - *Regional data protection requirements*.
-   - *Robust monitoring and alerting functionality, including logging and auditability*.
-   - *Private networking access to centralized repositories for container images, data, and code assets*.
+**Use Availability Zones.** An SAP application server can be deployed in an availability set or across availability zones. The decision you make needs to be based on workload requirements, however, we are currently recommending availability zones as the best option for resiliency. We don’t recommend scale sets. For more information, see [availability zones for SAP](/azure/virtual-machines/workloads/sap/sap-ha-availability-zones).
 
-### Tools
+**Use multiple application servers.** Using multiple smaller application servers instead of one larger application server is recommended. This setup avoids a single point of failure. It’s a best practice to configure SAP Logon Group (SMLG) and Batch Server Group (RZ12) for better load balancing between end-user & batch processing.
 
-Use an [Azure Machine Learning compute instance](/azure/machine-learning/concept-compute-instance) with team-level file shares as your EDA platform. One exception to this is if your team or organization is already using a suitable hosting platform, like GPU-enabled compute clusters in Databricks, for example. In that case, it might be more appropriate to stay on that platform.
+For more information, see:
 
-> [!NOTE]
-> Don't build a full EDA platform unless you need to. GPU-optimized compute is expensive and isn't appropriate if your use case doesn't require it.
+- [Azure Virtual Machines high availability for SAP NetWeaver](/azure/virtual-machines/workloads/sap/sap-high-availability-guide-start)
+- [SAP HANA high availability for Azure virtual machines](/azure/virtual-machines/workloads/sap/sap-hana-availability-overview)
+- [SAP workload configurations with Azure Availability Zones]( /azure/virtual-machines/workloads/sap/sap-ha-availability-zones)
 
-## Considerations for the model training and fine-tuning platform
+## Improve compute performance efficiency
 
-When you move to model training and fine-tuning, you'll probably need high-performance GPU-optimized compute for the compute-intensive work that's required by those activities. Reliability typically isn't as important as performance because most of this work occurs behind the scenes. If high reliability is a requirement, evaluate whether spreading the workload across availability zones or regions is necessary. High reliability becomes more important when model freshness is updated frequently, which requires training to be completed on a tighter schedule. Your [RTO](../reliability/metrics.md#define-recovery-metrics) should determine the reliability design that you choose.
+*Impact: Performance efficiency*
 
-The guidance in this section applies to both model training and fine-tuning. Unless you're forced to use separate platforms for these functions, you should use a single platform.
+Compute is the core that powers an SAP application. Compute includes the hardware, number of cores, and memory. These features are foundational to organizations. If you don’t optimize your compute configuration, an SAP workload will be unable to meet spikes in user demand or stay withing predefined budgets. It’s important to know the demands on your workload and match those demands with the compute you use for your SAP workload. Here are some compute performance considerations.
 
-### Functional requirements
+**Conduct reference sizing for on-premises workload.** Reference sizing is the process of checking the configurations and resource utilization data of an SAP workload on-premises. Reference sizing data shows the current compute needs of the workload, and these needs should be matched in Azure. To find this information, use the SAP OS Collector. SAP OS Collector retrieves system utilization information that can be reported via SAP transaction OS07N and the EarlyWatch Alert. Any system performance and statistics gathering tools can collect similar information.
 
-When you evaluate platforms for model training and fine-tuning, consider the following questions:
-
-- **Does the platform support transient usage?**
-
-   Like EDA activities, model training and fine-tuning are typically not run full-time, so you should use a platform that can be stopped when it's not in use to help control costs. Unlike EDA, however, model training is typically a batch process, so the compute is only needed when the batch runs and can be shut down until the next run.
-
-- **Does the platform provide orchestration?**
-
-   Because of the complexity required in managing the compute for model training and fine-tuning, we recommend an orchestrator.
-
-- **Can existing technologies in your environment be part of the solution?**
-
-   If your existing data platform has machine learning capabilities, like [Azure Databricks](/azure/databricks/machine-learning/) does, you can use it for certain steps, like data transformation and feature engineering, training, fine-tuning, and other steps in Machine Learning. Combining technologies can help you minimize the cost and complexity involved in using a data platform for functions it might not be ideally suited for.
-
-### Nonfunctional requirements
-  
-Consider this question as well:
-
-- **What's the tolerable tradeoff between cost and performance?**
-
-   Given the high-performance, GPU-optimized compute requirements, ensure that you test and benchmark your training and fine-tuning extensively to determine the ideal SKU that balances performance against costs.
-
-### Tools
-
-We recommend Azure Machine Learning for the model training and fine-tuning platform because it provides orchestration functionality with support for batch compute. There are two compute options to evaluate:
-
-- [Serverless compute](/azure/machine-learning/how-to-use-serverless-compute) is ideal for short, infrequent runs that can tolerate noisy neighbor effects. You can choose either standard pricing or spot pricing. Spot pricing is only recommended for highly interruptible training. Don't use serverless compute for full-time operations. The costs can escalate quickly.
-- [Compute clusters](/azure/machine-learning/how-to-create-attach-compute-cluster#what-is-a-compute-cluster) give you significant control over available hardware and are tuned for parallel or distributed training.
-
-> [!NOTE]
-> For foundation models, your choice of model hosting platform might limit your fine-tuning options. For example, using Azure OpenAI Service for model hosting limits your fine-tuning options to the built in Azure OpenAI fine-tuning functionality.
-
-## Considerations for the model hosting and inferencing platform
-
-Model hosting and inferencing functions make up the serve layer of the AI workload. These functions are performed with endpoints that are specific to the software that you use. Model-serving software solutions, like NVIDIA Triton, TorchServe, and TensorFlow Serving, are essentially Python SDKs that front a model with an API and add functionality that's specific to the solution. You can choose your hosting platform based on your choice of software or choose your software based on your choice of hosting platform.
-
-When you use SaaS or PaaS solutions with prepackaged models, like the large language models that are available in Azure OpenAI, you have few or no opportunities to select a serving software. Instead, the service that you're consuming provides an API. This reduces flexibility in the process for creating a model deployment, which can provide advantages and disadvantages. For example, it can streamline the development process of your workload. On the other hand, it reduces flexibility in how your application can call and interact with the model.
-
-Fundamentally, the APIs for the serve layer are microservices, so you should follow the same practices for these APIs that you follow for other microservices in your environment. They should be containerized, [bulkheaded](/azure/architecture/patterns/bulkhead) from other services, and have their own lifecycles that are independent of other services and APIs. Keep in mind, however, that serve layer APIs generally require significantly more GPU-based compute power and larger container images than traditional APIs.
-
-This section provides guidance on capabilities to consider when you select a model hosting and inferencing platform.
-
-### Functional requirements
-
-When you evaluate platforms for model hosting and inferencing, consider these questions:
-
-- **Does your workload require batch or online inferencing?**
-
-   The inferencing endpoints are used either for batch or online inferencing processes, and the inferencing method helps determine the right hosting platform. Batch inferencing is best hosted on a platform that supports transient usage and allows the compute to be shut down when it's not being used. Online inferencing is best hosted on a platform that supports elastic compute utilization, which scales automatically based on the load at any given time.
-
-- **Does the platform support traceability?**
-
-   Traceability is critical for maintaining the integrity of the models used in your workload. It's important to know information about the model, like the current version, who deployed it, when it was deployed, and the model's data lineage.
-
-   Apply meaningful tags to images in your container registry to ensure that your model hosting service pulls a specific version that the team can easily identify. This approach helps with data governance by reducing the risk of outdated or incorrect models being used in production.
-
-- **Will your hosting platform be a centralized resource?**
-
-   Many organizations use a centralized model hosting platform that's used by different teams for their own workloads. If your hosting platform is centralized, you should consider whether you need support for chargeback. This functionality allows you to track platform utilization by team and workload.
-
-### Nonfunctional requirements
-
-Consider these questions as well:
-
-- **What are the reliability requirements for the platform?**
-
-   Serve layer APIs are production resources, so you should apply the same reliability requirements to them that you apply to other workload flows that match their [criticality](/azure/well-architected/reliability/identify-flows) rating. If their criticality requires high availability, your hosting platform should support availability zones or a multiregion design.
-
-- **What networking controls are required for the platform?**
-
-   Determine whether you need private networking or an egress firewall to provide protection for the platform.
-
-- **What are the identity and access security requirements for the platform?**
-
-   Determine the identity and access controls that are required for your endpoints. Consider whether you need native role-based access control (RBAC) or built-in support for your identity and access platform, for example, Microsoft Entra ID.
-
-- **What monitoring capabilities does the platform support?**
-
-   Determine the required monitoring capabilities for your endpoints. Depending on the platform, you might have limited access to logs and metrics, which might limit your ability to audit activities or detect malfunctions.
-
-- **What are the performance requirements for the platform?**
-
-   Inference latency is a common concern, and different platforms have different performance profiles. Serverless and PaaS services that use a utility model can be affected by the noisy neighbor problem and often have no throughput guarantees. On the other hand, the same platforms might offer a self-hosted option that provides guaranteed throughput with a pre-purchasing model. You can also consider self-hosting on Kubernetes for more predictable latency behavior.
-
-   Be aware of service limits and quotas that might affect your performance, like those for [Azure OpenAI](/azure/ai-services/openai/quotas-limits). Often these quotas and limits are aggressively set to meet capacity demands, so if your choice of platform doesn't provide the performance that you require, you might need to adopt strategies to spread the compute demand across instances.
-
-   Advanced architectures can combine multiple deployments to achieve fixed throughput for the bulk of the workload and bursting capabilities for a more flexible compute.
-
-### Tools 
-
-#### Batch inferencing
-
-- If you're performing inferencing on data that resides in a platform that supports model hosting, like Databricks, consider using that platform for inferencing. Be sure to isolate the inferencing compute from other functions performed by the data platform.
-
-- We recommend [Azure OpenAI Batch API](/azure/ai-services/openai/how-to/batch) for foundation models.
-
-- For non-foundation models, consider these recommendations:
-
-  - Consider using [Azure Machine Learning batch endpoints](/azure/machine-learning/how-to-mlflow-batch) for the following scenarios:
-
-     - You need to perform inferencing on a large dataset that's distributed in multiple files and you don't require low latency.
-
-     - You need to perform long-running batch operations over large datasets and can take advantage of parallelization.
-
-     - You need to deploy pipeline components for batch processing.
-
-  - If you need to run Spark jobs for distributed data processing, consider using [Azure Synapse Analytics](/azure/synapse-analytics/), [Databricks](/azure/databricks/), or [Machine Learning serverless Spark compute](/azure/machine-learning/apache-spark-azure-ml-concepts).
-
-  - If none of these scenarios apply, we recommend Machine Learning batch endpoints.
-
-#### Online inferencing
-
-- Evaluate platform PaaS and serverless solutions as a first step. These services are typically the easiest to adopt and manage because they simplify your design and minimize operational burden. For example, Azure OpenAI is a good choice for foundation models.
-
-   - Consider using the Azure Machine Learning Serverless API to aggregate endpoint access even if you use Azure OpenAI or another foundation model hosting solution.
-
-- Consider Machine Learning with managed compute clusters when PaaS or serverless solutions aren't the best fit. Compute that's managed by Machine Learning supports traffic splitting and mirroring for A/B testing, debugging, and robust auditing. Because the compute is managed by the service, Day-2 operations are easier when you self-host your model. Managed compute also offers a wide selection of compute configurations and scaling capabilities.
-
-- If you choose to self-host your model on an Azure Kubernetes Service (AKS) cluster that's [attached to Machine Learning](/azure/machine-learning/how-to-attach-kubernetes-anywhere) or another container-based platform, be sure that the node pool is isolated from other APIs or any other workloads on the cluster to achieve predictable performance and to optimize security. Avoid using GPU-based or GPU-optimized compute for anything other than your AI workload functions to reduce costs. Instead, establish your performance baseline through testing and right-size your compute to meet your performance requirements without over-provisioning.
-
-- You can also self-host your model by using infrastructure as a service (IaaS) solutions, like [Azure Data Science Virtual Machine](/azure/machine-learning/data-science-virtual-machine/overview).
-
-## Considerations for the orchestration platform
-
-Orchestration, in the context of AI workload application platforms, refers to tools like prompt flow in [Machine Learning](/azure/machine-learning/prompt-flow/overview-what-is-prompt-flow) and [Microsoft Foundry portal](/azure/ai-studio/how-to/prompt-flow). These tools are designed to streamline the entire development cycle of AI applications by automating many common workflow functions.
-
-### Nonfunctional requirements
-
-As with all other production workloads in your cloud estate, when you evaluate orchestration tools, you need to consider:
-
-- **Reliability, security, and monitoring.** Orchestration tools should adhere to reliability, security, and monitoring standards for production workloads.
-
-- **Performance.** Orchestration tools don't require GPU-optimized or GPU-based compute, consider general-purpose SKUs.
-
-- **Cost optimization.** Orchestration tools are *always-on*, consider elastic compute options to minimize utilization costs.
-
-### Tools
-
-- Prefer an off-the-shelf solution like prompt flow. Determine whether its capabilities match your orchestration needs before you look into custom hosting with tools like LangChain or Semantic Kernel.
-
-- Host endpoints for solutions like prompt flow on Machine Learning with compute instances or on AKS with self-hosting.
+**Use SAP Quick Sizer for a new workload.** SAP Quick Sizer is a free web-based tool developed by SAP that translates business requirements into technical requirements. Use this tool when you build a new SAP workload to find the Azure VM with the correct network and storage throughput. For more information, see [SAP quick sizer]( https://service.sap.com/quicksizer).
 
 ## Next steps
 
 > [!div class="nextstepaction"]
-> [Design area: Training data design](./training-data-design.md)
+> [Application design](./application-design.md)
+
+> [!div class="nextstepaction"]
+> [Data platform](./data-platform.md)
+
+> [!div class="nextstepaction"]
+> [Networking and connectivity](./networking-and-connectivity.md)
+
+> [!div class="nextstepaction"]
+> [Security](./security.md)
+
+> [!div class="nextstepaction"]
+> [Operational procedures](./operational-procedures.md)

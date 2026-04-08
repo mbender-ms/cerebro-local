@@ -1,114 +1,197 @@
 ---
-title: AI Workload Operations on Azure
-description: Learn about AI workload operations on Azure and how to build operational mechanisms and practices to better support AI workloads.
-author: claytonsiemens77
-ms.author: csiemens
-ms.date: 11/15/2024
+title: Operations considerations for Azure VMware Solution workloads
+description: Examine Azure VMware Solution operational procedures. See how to use tools and practices like tagging and incident management to efficiently operate workloads.
+author: PageWriter-MSFT
+ms.author: prwilk
+ms.date: 08/10/2023
 ms.topic: concept-article
-ms.update-cycle: 180-days  
+ms.service: azure-waf
+ms.subservice: waf-workload-azure-vmware
 ---
 
-# AI workload operations on Azure
+# Operations considerations for Azure VMware Solution workloads
 
-When you build and transition your AI workloads to production, it's important that your operations teams are fully equipped to support these workloads like they would any other production workload. Because your operations teams might have limited experience with AI technologies, it's essential to train them on these technologies and integrate the AI workloads into their workflows early in the process. Bring operations and data teams together early in the development of the AI workload to foster mutual understanding of each team's processes. This early collaboration is crucial because both teams need to work closely to support the AI workload effectively. Data teams depend on operations teams to provide reliable health signals and actionable alerts. Operations teams depend on data teams to help diagnose potential problems and resolve actual problems according to operational standards. This partnership helps ensure smooth and efficient system performance.
+This article discusses the operations design area for Azure VMware Solution. The aim of this article is to build an operating model for Azure VMware Solution and the applications within the VMware software-defined datacenter (SDDC). Standard operating procedures (SOPs) are documented processes for managing a workload. Each Azure VMware Solution workload should have SOPs to govern operations. To stay aligned with business objectives and to help prevent drift from best practices, use SOPs in a continuous cycle of assessment and health checks that you run on your Azure VMware Solution workload.
 
-This guide provides recommendations for how to develop operational mechanisms and practices to improve support for AI workloads. It emphasizes efficient collaboration between operations and data teams.
+## Track application dependencies
 
-## Recommendations
+*Impact: Operational excellence*
 
-Here's the summary of recommendations provided in this article.
+IT teams continuously look to optimize the deployment, management, and maintenance of applications, sites, and services. This practice helps to ensure high performance, reliability, scalability, and security. Optimizing involves understanding how applications flow inside the Azure VMware Solution platform. It also involves examining external dependencies and relationships that are outside the private cloud. A dependency map is a valuable tool for developers, application architects, and IT teams as they seek to understand the structure and behavior of applications. Having insight into application components such as software and infrastructure, services, and external dependencies provides a visual way to understand data flows, functionality, and API calls.
 
-|Recommendation|Description|
-|---|---|
-|**Monitor all aspects of your workload**. | While many general monitoring and observability concerns also apply to AI workloads, there are specific considerations that you need to work through to ensure that the whole of your workload is appropriately monitored at all times. To build your monitoring and observability strategy, you might need to work across different teams to get the right expertise and cover all relevant modes and metrics.<br><br>&#9642; [Extend the observability platform](#extend-the-observability-platform)|
-|**Apply safe deployment practices to your AI workload**. | Take steps to ensure the highest level of safety around sensitive production data and align deployment approaches with zero-downtime requirements. Use the appropriate tools where necessary, and put an emphasis on not reinventing tools and processes that already exist. Often you'll be able to use established services to achieve a high level of efficiency while also enabling safe deployments. <br><br>&#9642; [Include AI workload components in your safe deployment practices](#include-ai-workload-components-in-your-safe-deployment-practices)|
-|**Embrace DevOps practices on testing and automation**. | Apply DevOps practices when building, deploying, and operating your AI workload in production. Your workload should allow for observability and testing with real user input in production. This can only be provided in a safe manner if a strong DevOps process and streamlined automation allow for swift deployments, error correction, and A/B testing. <br><br>&#9642; [Support testing in production](#support-testing-in-production)<br>&#9642; [Automate operational practices when possible](#automate-operational-practices-when-possible)<br>&#9642; [Embrace DevOps practices](#embrace-devops-practices)|
-|**Document your progress**. | Build good documentation habits from the start to allow the capturing of strategic decisions, change history, and key information about the data that your workload uses. <br><br>&#9642; [Adopt good documentation practices](#adopt-good-documentation-practices)|
+##### Recommendations
 
-## Extend the observability platform
+- Use Application Insights to track dependencies such as databases, API calls, and external services.
+- Use the service map feature of Azure Monitor to automatically discover and visualize different application and infrastructure components.
+- Use third-party tools like New Relic and Datadog to discover and map dependencies.
+- Use custom scripts or third-party configuration management tools that track the automation and deployment of dependencies.
 
-To achieve operational excellence, robust observability is essential. When your organization adopts AI technologies, it's crucial that you enhance your observability platform to help ensure comprehensive monitoring of workload health. Organizations new to AI might lack big data, data science, and DataOps expertise within their operations team. Therefore, training on the operational best practices is an important first step to improve your observability platform. For this reason, operations and data teams should collaborate to determine the correct modes of monitoring and metrics to capture and analyze.
+## Use automation, version control systems, and blue-green deployments
 
-To evaluate the health of a model, a comprehensive overview of its specific quality metrics is required. Quality measurements typically include metrics such as model freshness, output correctness, and response latency. However, you should collaborate with data scientists and engineers to establish the specific metrics that define your workload's quality. The nondeterministic nature of AI workloads makes vigilant monitoring of quality especially important because those measurements can change unexpectedly at any time after deployment. Recommendations for observability include:
+*Impact: Operational excellence*
 
-- Work with data scientists and engineers to determine quality metrics.
+Organizations can decrease time to market and benefit from improved collaboration and software quality by adopting DevOps practices. For example, automation can expedite the deployment and maintenance of applications.
 
-- Build or extend dashboards to assess the overall health of the workload. This approach should include component availability metrics and quality metrics.
+When you use infrastructure as code (IaC) to organize infrastructure deployments, you can benefit from improved efficiency in your infrastructure provisioning. IaC can also facilitate the adoption of DevOps principles in infrastructure management.
 
-- Implement well-designed availability and quality alerts that the operations teams can understand and take action on.
+- You can use IaC to create several resources in Azure VMware Solution. Examples include the entire private cloud or individual components like clusters, network appliances, and storage. Tools such as Azure Resource Manager, Bicep, Terraform, the Azure CLI, and PowerShell automate the provisioning and configuration of resources in Azure VMware Solution.
+- When you use IaC, you can update your infrastructure by modifying code. This approach reduces the time and effort that are required for manual configuration and provisioning.
+- The output that's returned from deploying IaC can serve as documentation to help maintain and provide extra visibility into the state and configuration of provisioned resources.
 
-- Codify standard operating procedures that define how operations teams respond to quality alerts, like working with data teams to investigate and remediate potential malfunctions.
+Version control systems provide a way for you to manage your code and use versioning to track and roll back changes as needed.
 
-- Pay close attention to utilization metrics because it can be cost-intensive to run AI workloads. Costs can grow quickly if the workload team doesn't shut down, scale down, or deallocate resources when they're not in use. Operations can help ensure that costs remain within expected parameters by monitoring utilization.
+When you need to update application code across servers, blue-green deployments can be helpful in many ways:
 
-## Include AI workload components in your safe deployment practices
+- They aid in managing the lifecycle of an application from development to production.
+- They help give customers a consistent web experience when updates and patches are being applied.
+- They use weighted algorithms to distribute traffic only to healthy servers during maintenance.
 
-AI workloads depend on production data, which often includes sensitive information. Therefore, it's important to maintain the highest level of safety around these workloads. To help protect your data, extend your [safe deployment practices](../operational-excellence/safe-deployments.md) to include all of the code that's related to your workload's AI components. If you have zero-downtime requirements for your workload, design your deployment approach for the AI components accordingly.
+Azure VMware Solution doesn't offer methods that a cloud-native application offers for achieving blue-green deployments. But these deployments are still possible in Azure VMware Solution:
 
-- For inferencing endpoints, use blue-green or canary deployments with or without traffic mirroring, depending on your deployment model.
+- Before you make changes to your application configuration, take snapshots of your environment.
+- Use version control to ensure that you can return to a last-known good state.
+- Consider creating a staging environment that mirrors production and deploys updates before you go live.
+- From the staging environment, perform rolling updates to a subset of servers and test your application.
 
-- For index serving, use a side-by-side deployment model with alias updates to cut traffic over.
+You can reduce manual effort, minimize errors, and improve resource usage by automating routine tasks like provisioning, scaling, and patching. DevOps methodologies are an important element of a well-architected solution for streamlining operations, saving time, and helping teams focus on value-added activities.
 
-- For orchestration code, use feature flags or blue-green deployments.
+##### Recommendations
 
-Depending on your application, data platform, and specific network topology, you might need to use a gateway solution, like [Azure Application Gateway](/azure/application-gateway/overview) or [Azure Front Door](/azure/frontdoor/front-door-overview).
+- Use IaC to deploy and provision infrastructure in a way that's repeatable, auditable, and consistent.
+- Automate expansion and contraction by using IaC.
+- Use version control systems to track changes, collaborate, and roll back code to previous versions as needed.
+- Take advantage of the blue-green concept by creating a staging environment that mirrors production and test environments before you go live.
+- Maintain the last good state of your application by using snapshots, cloning your disks, and having version-controlled code.
 
-### Tools
+## Define roles and processes
 
-Azure Machine Learning supports [blue-green deployments](/azure/machine-learning/how-to-safely-rollout-online-endpoints) natively with built-in traffic splitting.
+*Impact: Operational excellence*
 
-### Don't reinvent the wheel
+Well-defined roles and responsibilities help ensure clarity, accountability, and effective management of a well-architected Azure VMware Solution workload. Having a defined set of standards and structured processes and knowing who runs them leads to efficient operations and helps IT organizations align their technical offerings with business objectives and strategies. As the Azure VMware Solution environment grows and evolves, well-defined roles and responsibilities lead to easier task delegation and the potential to scale the solution without disruption. The result is a better experience for the application's users.
 
-Because online inferencing endpoints are essentially microservices, they operate as fully self-contained workload components with their own data and code that serve a specific function in the workflow. For this reason, treat online inferencing endpoints like other critical microservices that have their own life cycles. You can update online inferencing endpoints individually. However, like other microservices in a larger workload, they must work together seamlessly. Therefore, you should prioritize integration testing when you deploy updates. Make sure that your deployments don't negatively affect other services, like model serving and the orchestrator. Alternatively, batch inferencing endpoints are often closely coupled with the job processing compute, and are included in the data pipeline. In these cases, treat them as part of a larger solution instead of as microservices.
+It's important to have a culture of continual improvement that focuses on efficient day-to-day operations for applications in the private cloud. Examples of operations include maintaining service-level agreements (SLAs), maintaining availability, having the capacity to minimize service disruptions, and having a smooth delivery. For instance, Azure VMware Solution makes it possible to expand an environment with minimal user input. If you manually expand your contract, you should document who performs the associated activities and how to carry them out. Azure VMware Solution operators should ensure node reservation is available for expanding the environment as needed. For example, designate individuals who are responsible for identifying underutilized or idle resources. Provide those individuals with a process for right-sizing virtual machines (VMs) to reduce unnecessary costs.
 
-## Support testing in production
+Application teams and developers should define coding guidelines for code structure, exceptions, and error handling. You should also have methods for tracking changes, such as regular code reviews, API documentation, and regular code refactoring. When you use version control, enforce best practices such as branching, commit messages, and approval workflows. These practices can help make your code consistent, easy to debug, and maintainable.
 
-The operations teams will likely not design or perform [AI workload testing](./test.md). However, they must support AI workload testing through monitoring, alerting, and investigation because testing is needed in production. Because of AI's nondeterministic nature, testing in production is necessary to help ensure that the workload is performing as expected over time. The operations team should partner closely with the workload team to capture and diagnose abnormal test results efficiently and according to operational standards. To ensure that operations can support testing and that workload teams can perform testing, both teams need to align on their processes to work together. Training on testing activities in nonproduction environments helps familiarize the team with the order of operations.
+##### Recommendations
 
-## Automate operational practices when possible
+- Work with the cloud center of excellence (CCoE) team to understand the standards and guidelines for compliance, security, application architecture, and operational processes.
+- Have a security and compliance team focus on security policies that are specific to Azure VMware Solution. Also have the team perform risk assessments and ensure compliance with regulatory requirements.
+- Adopt a framework such as the Information Technology Infrastructure Library (ITIL). Or use International Organization for Standardization (ISO) practices to map day-to-day operations, processes, and activities. These practices can result in faster knowledge transfers, continuous improvements, and improved change management.
+- Define coding standards and implement security practices during application development.
+- Ensure that key service components such as HCX Manager are protected before undertaking critical activities or starting maintenance activity. Use [Run command to take HCX Manager snapshot](/azure/azure-vmware/use-hcx-run-commands#take-a-snapshot-of-vmware-hcx-cloud-manager). Snapshots are retained for 72 hours and can be restored by creating a support ticket with Microsoft.
 
-Automate all workload-related operational practices, including monitoring, alerting, and testing processes. Automation is a primary strategy to keep processes repeatable, efficient, and consistent. When you design your automation strategies, require human oversight for activities, such as properly diagnosing model inconsistencies and other quality signals. This is particularly true of initial releases. Processes that are related to maintaining the model are new for the operations teams, so the risk of improper responses to quality signals is higher at this stage. As your workload matures, you might be able to use automation to identify false alarms with well-designed quality gates, but getting to that point can be a long and complex process.
+## Use tagging strategies and best practices
 
-When possible, reuse existing automation tools to perform new automation tasks for your AI workload. For example, if you already use Azure Pipelines or GitHub Workflows, continue to use them for deploying orchestration code instead of using a separate tool. However, avoid over-engineering in an effort to only use one automation tool. If certain tasks or jobs aren't well-suited to your chosen tool, choose a more appropriate tool instead of building a custom solution that adds unnecessary complexity.
+*Impact: Operational excellence*
 
-> [!NOTE]
-> To fully support the workload, many intersecting roles and technologies are required. Data, infrastructure, security, and operations teams all depend on automation to some extent. Use the fewest possible tools and standardize them to help keep the automation strategy manageable and easier to train on.
+You can use a tagging strategy for chargeback and resource tracking. Tags are key-pair values that you define at the resource level and apply during provisioning. You can use IaC to create, update, and destroy guest VMs. Tags and IaC work together with configuration management tools. You can use tags in the following areas:
 
-## Embrace DevOps practices
+- Environments. You can apply tags like *production*, *QA*, or *dev test* to identify resources.
+- Cost centers, for tracking resource costs and expenses.
+- SLAs, to prioritize SLA requirements of resources.
+- Lifecycles. You can label applications as *active*, *archived*, or *retired*.
+- Criticality, by labeling resources based on their business impact and significance.
 
-Early in your workload development, standardize the use of [DevOps practices](/devops/what-is-devops#implement-devops-practices) in your development processes. For all environments besides sandbox environments, strictly defined and enforced standards should govern the entire development life cycle. Enforce these standards by strictly prohibiting any manual deployment activities. All deployments, whether they're updates, patches, or new resource deployments, must be done through a continuous integration and continuous deployment pipeline that adheres to [safe deployment practices](../operational-excellence/safe-deployments.md). Good DevOps hygiene practices should include:
+As part of your governance and compliance strategy, a group should be responsible for identifying resources without tags. That group can combine automation, auditing, and processes to help identify and remediate resources that don't meet tagging compliance policies.
 
-- **[Version control](/devops/what-is-devops#version-control):** Use version control for all code assets as much as possible. Version control is a cornerstone tenet of DevOps and good change management practices and is vital for smooth collaboration. Apply version control to library packages, including SDKs and container images. Be consistent in using a specific version of library packages across the software development life cycle (SDLC). Different versions of libraries like XGBoost or scikit-learn in various development environments can cause variations in your workload's behavior. The same is true for model versioning. Ensure that model versions are consistent across the SDLC so that you don't test one version of the model in a preproduction environment and release a different version in production.
+These tagging considerations are general. It's important that your tagging strategy supports effective resource categorization, resource lifecycle management, and reporting within Azure VMware Solution.
 
-- **Simple version naming scheme:** Use a simple version naming scheme to help ensure that you always use the most recently approved version of a given asset. AI-specific assets can include:
+##### Recommendations
 
-  - Notebook code.
-  - Orchestrator code.
-  - Data processing job code.
-  - Machine Learning job code.
-  - The model.
-  
-- **Tools that you can operationalize:** Some tools are great for experimentation but aren't designed for operationalization. This limitation can make it difficult or impossible to integrate them into your operational automation. For example, notebooks are a good tool for experimentation and exploratory data analysis work, but they aren't a good tool for production pipeline development work. When you complete your experimentation, pull the logic out of those tools and put it into a Python package that you can use for your job code.
+- Apply tags for resource management by using an organizational taxonomy to identify workloads and infrastructure. The taxonomy should include the host, business, owner, and environment.
+- Use appropriate tooling to maintain and apply tags programmatically during provisioning.
+- Use tags that align with your organization's compliance and governance initiatives, such as SLAs, chargeback policies, and lifecycle management practices.
+- Have processes in place to identify and remedy resources that don't adhere to tagging requirements.
 
-## Adopt good documentation practices
+## Establish incident response teams
 
-Good documentation habits are important for all types of workloads. The complexity of AI workloads makes those habits even more important. Ensure that you have a repository that's specific to your workload team where documentation is securely stored and version controlled. Like with other workloads, you should document standard information. This standard information includes all of the tools that are used in the workload, security configurations, network designs, and setup guides. Consider documenting the following AI-specific workload information:
+*Impact: Operational excellence*
 
-- **Model training and grounding data index management information:** Document data sources, the owner of data sources, refresh frequency, and bias elimination processes to establish how to train the model and how to handle grounding data.
+To track workload status in a private cloud, it's essential to monitor metrics such as CPU usage, operating system logs, and security alerts. To ensure the effectiveness of your alerting system, you need to evaluate several key operational aspects. Specifically, check that:
 
-- **History of the training process:** Detail how you arrived at the current approved configuration by documenting why you chose specific hyperparameters, temperatures, weights, and other parameters. Include what other configurations you tested and the behavioral changes you observed throughout the training process. This information helps prevent the repetition of unsuccessful or inefficient configurations.
+- All critical components are identified, such as databases, network devices, and storage.
+- Thresholds are set appropriately.
+- Alerts are specific and actionable.
+- The right people receive alerts.
+- There isn't a substantial amount of noise and false positives.
+- Adequate escalation procedures are in place.
 
-- **Feature store information:** Document which features have the best predictive power and how you made that determination.
+Before an incident or outage, it's crucial to establish a well-defined notification process to ensure timely communication. Identifying the relevant personnel responsible for resolution is vital. A dedicated remediation team can include operations personnel, application owners, and DevOps experts who possess the expertise that's needed to resolve issues quickly. The operations team must be aware of the appropriate individuals to involve in triaging each problem.
 
-- **Data scientist workstation configuration:** Document workstation configurations thoroughly to streamline the onboarding process for data scientists. Specify the necessary libraries and dependencies that are required to use conda environments.
+An incident response team can effectively coordinate responses by maintaining a comprehensive distribution list. This list should include key stakeholders from business-critical departments and designated escalation contacts. Business stakeholders must be informed of any potential impact on operations that result from an incident. The assigned escalation contacts should be individuals who are capable of making decisions or escalating issues to higher levels for guidance.
 
-- **Data transformation information:** Document the entire process from start to finish when data transformation occurs. Document how the data appears at ingestion and how it's presented after the transformation.
+Regularly reviewing the distribution list is essential to ensure its accuracy and alignment with current roles and responsibilities. Reviews ensure that key stakeholders are promptly informed about significant events that occur in Azure VMware Solution.
 
-### Tools
+An IT service management (ITSM) solution can map events to tasks. For example, an Azure native ITSM might use Azure DevOps to manage tasks. It might use Azure Automation for automating IT processes and Azure Logic Apps for building workflows. The result is a customized solution for problem management in Azure VMware Solution.  
 
-Take advantage of automated configuration and history capturing through MLFlow and Machine Learning.
+##### Recommendations
+
+- Define the appropriate recipients for Azure VMware Solution alerts and incidents.
+- Clearly define escalation contacts who should be reachable and authorized to make decisions or escalate issues.
+- Identify key business stakeholders or representatives to ensure visibility into any potential impact and to provide guidance.
+- Have a remediation team in place that consists of administrators, infrastructure engineers, and personnel who have the expertise that's needed to address and resolve issues.
+- Integrate alerts with an ITSM like Azure DevOps, JIRA, or ServiceNow.
+
+## Document procedures
+
+*Impact: Reliability*
+
+It's important to have a clear understanding of the backup and recovery infrastructure that exists in your environment. To configure a backup solution, you first need to define backup targets for your infrastructure. You should back up your applications, databases, and assets in blob storage or an Azure backup vault. You should also designate owners who are responsible for backing up and restoring your application.
+
+##### Recommendations
+
+- Clearly document your backup and recovery infrastructure.
+- Clearly document your backup and recovery procedures.
+
+## Implement backup and restore solutions
+
+*Impact: Reliability*
+
+The private cloud should protect against data loss, minimize downtime, and maintain the continuity of operations when there are unexpected disruptions or disasters.
+
+For business continuity, you need to implement robust data protection to help ensure the availability, integrity, and recoverability of your VMs and the critical data within the Azure VMware Solution environment. The backup tools need to be in place, and you must also confirm that they work. A key principle of Azure VMware Solution is to provide independent software vendor (ISV) technology support that's validated with Azure VMware Solution. Understanding the partners and options that are available to you is critical to your backup success.
+
+##### Recommendations
+
+- Use backup solutions that Microsoft supports, such as Microsoft Azure Backup Server, or approved third-party vendors.
+
+>[!Caution]
+>Make sure the VMs in your backup environment are running OSs that have supportability. [Learn about the supported OSs](/azure/virtual-machines/enable-nvme-interface).
+
+## Use Azure Site Recovery
+
+*Impact: Reliability*
+
+Azure Site Recovery is a disaster recovery solution that's designed to minimize downtime of the VMs in an Azure VMware Solution environment when there's a disaster. Azure Site Recovery automates and orchestrates failover and failback. Built-in nondisruptive testing helps ensure your recovery time objectives (RTOs) are met. Azure Site Recovery simplifies management through automation and helps ensure fast and highly predictable recovery times.
+
+##### Recommendations
+
+- In a prolonged regional outage, protect your workloads by replicating them to an alternate Azure region.
+- Configure Azure Site Recovery to send backups to an alternate region.
+
+## Rotate secrets
+
+*Impact: Security*
+
+It's more challenging for attackers to access or misuse encrypted data if they don't have access to encryption keys. You should securely store keys, secrets, and certificates, and you should rotate them frequently. Comprehensive steps for securing and maintaining data integrity include:
+
+- Encrypting data.
+- Storing keys securely.
+- Encrypting data at the application level before you transmit data.
+
+##### Recommendations
+
+- Use Azure Key Vault to store encryption keys.
 
 ## Next steps
 
+Now that you've looked at operational management procedures, see how to integrate an Azure VMware Solution workload with Azure landing zones.
+
 > [!div class="nextstepaction"]
-> [Design area: Testing and evaluation](./test.md)
+> [Landing zone integration](./landing-zone-integration.md)
+
+Use the assessment tool to evaluate your design choices.
+
+> [!div class="nextstepaction"]
+> [Assessment](./assessment.md)

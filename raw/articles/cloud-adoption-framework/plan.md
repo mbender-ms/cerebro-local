@@ -1,90 +1,106 @@
 ---
-title: Develop a plan for cloud-scale analytics
-description: Understand how to build a plan for cloud-scale analytics in Azure.
-author: stephen-sumner
+title: Plan for a Secure Cloud Adoption
+description: Learn how to adopt security best practices in your cloud adoption plan to help ensure a secure and compliant cloud environment.
+author: claytonsiemens77
 ms.author: pnp
-ms.date: 11/27/2024
+ms.date: 10/23/2024
 ms.topic: concept-article
-ms.custom: e2e-data-management, think-tank
+ms.custom: internal, UpdateFrequency2
 ---
 
-# Develop a plan for cloud-scale analytics
+# Plan for a secure cloud adoption
 
-> [!IMPORTANT]
-> **Deprecation notice:** The Cloud‑Scale Analytics scenario has been deprecated and is no longer maintained or supported. To ensure only the best guidance is surfaced, this guidance will be deleted April 2026.
->
-> For current CAF data guidance, see [**Unify your data platform**](https://aka.ms/cafdata).
+Developing a cloud adoption plan can be difficult and often has many technical challenges. You must carefully plan each step of your cloud adoption process, specifically when you update legacy workloads for cloud infrastructure. To build a secure cloud estate from the ground up, you need to integrate security considerations into every phase of your adoption plan. This approach helps ensure that your new cloud environment is secure from the start.
 
-The Cloud Adoption Framework's [Plan methodology](../../plan/index.md) helps you create an overall cloud adoption plan to guide all programs and teams involved in your cloud-based digital transformation. The Plan methodology also provides templates to help you create your backlog and plans to help your teams build necessary skills. The backlog and plans you create should be based on what you plan to do in the cloud.
+When you make decisions about your migration or implementation, design for the highest security strategy stance that's feasible for your business. Prioritize security over performance and cost efficiency when you start your designs. This approach ensures that you don't introduce risks that could require you to redesign workloads later. The guidance provided in this article can help you develop a cloud adoption plan that has security as a fundamental principle.
 
-This article provides further guidance for data estate rationalization and skilling plans that are specific to cloud-scale analytics.
+:::image type="content" source="./media/caf-secure-plan.png" alt-text="Diagram showing the methodologies involved in cloud adoption. The diagram has boxes for each phase: teams and roles, strategy, plan, ready, adopt, govern, and manage. The box for this article is highlighted." lightbox="./media/caf-secure-plan.png" border="false":::
 
-## Data estate rationalization
+This article is a supporting guide to the [Plan](../plan/index.md) methodology. It provides areas of security optimization for you to consider as you move through that phase in your journey.
 
-Using a cloud-scale analytics scenario shifts the primary focus of rationalization to the **data estate**, a subset of the overall digital estate. Your organization must evaluate the data estate more broadly and deeply than other scenarios require. Include plans for the overall analytics and [data governance](./govern.md) needed to support your desired maturity.
+## Plan for landing zone adoption
 
-### Strategic initiatives
+To build out your cloud estate foundational elements, use the [landing zone](../ready/landing-zone/index.md) approach. This recommendation applies specifically to enterprise and large organizations. Smaller organizations and start-ups might not benefit from adopting this approach at the beginning of their cloud journey. However, it's important to understand the [design areas](../ready/landing-zone/design-areas.md) because you need to include these areas in your cloud adoption plan, even if you don't create a full landing zone.
 
-Begin to properly rationalize your data estate by aligning your business outcomes with each of your data initiatives. This alignment allows you to prioritize and clearly understand what value you can derive from each data initiative.
+You can use the Azure landing zone approach to establish a solid foundation for your cloud estate. This foundation helps ensure a manageable environment that you can secure more efficiently according to best practices.
 
-In your cloud migration plan, initiatives with small business impacts and lesser migration complexity can deliver quick efficiency gains. Initiatives with large business impacts or greater technical complexity require more detailed planning, but they can provide long-term innovation value.
+- *Landing Zones:* A landing zone is a preconfigured, enhanced-security, scalable environment in the cloud that serves as a foundation for your workloads. It includes network topology, identity management, security, and governance components.
 
-:::image type="content" source="./images/strategic-initiative.png" alt-text="Diagram of strategic initiatives." lightbox="./images/strategic-initiative.png":::
+- *Benefits:* Landing zones can help you standardize cloud environments. This approach helps ensure consistency and compliance with security policies. Also, they facilitate easier management and scalability.
 
-### Prioritization
+## Security posture modernization
 
-To begin prioritizing data projects, complete an [inventory and benchmark of your data estate](../../plan/discover-existing-workload-inventory.md). You can use tools like Azure Migrate to capture rich benchmarking data from the infrastructure and data assets in your estate. This benchmarking data helps you track progress and measure success. It can also help you quantify the exact investment needed for people, processes, and technology.
+When you develop a security modernization plan, it's essential to focus on adopting new technologies and operational practices. It's equally important that you align these security measures with your business objectives.
 
-A mapping of business impact (from your strategic business outcomes) and technical complexity (from your data estate inventory) can guide your prioritization of data projects. The mapping achieves this prioritization by helping you identify waves of your cloud adoption effort. The waves can guide you as you prioritize data projects. The following table describes these cloud adoption waves in more detail.
+### Plan for Zero Trust adoption
 
-| Wave | Rationalization | Outcomes |
-|------|-----------------|----------|
-|**Migrate & Modernize**| Rehost and refactor | Quick, tactical wins can be included in standard migration projects alongside other applications and infrastructure. Use tools like Azure Migrate to automate this type of one-time cloud migration. This approach allows you to modernize data platforms to Azure SQL Database, Azure Cosmos DB, or other transactional data structures.|
-|**Transform & Modernize**| Rehost and refactor | When business value increases, so can the complexity of data estate management. Some amount of transmission, transformation, and synchronization is likely required to keep on-premises processes running while enabling richer functions in the cloud. Use tools like Azure Data Factory to help with the ongoing transformation after your data asset is migrated and modernized.|
-|**Innovate with confidence**| Rearchitect or rebuild | Achieving high business value requires an ability to innovate with confidence. Use cloud-native data tools to democratize data, analyze information, and predict outcomes.|
+As you develop your adoption plan, incorporate the principles of Zero Trust across your plan to help structure the phases and steps that teams throughout the organization are responsible for and how they can accomplish their activities.
 
-### Workload identification
+The Microsoft Zero Trust approach provides guidance for seven technology pillars, including deployment and configuration recommendations. As you build your plan, explore each pillar to help ensure comprehensive coverage of these areas.
 
-Strategic initiatives are delivered by the workloads that run on top of your data environment. To properly architect workloads, you must first identify the workloads running within your data estate. The identification process can be complex. Data workloads can include one or more data sources. They can also include multiple processes for preparing data, analyzing information, or predicting outcomes.
+#### Zero Trust technology pillars
 
-Use the previously described wave planning approach to simplify workload identification. For each wave, identify the data sources, applications, and infrastructure required to deliver your strategic initiative. Use the Azure Migrate tool to evaluate their dependencies and clearly understand workload groupings.
+- **[Identity](/security/zero-trust/deploy/identity):** Guidance for verifying identities with strong authentication and controlling access under the principle of least privilege.
 
-Transactional data assets are typically associated with an existing application, making workload identification easier.
+- **[Endpoints](/security/zero-trust/deploy/endpoints):** Guidance for securing all endpoints, including devices and apps, that interact with your data. This guidance applies regardless of where the endpoints connect from and how they connect.
 
-Analysis and AI/machine learning solutions can be more complex, requiring a more granular review of the outcomes delivered by each. Associate analysis and AI solutions with the business processes that consume their outputs, often creating an application-level mapping. For cross-application BI, AI, or machine learning solutions, create new workload names to map the data assets to the business processes they impact.
+- **[Data](/security/zero-trust/deploy/data):** Guidance for securing all data by using a defense-in-depth approach.
 
-Workloads identified in the digital estate assessment can be used throughout your adoption to drive business impact classification. Record the derived values using the [naming and tagging standards](/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming) that apply to all Azure cloud adoption efforts.
+- **[Apps](/security/zero-trust/deploy/applications):** Guidance for securing the cloud apps and services that you consume.
 
-Identifying workloads will also help you gain a better understanding of the skills your teams need to be successful.
+- **[Infrastructure](/security/zero-trust/deploy/infrastructure):** Guidance for securing cloud infrastructure through strict policies and enforcement strategies.
 
-## Develop a skilling plan
+- **[Network](/security/zero-trust/deploy/networks):** Guidance for securing your cloud network through segmentation, traffic inspection, and end-to-end encryption.
 
-Developing a skilling plan is part of building your capability to drive your data strategy. It's important to create a clear mapping of your product, services, or tools and your organization's people skills. The following exercise helps you to develop your skilling plan by preparing early and practicing agility.
+- **[Visibility, automation, and orchestration](/security/zero-trust/deploy/visibility-automation-orchestration):** Guidance for operational policies and practices that help enforce Zero Trust principles.
 
-## Prepare your plan with these tips
+### Business alignment
 
-This section provides useful tips for developing your skilling plan.
+Alignment between technology and business stakeholders is critical to the success of your security modernization plan. You must approach plan development as a collaborative process and negotiate with stakeholders to find the best way to adapt processes and policies. Business stakeholders must understand how the modernization plan affects business functions. Technology stakeholders must know where to make concessions to keep critical business functions secure and intact.
 
-### Prepare for potential challenges and roadblocks early
+## Incident preparedness and response
 
-Harnessing the power of data in a secure and compliant manner is a challenge. You can run into various difficulties throughout the process, including:
+- **Plan for preparedness:** Plan for incident preparation by evaluating vulnerability management solutions, threat and incident detection systems, and robust infrastructure monitoring solutions. Plan for infrastructure hardening to reduce attack surfaces.
 
-* Organizational silos dividing your organization
-* Roadblocks in your effort to build a data-driven culture
-* Multiple tools and technologies being in use across your organization
+- **Plan for incident response:** Build a robust incident response plan to help ensure cloud security. In the Plan phase, start drafting your incident response plan by identifying the roles and key phases, such as investigation, mitigation, and communications. You'll add details about these roles and phases as you create your cloud estate. Review the requirements of [Microsoft's Secure Future Initiative (SFI)](/security/zero-trust/sfi/integrate-nist-2-governance) and add them to your assessments.
 
-Time-to-market is one of the most critical factors for any business. Your organization can have an excellent idea and the data to enable it, but challenges and roadblocks can significantly extend your time-to-market. An unexpected challenge might prevent you from gaining insights and business value from your data for weeks or months. It's important for you to prepare for potential challenges and roadblocks early, so you minimize the impact they can have on your time.
+## Plan for confidentiality
 
-### Adopting agile delivery method
+- **Data loss protection:** To establish organizational data confidentiality across the enterprise, meticulously plan specific data loss prevention policies and procedures. This process includes identifying sensitive data, determining how to protect the data, and planning for the deployment of encryption technologies and secure access controls.
 
-Agile is the ability to create and respond to change. It's a way to deal with, and ultimately succeed in, any uncertain and turbulent environment.
+- **Include data protection requirements in your cloud migration or development plans:**
 
-Agility requires you to think through what's going on in your current environment, identify any uncertainties, and plan how to adapt as you go.
+  - *Data classification:* Identify and classify data based on sensitivity and regulatory requirements. This process helps you apply appropriate security measures.
 
-## Next steps
+  - *Encryption:* Ensure that data is encrypted at rest and in transit. Use strong encryption standards to protect sensitive information.
 
-The following articles can guide your cloud adoption journey and help your cloud adoption scenario to succeed:
+  - *Access controls:* Implement strict access controls to help ensure that only authorized users can access sensitive data. Use multifactor authentication and role-based access control. Follow the principle of Zero Trust and verify explicitly, always authenticating and authorizing based on all available data points. These data points include user identity, location, device health, service or workload, data classification, and anomalies.
 
-- [Review your environment for Azure landing zones](./ready.md)
-- [Govern cloud-scale analytics](./govern.md)
-- [Secure cloud-scale analytics](./secure.md)
+## Plan for integrity
+
+In addition to the measures recommended for confidentiality, consider implementing specific data and system integrity measures.
+
+- **Plan for data and system integrity observability and governance:** In your cloud adoption or development plans, include plans to monitor data and systems for unauthorized changes and policies for data hygiene.
+
+- **Plan for integrity incidents:** In your incident response plan, include considerations for integrity. These considerations should address unauthorized changes to data or systems and how to remediate invalid or corrupted data discovered through your monitoring and data hygiene practices.
+
+## Plan for availability
+
+Your cloud adoption plan should address availability by adopting standards for architecture design and operations. These standards guide the implementation and future phases and provide a blueprint for how you can achieve availability requirements. Consider the following recommendations as you build out your cloud adoption plan:
+
+- **Standardize infrastructure and application design patterns:** Standardize infrastructure and application design patterns to help ensure that your workloads are reliable. Avoid unnecessary complexity to make designs repeatable and to discourage shadow IT behaviors. Follow best practices for [highly available infrastructure](/azure/well-architected/reliability/redundancy) and [resilient applications](/azure/well-architected/reliability/self-preservation) as you define your design standards.
+
+- **Standardize development tools and practices:** Develop well-defined and enforceable [standards for your development tools and practices](/azure/well-architected/operational-excellence/formalize-development-practices). This approach helps ensure that your deployments adhere to the principles of the CIA Triad and incorporates best practices for [safe deployments](/azure/well-architected/operational-excellence/safe-deployments).
+
+- **Standardize operational tools and practices:** Depend on well-defined and strictly enforced standards for operators to follow in order to maintain confidentiality, integrity, and availability. Follow standards consistently and train on them routinely so that your systems are resilient to attacks and can respond efficiently to incidents.
+
+## Plan for security sustainment
+
+For the long-term sustainment of your security posture, adopt a mindset of continuous improvement across the organization. This approach includes not only adhering to operational standards in everyday practices but also actively seeking opportunities for enhancement. Regularly review your standards and policies, and implement a training program that fosters a continuous improvement mindset.
+
+In order to plan your security baseline, you must first understand your current security posture to establish your baseline. Use an automated tool like [Microsoft Secure Score](/defender-xdr/microsoft-secure-score-improvement-actions) to establish your baseline quickly and gain insights into areas for improvement.
+
+## Next step
+
+> [!div class="nextstepaction"]
+> [Prepare your secure cloud estate](./ready.md)

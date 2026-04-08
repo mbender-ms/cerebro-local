@@ -1,37 +1,63 @@
 ---
-title: Governance considerations for the Azure API Management landing zone accelerator
-description: Learn about design considerations and recommendations for governance in the Azure API Management landing zone accelerator
+title: Governance considerations for the Azure Integration Services landing zone accelerator
+description: Learn about design considerations and recommendations for governance in the Azure Integration Services landing zone accelerator.
 author: stephen-sumner
-ms.author: pnp
-ms.date: 04/12/2022
+ms.author: jordanbean
+ms.date: 09/12/2025
 ms.topic: concept-article
-ms.custom: internal
 ---
-
-# Governance considerations for the API Management landing zone accelerator
+# Governance considerations for the Azure Integration Services landing zone accelerator
 
 > [!IMPORTANT]
-> **Deprecation notice:** This is deprecated and is no longer being updated. To ensure only the best guidance is surfaced, this article will be deleted in May 2026.
+> **Deprecation notice:** This article is deprecated and is no longer being updated. To ensure only the best guidance is surfaced, this article will be deleted in May 2026.
 >
-> For alternative guidance, see [**Azure API Management landing zone architecture**](/azure/architecture/example-scenario/integration/app-gateway-internal-api-management-function) guidance in the Azure Architecture Center.
+> For alternative guidance, see [**Integration architecture**](/azure/architecture/browse/?filter-products=service&azure_categories=integration) guidance in the Azure Architecture Center.
 >
-> If you would like to save this guidance, you can select **Download a PDF** at the bottom left of this page or download the files from [GitHub](https://github.com/MicrosoftDocs/cloud-adoption-framework/tree/main/docs/scenarios/app-platform/api-management).
+> If you would like to save this guidance, you can select **Download a PDF** at the bottom left of this page or download the files from [GitHub](https://github.com/MicrosoftDocs/cloud-adoption-framework/tree/main/docs/scenarios/app-platform/integration-services).
 
-This article provides design considerations and recommendations for governance when using the API Management landing zone accelerator. Azure governance establishes the tooling needed to support cloud governance, compliance auditing, and automated guardrails.
+Governance involves making sure any policies you have in place are followed, and that you can show your applications are compliant with any legal, financial, regulatory, or internal requirements they are subject to. For smaller applications, governance may be a manual process; for larger applications, automation is essential. Azure contains several offerings designed to make the compliance and governance process easier.
 
-Learn more about the [Azure governance](../../../ready/landing-zone/design-area/governance.md) design area.
+This article deals with the [Control Plane](/azure/azure-resource-manager/management/control-plane-and-data-plane) only - meaning how we create, manage, and configure the resources in Azure (generally via the **Azure Resource Manager**). This article does not deal with governance of the Data Plane - meaning how the endpoints for your resources are governed or secured or monitored.
 
 ## Design considerations
 
-- Research the available [built-in RBAC roles](/azure/api-management/api-management-role-based-access-control) available for the API Management service.
-- Review the [Azure Policy built-in policy definitions](/azure/api-management/policy-reference) and the [Azure Policy Regulatory Compliance controls](/azure/api-management/security-controls-policy) for API Management. Azure Policy can help enforce vital management and security conventions across Azure platform services.
-- Consider what level of logging is necessary to meet your organization's compliance requirements.
-- Consider how non-compliance should be detected.
-- Consider how to standardize error responses returned by APIs.
+- Have you defined the roles and responsibilities for all individuals that interact with your resources?
+
+- Have you defined a Disaster Recovery (DR) plan, and do you need to automate your recovery activities? For example, do you need to automatically provision redundant resources in geographically disparate regions?
+
+- Do you have specific **Recovery Time Objective** (RTO) and **Recovery Point Objective** (RPO) policies that need to be adhered to?
+
+- Do you have an alert or escalation plan that needs to be implemented?
+
+- What industry, legal, or financial regulations are your resources subject to, and how do you ensure that you are compliant?
+
+- What tooling do you have for managing all your resources? Do you need to perform manual remediation, or can it be automated? How are you alerted if any part of your estate is not in compliance?
 
 ## Design recommendations
 
-- Use Azure built-in roles to provide least-privilege permissions to manage the API Management service.
-- Configure [diagnostic settings](/azure/api-management/api-management-howto-use-azure-monitor) within API Management to output logs and metrics to Azure Monitor.
-- Implement an [error handling policy](/azure/api-management/api-management-error-handling-policies) at the global level.
-- All API Management policies should include a [`<base/>`](/azure/api-management/set-edit-policies#use-base-element-to-set-policy-evaluation-order) element.
+- Use **[Azure Policy](/azure/governance/policy/overview)** to enforce organizational standards and help you assess compliance. Azure Policy can provide you with an aggregated view, enabling to evaluate the overall state of your environment, with the ability to drill down to per-resource per-policy granularity. For example, you can have policies that look for unauthorized or expensive resources; or which look for resources that are provisioned without adequate security.
+
+- Automate your deployments using a **Continuous Integration/Continuous Deployment** (CI/CD) tool like [GitHub Actions](/azure/developer/github/github-actions) or [Azure DevOps Pipelines](/azure/devops/pipelines/overview-azure). Use Infrastructure as Code tools such as [Bicep](/azure/azure-resource-manager/bicep/overview) or [Terraform](/azure/developer/terraform/overview). This helps ensure that any policies you have in place are followed, without the need for manual configuration.
+
+- Use **[Automation tasks](/azure/logic-apps/create-automation-tasks-azure-resources)** to automate tasks like sending alerts on weekly or monthly spend on resources; or to archive or delete old data. Automation tasks use Logic Apps (Consumption) workflows to perform the tasks.
+
+- Use **[Role-based access control](/azure/role-based-access-control/overview)** (RBAC) to restrict user and application access to differing levels of scope.
+
+- Use monitoring tools such as **[Azure Monitor](/azure/azure-monitor/overview)** or to identify where resources are either in breach of policy, or to identify resources that are in danger of breaching policy soon.
+
+- Enable **[Microsoft Defender for Cloud](/azure/defender-for-cloud/defender-for-cloud-introduction)** to help identify resources that are in breach of security of endpoint policies.
+
+## Recommended content
+
+- [What is Azure Policy?](/azure/governance/policy/overview)
+
+- [Manage Azure resources and monitor costs by creating automation tasks](/azure/logic-apps/create-automation-tasks-azure-resources)
+
+- [Azure RBAC documentation](/azure/role-based-access-control/)
+
+- [Logic Apps Multi-Region Disaster Recovery](/azure/logic-apps/multi-region-disaster-recovery)
+
+- [Function Apps Disaster Recovery](/azure/reliability/reliability-functions?tabs=azure-portal&pivots=flex-consumption-plan)
+
+- [Data Factory Disaster Recovery](/azure/reliability/reliability-data-factory)
+

@@ -216,3 +216,29 @@ Added search-server.js and search.html references to:
 - README.md: architecture tree, "Search in the Browser" section, scripts reference
 - docs/workflow.md: daily use section
 - docs/new-machine-setup.md: verify section
+
+## [2026-04-08] sync | Full sync — processed 454 modified, 1 added, 390 deleted
+
+Ran ./scripts/sync-all.sh across all 8 repos. 25 service areas had changes.
+
+Changes by category:
+- MS Learn (azure-docs): expressroute, firewall, network-watcher, private-link (~1 each),
+  vpn-gateway (+1 new IPv6 S2S article, ~3 modified)
+- Compute: virtual-machines (~96 modified), service-fabric (~2), azure-impact-reporting (~2)
+- AKS: aks (~6), kubernetes-fleet (~1)
+- Management: azure-arc (~72 modified)
+- Frameworks: well-architected (~65), cloud-adoption-framework (~145), architecture-center (~54)
+- Support: support-azure-kubernetes (~1), support-azure-storage (~2), support-partner-solutions (~1)
+
+Major upstream cleanup — 390 support articles deleted:
+- support-virtual-machines: -292 (entire area emptied)
+- support-virtual-desktop: -23 (emptied)
+- support-site-recovery: -20 (emptied)
+- support-virtual-network: -17 (emptied)
+- support-synapse-analytics: -14 (emptied)
+- support-vpn-gateway: -12 (emptied)
+- support-virtual-machine-scale-sets: -10 (emptied)
+- support-service-fabric: -2 (emptied)
+
+8 support entity pages updated with upstream removal notes.
+qmd re-indexed: 82 documents re-embedded (526 chunks).

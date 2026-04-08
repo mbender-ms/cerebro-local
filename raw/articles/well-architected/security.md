@@ -1,159 +1,144 @@
 ---
-title: Security considerations for Azure VMware Solution workloads
-description: Examine Azure VMware Solution security considerations. See how to encrypt data, use network segmentation, detect threats, and implement other security measures.
-author: PageWriter-MSFT
-ms.author: prwilk
-ms.date: 08/10/2023
+title: SAP workload security
+description: SAP workload best practices for security
+author: stephen-sumner
+ms.author: ssumner
+ms.date: 12/19/2022
 ms.topic: concept-article
-ms.service: azure-waf
-ms.subservice: waf-workload-azure-vmware
-ms.custom: sfi-image-nochange
+
 ---
 
-# Security considerations for Azure VMware Solution workloads
+# SAP workload security
 
-This article discusses the security design area of an Azure VMware Solution workload. The discussion covers various measures for helping to secure and protect Azure VMware Solution workloads. These measures help protect infrastructure, data, and applications. This approach to security is holistic and aligns with an organization's core priorities.
+Azure provides all the tools needed to secure your SAP workload. SAP applications can contain sensitive data about your organization. You must protect your SAP architecture with secure authentication methods, hardened networking, and encryption.
 
-Securing Azure VMware Solution requires a shared responsibility model, where Microsoft Azure and VMware are responsible for certain security aspects. To implement appropriate security measures, ensure a clear understanding of the shared responsibility model and collaboration between IT teams, VMware, and Microsoft.
-
-## Manage compliance and governance
-
-*Impact: Security, Operational Excellence*
-
-To avoid deleting the private cloud by mistake, use [resource locks](/azure/azure-resource-manager/management/lock-resources?tabs=json) to safeguard resources from unwanted deletion or change. They can be set at the subscription, resource group, or resource level and block deletions, modifications, or both. 
-
-It's also important to detect noncompliant servers. You can use Azure Arc for this purpose. Azure Arc extends Azure management capabilities and services to on-premises or multicloud environments. Azure Arc gives you a single-pane view for applying updates and hotfixes by providing centralized server management and governance. The result is a consistent experience for managing components from Azure, on-premises systems, and Azure VMware Solution.
-
-##### Recommendations
-
-- Put a resource lock on the resource group that hosts the private cloud to prevent accidentally deleting it.
-- Configure Azure VMware Solution guest virtual machines (VMs) as Azure Arc–enabled servers. For methods that you can use to connect machines, see [Azure connected machine agent deployment options](/azure/azure-arc/servers/deployment-options).
-- Deploy a certified third-party solution or Azure Arc for Azure VMware Solution (preview).
-- Use Azure Policy for Azure Arc–enabled servers to audit and enforce security controls on Azure VMware Solution guest VMs.
-
-## Protect the guest operating system
+## Configure identity management
 
 *Impact: Security*
 
-If you don't patch and regularly update your operating system, you make it susceptible to vulnerabilities and put your entire platform at risk. When you apply patches regularly, you keep your system up to date. When you use an endpoint protection solution, you help prevent common attack vectors from targeting your operating system. It's also important to regularly perform vulnerability scans and assessments. These tools help you identify and remediate security weaknesses and vulnerabilities.
+Identity management is a framework to enforce the policies that control access to critical resources. Identity management controls access your SAP workload within or outside its virtual network. There are three identity management use cases to consider for your SAP workload, and the identity management solution differs for each.
 
-Microsoft Defender for Cloud offers unique tools that provide advanced threat protection across Azure VMware Solution and on-premises VMs, including:
+<a name='use-azure-active-directory'></a>
 
-- File integrity monitoring.
-- Fileless attack detection.
-- Operating system patch assessment.
-- Security misconfiguration assessment.
-- Endpoint protection assessment.
+### Use Microsoft Entra ID
 
-##### Recommendations
+Organizations can improve the security of Windows and Linux virtual machines in Azure by integrating with Microsoft Entra ID, a fully managed identity and access management service. Microsoft Entra ID can authenticate and authorize end user’s access to the SAP operating system. You can use Microsoft Entra ID to create domains that exist on Azure, or use it integrate with your on-premises Active Directory identities. Microsoft Entra ID also integrates with Microsoft 365, Dynamics CRM Online, and many Software-as-a-Service (SaaS) applications from partners. We recommend using System for Cross-Domain Identity Management (SCIM) for identity propagation. This pattern enables optimal user life cycle.
 
-- Install an Azure security agent on Azure VMware Solution guest VMs through Azure Arc for servers to monitor them for security configurations and vulnerabilities.
-- Configure Azure Arc machines to automatically create an association with the default data collection rule for Defender for Cloud.
-- On the subscription you use to deploy and run the Azure VMware Solution private cloud, use a Defender for Cloud plan that includes server protection.
-- If you have guest VMs with extended security benefits in the Azure VMware Solution private cloud, deploy security updates regularly. Use the Volume Activation Management Tool to deploy these updates.
+For more information, see:
+
+- [SCIM synchronization with Microsoft Entra ID](/azure/active-directory/fundamentals/sync-scim)
+- [Configure SAP Cloud Platform Identity Authentication for automatic user provisioning](/azure/active-directory/saas-apps/sap-cloud-platform-identity-authentication-provisioning-tutorial)
+- [Microsoft Entra single sign-on (SSO) integration with SAP NetWeaver](/azure/active-directory/saas-apps/sap-netweaver-tutorial)
+- [Sign in to a Linux virtual machine in Azure by using Microsoft Entra ID and OpenSSH]( /azure/active-directory/devices/howto-vm-sign-in-azure-ad-linux)
+- [Sign in to a Windows virtual machine in Azure by using Microsoft Entra ID]( /azure/active-directory/devices/howto-vm-sign-in-azure-ad-windows)
+
+### Configure single sign-on
+
+You can access the SAP application with the SAP frontend software (SAP GUI) or a browser with HTTP/S. We recommend configuring single sign-on (SSO) using Microsoft Entra ID or Active Directory Federation Services (AD FS). SSO allows end users to connect to SAP applications via browser where possible.
+
+For more information, see:
+
+- [SAP HANA SSO](/azure/active-directory/saas-apps/saphana-tutorial)
+- [SAP NetWeaver SSO](/azure/active-directory/saas-apps/sap-netweaver-tutorial)
+- [SAP Fiori SSO](/azure/active-directory/saas-apps/sap-fiori-tutorial)
+- [SAP Cloud Platform SSO](/azure/active-directory/saas-apps/sap-hana-cloud-platform-tutorial)
+- [SuccessFactors SSO](/azure/active-directory/saas-apps/successfactors-tutorial)
+- [Microsoft Entra overview](/azure/active-directory/)
+
+### Use application-specific guidance
+
+We recommend consulting the SAP Identity Authentication Service for SAP Analytics Cloud, SuccessFactors, and SAP Business Technology Platform. You can also integrate services from the SAP Business Technology Platform with Microsoft Graph using Microsoft Entra ID and the SAP Identity Authentication Service.
+
+For more information, see:
+
+- [Using Microsoft Entra ID to secure access to SAP platforms and applications](/azure/active-directory/fundamentals/scenario-azure-first-sap-identity-integration).
+- [SAP Identity Authentication Service](https://help.sap.com/docs/IDENTITY_AUTHENTICATION)
+- [SAP Identity Provisioning Service](https://help.sap.com/docs/IDENTITY_PROVISIONING)
+
+A common customer scenario is deploying SAP application into Microsoft Teams. This solution requires SSO with Microsoft Entra ID. We recommend browsing the Microsoft commercial marketplace to see which SAP apps are available in Microsoft Teams. For more information, see [the Microsoft commercial marketplace](https://appsource.microsoft.com/en-us/marketplace/apps?page=1&search=sap).
+
+*Table 1 - Summary of the recommended SSO methods*
+
+| SAP solution | SSO method |
+| --- | --- |
+|SAP NetWeaver based-web applications such as Fiori, WebGui|Security Assertion Markup Language (SAML)|
+|SAP GUI|Kerberos with windows active directory or Microsoft Entra Domain Services or third party solution|
+|SAP PaaS and SaaS applications such as SAP Business Technology Platform (BTP), Analytics Cloud, [Cloud Identity Services](https://help.sap.com/docs/IDENTITY_AUTHENTICATION), [SuccessFactors]( /azure/active-directory/app-provisioning/sap-successfactors-integration-reference), [Cloud for Customer]( /azure/active-directory/saas-apps/sap-customer-cloud-tutorial), [Ariba](/azure/active-directory/saas-apps/ariba-tutorial)|SAML / OAuth / JSON Web Tokens (JWT) and pre-configured authentication flows with Microsoft Entra ID directly or by proxy with the SAP Identity Authentication Service|
+
+## Use role-based access control (RBAC)
+
+*Impact: Security*
+
+It’s important to control access to the SAP workload resources you deploy. Every Azure subscription has a trust relationship with a Microsoft Entra tenant. We recommend you use Azure role-based access control (Azure RBAC) to grant users within your organization access the SAP application. Grant access by assigning Azure roles to users or groups at a certain scope. The scope can be a subscription, a resource group, or a single resource. The scope depends on the user and how you’ve grouped your SAP workload resources.
+    
+ For more information, see:
+
+- [Microsoft Entra ID trust relationship](/azure/active-directory/fundamentals/active-directory-how-subscriptions-associated-directory)
+- [Azure RBAC](/azure/role-based-access-control/overview)
+
+## Enforce network and application security
+
+Network and application security controls are baseline security measures for every SAP workload. Their importance bears repeating to enforce the idea that the SAP network and application requires rigorous security review and baseline controls.  
+
+**Use hub-spoke architecture.** It’s critical to differentiate between shared services and SAP application services. A hub-spoke architecture is a good approach to security. You should keep workload specific resources in its own virtual network separate from the shared services in hub such as management services and DNS.  
+
+For SAP-native setups, you should use SAP Cloud Connector and SAP Private Link for Azure as part of the hub-spoke setup. These technologies support the SAP extension and innovation architecture for the SAP Business Technology Platform (BTP). Azure native integrations fully integrated with Azure virtual networks and APIs and don’t require these components.
+
+**Use network security groups.** Network security groups (NSGs) allow you to filter network traffic to and from your SAP workload. You can define NSG rules to allow or deny access to your SAP application. You can allow access to the SAP application ports from on-premises IP addresses ranges and denying public internet access. For more information, see [network security groups](/azure/virtual-network/network-security-groups-overview)
+
+**Use application security groups.** In general, the security best practices for application development also apply in the cloud. These include things like protecting against cross-site request forgery, thwarting cross-site scripting (XSS) attacks, and preventing SQL injection attacks.
+
+Application security groups (ASGs) make it easier to configure the network security of a workload. The ASG can be used in security rules instead of explicit IPs for VMs. The VMs are then assigned to ASG. This configuration supports the reuse of the same policy over different application landscapes, because of this abstraction layer. Cloud applications often use managed services that have access keys. Never check access keys into source control. Instead, store application secrets in Azure Key Vault. For more information, see [application security groups](/azure/virtual-network/application-security-groups).
+
+**Filter web traffic.** An internet facing workload must be protected using services like Azure Firewall, Web Application Firewall, Application Gateway to create separation between endpoints. For more information, see [inbound and outbound internet connections for SAP on Azure](/azure/architecture/guide/sap/sap-internet-inbound-outbound).
 
 ## Encrypt data
 
-*Impact: Security, Operational Excellence*
-
-Data encryption is an important aspect of protecting your Azure VMware Solution workload from unauthorized access and preserving the integrity of sensitive data. Encryption includes data at rest on the systems and data in transit.
-
-##### Recommendations
-
-- Encrypt VMware vSAN datastores with customer-managed keys to encrypt data at rest.
-- Use native encryption tools such as BitLocker to encrypt guest VMs.
-- Use native database encryption options for databases that run on Azure VMware Solution private cloud guest VMs. For instance, you can use transparent data encryption (TDE) for SQL Server.
-- Monitor database activities for suspicious activity. You can use native database monitoring tools like SQL Server Activity Monitor.
-
-## Implement network security
-
-*Impact: Operational excellence*
-
-A goal of network security is to prevent unauthorized access to Azure VMware Solution components. One method for achieving this goal is to implement boundaries via network segmentation. This practice helps to isolate your applications. As part of segmentation, a virtual LAN operates at your data-link layer. That virtual LAN provides physical separation of your VMs by partitioning the physical network into logical ones to separate traffic.
-
-Segments are then created to provide advanced security capabilities and routing. For example, the application, web, and database tier can have separate segments in a three-tier architecture. The application can add a level of micro-segmentation by using security rules to restrict network communication between the VMs in each segment.
-
-:::image type="content" source="./images/azure-vmware-solution-segmentation.png" alt-text="Architecture diagram that shows the various tiers and segments of an Azure VMware Solution environment." border="false":::
-
-The tier-1 routers are positioned in front of the segments. These routers provide routing capabilities within the software-defined datacenter (SDDC). You can deploy multiple tier-1 routers to segregate different sets of segments or to achieve a specific routing. For example, say you'd like to restrict East-West traffic that flows to and from your production, development, and testing workloads. You can use distributed level-1 tiers to segment and filter that traffic based on specific rules and policies.
-
-:::image type="content" source="./images/azure-vmware-solution-distributed-tiers.png" alt-text="Architecture diagram that shows multiple distributed level-one tiers in an Azure VMware Solution environment." border="false":::
-
-##### Recommendations
-
-- Use network segments to separate and monitor components logically.
-- Use micro-segmentation capabilities that are native to VMware NSX-T Data Center to restrict network communication between application components.
-- Use a centralized routing appliance to secure and optimize routing between segments.
-- Use staggered tier-1 routers when network segmentation is driven by organizational security or networking policies, compliance requirements, business units, departments, or environments.
-
-## Use an intrusion detection and prevention system (IDPS)
-
 *Impact: Security*
 
-An IDPS can help you detect and prevent network-based attacks and malicious activity in your Azure VMware Solution environment.
+Azure includes tools to safeguard data according to your organization's security and compliance needs. It's essential that you encrypt SAP workload data at rest and in transit.
 
-##### Recommendations
+### Encrypt data at rest
 
-- Use the VMware NSX-T Data Center distributed firewall for help with detecting malicious patterns and malware in East-West traffic between your Azure VMware Solution components.
-- Use an Azure service such as Azure Firewall or a certified third-party NVA that runs in Azure or in Azure VMware Solution.
+Encrypting data at rest is a common security requirement. Azure Storage service-side encryption is enabled by default for all managed disks, snapshots, and images. Service-side encryption uses service-managed keys by default, and these keys are transparent to the application.
 
-## Use role-based access control (RBAC) and multifactor authentication
+We recommend you review and understand service/server-side encryption (SSE) with customer-managed keys (CMKs). The combination of server-side encryption and a customer-managed key allows you to encrypt data at rest in the operating system (OS) and data disks for available SAP OS combinations.  Azure Disk Encryption doesn’t support all SAP operating systems. The customer-managed key should be stored in Key Vault to help ensure the integrity of the operating system. We also recommend encrypting your SAP databases. Azure Key Vault supports database encryption for SQL Server from the database management system (DBMS) and other storage needs. The following image shows the encryption process.
 
-*Impact: Security, Operational excellence*
+![Diagram that shows the workflow for service-side encryption with a customer managed key using Microsoft Entra ID and Azure Key Vault](../images/sse-cmk.png)
 
-Identity security helps control access to Azure VMware Solution private cloud workloads and the applications that run on them. You can use RBAC to assign roles and permissions that are appropriate for specific users and groups. These roles and permissions are granted based on the principle of least privilege.
+When you use client-side encryption, you encrypt the data and upload the data as an encrypted blob. Key management is done by the customer. For more information, see:
 
-You can enforce multifactor authentication for user authentication to provide an extra layer of security against unauthorized access. Various multifactor authentication methods, such as mobile push notifications, offer a convenient user experience and also help to ensure strong authentication. You can integrate Azure VMware Solution with Microsoft Entra ID to centralize user management and take advantage of Microsoft Entra advanced security features. Examples of features include privileged identity management, multifactor authentication, and conditional access.
+- [Server-side encryption for managed disks]( /azure/virtual-machines/disk-encryption)
+- [Azure Storage service-side encryption](/azure/storage/common/storage-service-encryption)
+- [Service-side encryption using customer-managed key in Azure Key Vault](/azure/storage/common/customer-managed-keys-configure-existing-account)
+- [Client-side encryption](/azure/storage/blobs/client-side-encryption)
 
-##### Recommendations
+### Encrypt data in transit
 
-- Use Microsoft Entra Privileged Identity Management to allow time-bound access to the Azure portal and control pane operations. Use privileged identity management audit history to track operations that highly privileged accounts perform.  
-- Reduce the number of Microsoft Entra accounts that can:
-  - Access the Azure portal and APIs.
-  - Navigate to the Azure VMware Solution private cloud.
-  - Read VMware vCenter Server and VMware NSX-T Data Center admin accounts.
-- Rotate local `cloudadmin` account credentials for VMware vCenter Server and VMware NSX-T Data Center to prevent the misuse and abuse of these administrative accounts. Use these accounts only in *break glass* scenarios. Create server groups and users for VMware vCenter Server, and assign them identities from external identity sources. Use these groups and users for specific VMware vCenter Server and VMware NSX-T Data Center operations.
-- Use a centralized identity source for configuring authentication and authorization services for guest VMs and applications.
+Encryption in transit applies to the state of data moving from one location to another. Data in transit can be encrypted in several ways, depending on the nature of the connection. For more information, see [encryption of data in transit]( /azure/security/fundamentals/encryption-overview#encryption-of-data-in-transit).
 
-## Monitor security and detect threats
+## Collect and analyze SAP application logs
 
-*Impact: Security, Operational excellence*
+Application log monitoring is essential for detecting security threats at the application level. We recommend using the Microsoft Sentinel Solution for SAP. It’s a cloud-native security information and event management (SIEM) solution built for your SAP workload running on a VM. For more information, see [Microsoft Sentinel Solution for SAP](/Azure/sentinel/sap/deployment-overview).
 
-Security monitoring and threat detection involve detecting and responding to changes in the security posture of Azure VMware Solution private cloud workloads. It's important to follow industry best practices and comply with regulatory requirements, including:
+For general security information, see:
 
-- The Health Insurance Portability and Accountability Act (HIPAA).
-- Payment Card Industry Data Security Standards (PCI DSS).
-
-You can use a security information and event management (SIEM) tool or Microsoft Sentinel to aggregate, monitor, and analyze security logs and events. This information helps you detect and respond to potential threats. Regularly conducting audit reviews also helps you avert threats. When you regularly monitor your Azure VMware Solution environment, you're in a better position to ensure it aligns with security standards and policies.
-
-##### Recommendations
-
-- Automate responses to recommendations from Defender for Cloud by using the following Azure policies:
-  - Workflow automation for security alerts
-  - Workflow automation for security recommendations
-  - Workflow automation for regulatory compliance changes
-- Deploy Microsoft Sentinel and set the destination to a Log Analytics workspace to collect logs from Azure VMware Solution private cloud guest VMs.
-- Use a data connector to connect Microsoft Sentinel and Defender for Cloud.
-- Automate threat responses by using Microsoft Sentinel playbooks and Azure Automation rules.
-
-## Establish a security baseline
-
-*Impact: Security*
-
-The Microsoft cloud security benchmark provides recommendations about how you can secure your cloud solutions on Azure. This security baseline applies controls that are defined by Microsoft cloud security benchmark version 1.0 to Azure Policy.
-
-##### Recommendations
-
-- To help protect your workload, apply the recommendations that are given in [Azure security baseline for Azure VMware Solution](/security/benchmark/azure/baselines/azure-vmware-solution-security-baseline).
+- [Azure security documentation]( /azure/security/)
+- [Trusted Cloud eBook](https://azure.microsoft.com/explore/trusted-cloud/)
 
 ## Next steps
 
-Now that you've looked at best practices for securing Azure VMware Solution, investigate operational management procedures for achieving business excellence.
+> [!div class="nextstepaction"]
+> [Application design](./application-design.md)
 
 > [!div class="nextstepaction"]
-> [Operations](./operations.md)
-
-Use the assessment tool to evaluate your design choices.
+> [Application platform](./application-platform.md)
 
 > [!div class="nextstepaction"]
-> [Assessment](./assessment.md)
+> [Data platform](./data-platform.md)
+
+> [!div class="nextstepaction"]
+> [Networking and connectivity](./networking-and-connectivity.md)
+
+> [!div class="nextstepaction"]
+> [Operational procedures](./operational-procedures.md)

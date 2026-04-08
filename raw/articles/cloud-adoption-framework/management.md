@@ -1,77 +1,158 @@
 ---
-title: Management and operations for the Azure Container Apps Landing Zone Accelerator
-description: Learn how to use the features of Container Apps to keep your apps stable and error free.
-author: craigshoemaker
-ms.author: cshoe
-ms.date: 10/06/2023
+title: Operations management considerations for the Azure Integration Services landing zone accelerator
+description: Learn about design considerations and recommendations for operations management in the Azure Integration Services landing zone accelerator.
+author: claytonsiemens77
+ms.author: csiemens
+ms.date: 03/16/2023
 ms.topic: concept-article
 ---
 
-# Management and operations for the Azure Container Apps - Landing Zone Accelerator
+# Operations management considerations for the AIS Services landing zone accelerator
 
 > [!IMPORTANT]
 > **Deprecation notice:** This article is deprecated and is no longer being updated. To ensure only the best guidance is surfaced, this article will be deleted in May 2026.
 >
-> For alternative guidance, see [**Azure Container Apps**](/azure/architecture/example-scenario/serverless/microservices-with-container-apps) architecture guidance in the Azure Architecture Center.
+> For alternative guidance, see [**Integration architecture**](/azure/architecture/browse/?filter-products=service&azure_categories=integration) guidance in the Azure Architecture Center.
 >
-> If you would like to save this guidance, you can select **Download a PDF** at the bottom left of this page or download the files from [GitHub](https://github.com/MicrosoftDocs/cloud-adoption-framework/tree/main/docs/scenarios/app-platform/container-apps).
+> If you would like to save this guidance, you can select **Download a PDF** at the bottom left of this page or download the files from [GitHub](https://github.com/MicrosoftDocs/cloud-adoption-framework/tree/main/docs/scenarios/app-platform/integration-services).
 
-Review features and services of Azure Container Apps available to help you design and maintain your app for long-term health and stability.
+This article provides considerations and recommendations for operations management and monitoring when using the AIS offerings.
 
-- Understand the Container Apps [limits](/azure/container-apps/quotas).
+Most of the recommendations in this section apply to the Standard (single-tenant) version of Logic Apps, which itself is part of the Azure App Service offering and shares many of the same management capabilities.
 
-- Consider isolating workloads at the network, compute, monitor, or data level.
+Many resources that make up AIS can be configured to store log, telemetry and metric data in Log Analytics/Application Insights, or in custom storage locations (these resources include Storage Accounts, Event Hubs, and others).
 
-- Understand ways to control resource consumption by workloads.
+We can utilize this information to visualize the overall health of our resources and take the appropriate management actions.
 
-- Use health probes to help report and recover from deteriorating application health.
+## Definitions
 
-- Use [Dapr](/azure/container-apps/dapr-overview?tabs=bicep1%2Cyaml) to establish secure connections to external services.
+- **[Azure Monitor Logs](/azure/azure-monitor/logs/data-platform-logs)** collects and organizes log and performance data from monitored resources. Tools such as Log Analytics can then query or visualize this log information, or allow you to alert if certain conditions are met.
 
-- Use logging and monitoring to provide insight into any issues associated with your applications.
+- **[Azure Metric Logs](/azure/azure-monitor/essentials/data-platform-metrics)** collects numeric data into a time-series database from monitored resources. Tools such as Application Insights can then visualize this data, help you identify performance and runtime issues.
 
-- Use [alerts](/azure/container-apps/alerts) during critical application and system events to ensure operations staff can take swift action in the event application failures.
+- **[Log Analytics](/azure/azure-monitor/logs/log-analytics-overview)** is an Azure Monitoring offering, which provides a location to store log and performance data, provides a mechanism and language for querying those logs (Kusto); and provides the ability to create alerts and dashboards based on those logs (among other capabilities).
 
-- Define a [scaling strategy](/azure/container-apps/scale-app?pivots=azure-cli) to ensure enough capacity available to handle traffic to your application, while minimizing unused capacity. Scaling triggers include CPU or memory usage, along with any KEDA-supported scaler.
+- **[Application Insights](/azure/azure-monitor/app/app-insights-overview)** is an Azure Monitoring offering, which provides the ability visualize and alert on performance data emitted by monitored resources.
 
-- Be familiar with Envoy as Azure Container Apps uses it as a [network proxy](/azure/container-apps/ingress-overview).
+- **[Kusto Query Language](/azure/data-explorer/kusto/query/)** (KQL) is a powerful query language optimized for querying and formatting data. For example, it's the primary query language for Log Analytics.
 
-- Be aware of recovery time objective (RTO) and recovery point objective (RPO) requirements around Business Continuity and Disaster Recovery. Define a service-level agreement (SLA) for your infrastructure and application. Learn about the [SLA for Azure Container Apps](https://azure.microsoft.com/support/legal/sla/container-apps/v1_0/). See the *SLA details* section for information about monthly uptime calculations.
+## Design Considerations
 
-- Depending on the specific requirements for your application, you may need to use high-availability measures to ensure continued operation if there are issues with the underlying Azure platform. In Azure, the various zones and regions allow you to build solutions for high-availability:
+- Consider your monitoring solution as a whole:
 
-  - [Availability Zones](/azure/reliability/reliability-container-apps#resilience-to-availability-zone-failures) are fault isolation constructs in Azure datacenter design. Each zone has its own power, network and cooling to minimize the chance of outages spreading across zones. To use Availability Zones, each Azure resource can be deployed either to a specific zone ("zonal") or to all zones ("zone redundant").
+  - What resources do you need to monitor?
 
-  - Multi-region solutions provide the highest level of fault isolation and the highest reliability, but are often more difficult to implement because of the higher latency between the geographic regions. This latency can cause data-replication delays. For more information on multi-region design, see the [Azure Mission Critical documentation](/azure/well-architected/mission-critical/mission-critical-application-design).
+  - How will you track messages that flow between resources?
 
-- Consider using Azure DevOps and GitHub to provide automated ways of managing development, build, and deployment processes.
+  - What external systems will you connect to?
 
-## Recommendations
+  - What types of alerting will you need?
 
-- **Isolate by environment**: Create distinct Container Apps environments for full resource isolation. Avoid using revisions to create tenant-specific container apps. For more information, see [Azure Container Apps in multitenant solution](/azure/architecture/guide/multitenant/service/container-apps).
+- Think about what queries you need to run. For example, will you need to know if a given request takes longer than expected? Or if you get a single error vs a cluster of errors?
 
-- **Use limits to compute resources**: Use [containers CPU and memory resources requests limits](/azure/container-apps/containers) to manage the compute and memory resources within an environment. Container default limits are 2 vCPU and 4 GiB for compute and memory respectively.
+- What level of tracking will you need? For example, if a message arrives from a third party, do you need to track that message through all associated resources?
 
-- **Use health probes**: Add health probes to your container apps. Make sure revisions contain `livenessProbe`, `readinessProbe`, and `startupProbe`. For more information, see [Azure Container Apps health probes](/azure/container-apps/health-probes?tabs=arm-template).
+- What management tasks will you need to perform? Will you need to resubmit messages or files?
 
-- **Configure health probes correctly**: The health probe is responsible for making calls to an endpoint and expects to receive a success status code, typically in the HTTP 2xx range, when the system is in a healthy state. It is recommended that this endpoint performs checks not only on the system's health but also on the health of critical downstream components, such as databases, storage, and messaging services. To prevent a continuous cascade of health checks, it's important to implement caching of the downstream health responses for a brief duration.
+- Logic App run history is stored in Azure Storage by default, but you can choose to also export metrics and log files to other sources (for example, Log Analytics, or an external Storage Account). Consider how you use your logging information, and if you use a centralized log store.
 
-- **Log extensively**: Create Log Analytics queries to look for warnings, errors, and critical messages.
+- Application Insights is used to provide application performance monitoring. It does so by collecting metrics from the resources that make up your solution.
 
-  - *Application logs* are generated by containers console output (`stdout`/`stderr`) messages. When Dapr is enabled, console output contains both application container and Dapr sidecar messages. Review [Log monitoring](/azure/container-apps/log-monitoring?tabs=bash) for more detail on how to query logs using log analytics.
+- Log Analytics is used to query logs and set up alerts, enabling you to see the health of your resources and understand issues that may occur. Log data can include custom properties (see *Tracked Properties* below).
 
-  - *System logs* are generated by Azure Container Apps.
+- Refer to the App Service landing zone accelerator [management article](../app-services/management.md) for more considerations and recommendations specific to App Services
 
-- **Enable visual tracing**: When you enable Dapr, configure the [`DaprAIInstrumentationKey``](/azure/container-apps/environment) at the ACA environment level to visualize container apps distributed tracing in the Azure Application Insights application map.
+## Design Recommendations
 
-- **Use the Application Insights SDK**: Using the Application Insights SDK for application data as [auto-instrumentation agent](/azure/container-apps/observability) isn't supported yet.
+- Set up **Application Insights** so that it uses a Log Analytics Workspace as its data source (known as a [workspace-based resource](/azure/azure-monitor/app/convert-classic-resource)). Doing so allows logging and performance data to be kept in a consolidated location.
 
-- **Use availability zones**: When you need high-availability, use Availability Zones on all resources. Ensure that not only your Container Apps are zone redundant, but also adjacent services required to fulfill requests, such as databases, storage and messaging services.
+- Set up alerts for all resources to notify appropriate teams of events related to individual resources or to the workload.
 
-- **Use distributed replication**: For disaster recovery (DR) purposes, ensure your application data and source code are available in more than one Azure region. For example, Azure Storage accounts allow geo-replicated storage and Azure SQL Databases allow read-replicas to be placed in other regions.
+- Link the resources in your solution to Application Insights, if supported. For example, a Logic App can be linked to Application Insights, so that runtime data and metrics are available for querying. See [here for an example](/azure/logic-apps/create-single-tenant-workflows-azure-portal#enable-open-application-insights).
 
-- **Automate builds**: Use end-to-end automation to build and deploy your Azure Container Apps applications.
+- Use the **[clientTrackingId](/azure/logic-apps/monitor-logic-apps-log-analytics)** feature of Logic Apps to supply a custom tracking ID, allowing you to correlate events across logic app runs. You can use the x-ms-client-tracking-id header to achieve this result with the Request, HTTP, or HTTP+WebHook triggers.
 
-- **Use a container registry**: Store your container images in [Azure Container Registry](/azure/container-registry/container-registry-geo-replication) and geo-replicate the registry to each ACA region.
+- Use the **[Tracked Properties](/azure/logic-apps/monitor-logic-apps-log-analytics)** feature of Logic Apps to log other data (input or output) from an action into the log files. These properties are then available for use when querying logs using KQL with Log Analytics or another solution.
 
-- **Test your disaster recovery plan**: Create and test a disaster recovery plan regularly using key failure scenarios. For more information, see [Testing backup and disaster recovery](/azure/well-architected/reliability/disaster-recovery).
+- Consider using resource tags. Resource tags can help you manage and organize resources on Azure. You can use them to assign metadata to resources. You can use this metadata for various purposes, like categorizing resources by application or business unit, tracking the cost of resources, and identifying resources for compliance.
+
+## Sample Kusto Queries
+
+The queries below show how to query the three main tables used for AIS log data. Each of these tables can be accessed from the Logs option in the Monitoring section of your Logic App.
+
+The main query tables are:
+
+- *exceptions*  
+  This table contains any exceptions logged by your resource, like exceptions thrown by the Logic App runtime. It can be used to look for the underlying cause of any issues you see, either in the portal or during execution of your code.
+
+- *requests*  
+  This table logs all requests made by the Logic App runtime to another resource OR to specific actions within your workflow.
+
+- *traces*  
+  This table contains the bulk of the Logic Apps runtime logs, logging details on trigger execution, workflow starting and stopping, and action execution. If you've logged any tracked properties from your actions, you'll find this data in the *customDimensions* section. You can then use the extend clause in a query to add the data as columns in your query response.
+
+**Workflows with Errors:**
+
+```Kusto
+> traces
+>
+> \| where customDimensions\["Category"\] == "Host.Triggers.Workflows"
+>
+> \| where customDimensions.LogLevel == "Error"
+```
+
+**Number of workflow executions in last 24 hours across all workflows:**
+
+```Kusto
+> traces
+>
+> \| where customDimensions\["Category"\] == "Host.Triggers.Workflows"
+>
+> \| where customDimensions\["EventName"\] == "WorkflowActionStart"
+>
+> \| where timestamp \> ago(1d)
+>
+> \| count
+```
+
+**Trigger success rate, graphed over time**
+
+```Kusto
+> traces  
+> \| where customDimensions\["Category"\] == "Host.Triggers.Workflows"  
+> \| where customDimensions\["EventName"\] == "WorkflowTriggerEnd"  
+> \|summarize
+>
+> success = countif(customDimensions\["prop\_\_status"\] ==
+> "Succeeded"),
+>
+> failures = countif(customDimensions\["prop\_\_status"\] == "Failed")
+>
+> by bin(timestamp, 1m)  
+> \| render timechart
+```
+
+## Next step
+
+Review the critical design areas to make complete considerations and recommendations for your architecture.
+
+> [!div class="nextstepaction"]
+> [Governance](./governance.md)
+
+## Recommended content
+
+- [Application Insights overview](/azure/azure-monitor/app/app-insights-overview?tabs=net)
+
+- [Overview of Log Analytics in Azure Monitor](/azure/azure-monitor/logs/log-analytics-overview)
+
+- [Azure Monitor Logs overview](/azure/azure-monitor/logs/data-platform-logs)
+
+- [Azure Monitor Metrics overview](/azure/azure-monitor/essentials/data-platform-metrics)
+
+- [Set up Azure Monitor logs and collect diagnostics data for Azure Logic Apps](/azure/logic-apps/monitor-logic-apps-log-analytics)
+
+- [Kusto Query Language (KQL) overview](/azure/data-explorer/kusto/query/)
+
+- [Azure Logic Apps Running Anywhere – Monitor with Application Insights – part 1](https://techcommunity.microsoft.com/t5/integrations-on-azure-blog/azure-logic-apps-running-anywhere-monitor-with-application/ba-p/1877849)
+
+- [Azure Logic Apps Running Anywhere – Monitor with Application Insights – part 2](https://techcommunity.microsoft.com/t5/integrations-on-azure-blog/azure-logic-apps-running-anywhere-monitor-with-application/ba-p/2003332)

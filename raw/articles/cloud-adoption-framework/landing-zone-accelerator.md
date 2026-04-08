@@ -1,59 +1,43 @@
 ---
-title: Azure Red Hat OpenShift landing zone accelerator
-description: Learn how to deploy Azure Red Hat OpenShift landing zone accelerator.
-author: UmarMohamedUsman
-ms.author: umarm
-ms.date: 08/17/2022
+title: Azure Integration Services application landing zone accelerator
+description: Learn to deploy the Azure Integration Services application landing zone accelerator in an Azure landing zone.
+author: stephen-sumner
+ms.author: pnp
+ms.date: 10/13/2025
 ms.topic: concept-article
-ms.custom:
-  - think-tank
-  - e2e-ARO
-  - linux-related-content
-  - sfi-image-nochange
 ---
 
-# Azure Red Hat OpenShift (ARO) landing zone accelerator
+# Azure Integration Services application landing zone accelerator in an Azure landing zone
 
-The Azure Red Hat OpenShift landing zone accelerator is a collection of design guidance and implementation references to accelerate deployment of Azure Red Hat OpenShift clusters in your landing zone.
+> [!IMPORTANT]
+> **Deprecation notice:** This article is deprecated and is no longer being updated. To ensure only the best guidance is surfaced, this article will be deleted in May 2026.
+>
+> For alternative guidance, see [**Integration architecture**](/azure/architecture/browse/?filter-products=service&azure_categories=integration) guidance in the Azure Architecture Center.
+>
+> If you would like to save this guidance, you can select **Download a PDF** at the bottom left of this page or download the files from [GitHub](https://github.com/MicrosoftDocs/cloud-adoption-framework/tree/main/docs/scenarios/app-platform/integration-services).
 
-This solution is open source. You can adapt the templates to create an architecture that meets your needs. The landing zone accelerator is both a strategic design path and a target technical state, and it adheres to the architecture and best practices of the Cloud Adoption Framework's Azure landing zones. The design decisions your organization makes, based on this guidance, can lay the groundwork for scalability.
+This article provides strategic guidance for deploying Azure Integration Services (AIS) within an Azure landing zone. Azure Integration Services includes Logic Apps, API Management, Service Bus, and Event Grid. These services enable scalable integration across applications, data, and business processes. The AIS application landing zone accelerator automates the deployment of these services, which promotes consistency and scalability while aligning with Azure landing zone standards.
 
-## Implement a platform foundation
+[![Diagram that shows Azure Integration Services landing zone accelerator architecture.](./media/integration-services-enterprise-deployment_highres.png)](./media/integration-services-enterprise-deployment_highres.png#lightbox)
 
-The Azure Red Hat OpenShift landing zone accelerator assumes that a platform foundation has been successfully implemented, which will take care of the shared services required to construct and operationalize a landing zone. Shared services include networking, security, identity, and governance.
+## Establish an Azure landing zone
 
-A platform foundation isn't mandatory to implement a landing zone accelerator, but it does handle much of the security and management required to safely manage your cloud environment. If you already have a platform foundation, you can skip this step. For more information, review [Implement Cloud Adoption Framework Azure landing zone](../../../ready/landing-zone/index.md).
+**Start with an Azure landing zone.** Begin with a foundational [Azure landing zone](../../../ready/landing-zone/index.md) that includes shared services such as identity, networking, and monitoring. Centralized platform teams must own and operate these services to enforce governance, security, and compliance policies across all workloads. This separation of responsibilities allows workload teams to focus on delivering business value through application development without duplicating platform capabilities.
 
-## Landing zone accelerator benefits
+**Understand integration points.** Integration workloads often depend on shared resources like virtual networks, identity providers, and observability tools. Establish clear communication channels between platform and workload teams to align on resource planning. For example, if a workload requires high throughput, the platform team must allocate sufficient IP address space and bandwidth early in the planning cycle. This coordination reduces rework and accelerates deployment timelines.
 
-The landing zone accelerator approach for Azure Red Hat OpenShift provides:
+## How to use the AIS application landing zone accelerator
 
-- A modular approach that allows you to customize your environment variables.
-- Design guidelines for evaluating critical decisions.
-- The landing zone architecture.
-- A Microsoft-recommended reference implementation using Azure CLI.
+**Review the architecture diagram.** The architecture diagram illustrates how AIS components integrate within an Azure landing zone. Review this visualization with stakeholders to evaluate tradeoffs in scalability, security, and maintainability. Use the diagram to guide decisions about service boundaries, data flow, and governance controls.
 
-## Design areas
-
-There are many issues to consider when creating Azure landing zones.
-
-- [Identity and access management considerations](./identity-access-management.md)
-- [Network topology and connectivity considerations](./network-topology-connectivity.md)
-- [Resource organization considerations](./resource-organization.md)
-- [Security considerations](./security.md)
-- [Operations management and baseline considerations](./operations.md)
-- [Deployment option considerations](./platform-automation-devops.md)
-
-## Reference architecture
-
-The following diagram shows the landing zone accelerator architecture.
-
-[![Diagram showing the landing zone accelerator architecture.](./media/landing-zone-architecture.png)](./media/landing-zone-architecture.png)
-
-## Resources on GitHub
-
-The landing zone accelerator is an open-source repo that consists of an Azure CLI reference implementation along with Critical Design Area recommendations. The repo is [available on GitHub](https://github.com/Azure/ARO-Landing-Zone-Accelerator).
+**Deploy the reference implementation.** The GitHub hosted [AIS application landing zone accelerator](https://github.com/Azure/Integration-Services-Landing-Zone-Accelerator/blob/main/docs/scenario1/Reference%20Implementation.md) provides a working environment that includes preconfigured services, governance policies, and automation scripts. Use this implementation to validate architecture decisions, onboard development teams, and begin integration development immediately. This approach reduces setup time and ensures alignment with enterprise standards.
 
 ## Next steps
 
-Learn about [identity and access management for your Azure Red Hat OpenShift landing zone](./identity-access-management.md).
+The design areas provide recommendations across key technical domains that Integration workloads must align with enterprise governance models across identity, networking, security, management, and compliance. Use the following design area guidance to ensure consistency and reduce risk:
+
+- [Identity and access management](./identity-and-access-management.md)
+- [Network topology and connectivity](./network-topology-and-connectivity.md)
+- [Security](./security.md)
+- [Management](./management.md)
+- [Governance](./governance.md)

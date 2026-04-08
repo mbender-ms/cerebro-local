@@ -1,147 +1,402 @@
 ---
-title: Network topology and connectivity for Azure Kubernetes Service (AKS)
-description: Learn how to improve the network topology and connectivity of the Azure Kubernetes Service (AKS).
-author: balunywa
-ms.author: mubaluny
-
-ms.date: 05/23/2023
+title: Network topology and connectivity considerations for the Azure Integration Services landing zone accelerator
+description: Learn about design considerations and recommendations for network topology and connectivity in the Azure Integration Services landing zone accelerator.
+author: stephen-sumner
+ms.author: jordanbean
+ms.date: 09/12/2025
 ms.topic: concept-article
-ms.custom: think-tank, e2e-aks
 ---
 
-# Network topology and connectivity considerations for AKS
+# Network topology and connectivity considerations for the Integration Services landing zone accelerator
 
 > [!IMPORTANT]
 > **Deprecation notice:** This article is deprecated and is no longer being updated. To ensure only the best guidance is surfaced, this article will be deleted in May 2026.
 >
-> For alternative guidance, see [**Azure Kubernetes Service**](/azure/architecture/reference-architectures/containers/aks-start-here) architecture guidance in the Azure Architecture Center.
+> For alternative guidance, see [**Integration architecture**](/azure/architecture/browse/?filter-products=service&azure_categories=integration) guidance in the Azure Architecture Center.
 >
-> If you would like to save this guidance, you can select **Download a PDF** at the bottom left of this page or download the files from [GitHub](https://github.com/MicrosoftDocs/cloud-adoption-framework/tree/main/docs/scenarios/app-platform/aks).
+> If you would like to save this guidance, you can select **Download a PDF** at the bottom left of this page or download the files from [GitHub](https://github.com/MicrosoftDocs/cloud-adoption-framework/tree/main/docs/scenarios/app-platform/integration-services).
+
+This article provides design considerations and recommendations for network topology and connectivity that you can apply when you use the Azure Integration Services (AIS) landing zone accelerator. Networking is central to almost everything in a landing zone.
+
+The network topology and connectivity considerations for this architecture depend on the requirements of the workloads and on the security and compliance requirements of your organization.
 
 ## Design considerations
 
-Azure Kubernetes Service (AKS) provides three different networking models for container networking: Kubenet, CNI Overlay, and CNI. Each of these models has its unique set of features and advantages, offering flexibility and scalability options for container networking in AKS.
+Use a network topology based on [Virtual WAN](/azure/cloud-adoption-framework/ready/azure-best-practices/virtual-wan-network-topology) if your organization:
 
-### Kubenet
+- Plans to deploy resources across several Azure regions and requires global connectivity between [Virtual Networks](/azure/virtual-network/virtual-networks-overview) (VNets) in these Azure regions and multiple on-premises locations.
 
-Kubenet is a basic networking solution that conserves IP address space and offers simple configuration. It's ideal for small AKS clusters with fewer than 400 nodes, where manually managing and maintaining user-defined routes is acceptable. It's suitable for scenarios where internal or external load balancers are sufficient for reaching pods from outside the cluster.
+- Needs to integrate a large-scale branch network directly into Azure, either via a software-defined WAN (SD-WAN) deployment or requires more than 30 branch sites for native IPsec termination.
 
-### Azure CNI
+- You require transitive routing between VPN and [ExpressRoute](/azure/expressroute/expressroute-introduction), such as remote branches connected via [Site-to-Site VPN](/azure/vpn-gateway/design) or remote users connected via [Point-to-Site VPN](/azure/vpn-gateway/design), require connectivity to an ExpressRoute connected DC, via Azure.
 
-Azure CNI is a network model designed for advanced networking. It provides full virtual network connectivity for pods, allowing for pod-to-pod and pod-to-VM connectivity. It's ideal for scenarios where advanced AKS features, such as virtual nodes, are required. It's suitable for scenarios where sufficient IP address space is available, and external resources need to reach pods directly. AKS network policies are also supported with Azure CNI.
+Organizations use Virtual WAN to meet large-scale interconnectivity requirements. Microsoft manages this service, which helps reduce overall network complexity and modernizes your organization's network.
 
-### Azure CNI Overlay
+Use a [traditional Azure network topology](/azure/cloud-adoption-framework/ready/azure-best-practices/traditional-azure-networking-topology) based around a hub-and-spoke architecture if your organization:
 
-Azure CNI Overlay is designed to address IP address shortages and simplify network configuration. It's suitable for scenarios where scaling up to 1000 nodes and 250 pods per node is sufficient, and an additional hop for pod connectivity is acceptable. AKS egress requirements can also be met with Azure CNI Overlay.
+- Plans to deploy resources in only select Azure regions.
 
-For a summary of recommended use cases per network model, see [Compare network models in AKS](/azure/aks/concepts-network#compare-network-models).
+- Doesn't need a global, interconnected network.
 
-In addition, when designing your AKS cluster, it's important to carefully plan the IP addressing and size of the virtual network subnet to support scaling. Virtual nodes can be used for quick cluster scaling, but there are some known limitations.
+- Has few remote or branch locations per region and needs fewer than 30 IP security (IPsec) tunnels.
 
-AKS clusters support Basic and Standard Azure Load Balancer SKUs, and services can be exposed with public or internal load balancers. AKS uses CoreDNS to provide name resolution to pods running in the cluster, and outbound (egress) network traffic can be sent through an Azure Firewall or network virtual appliance cluster.
+- Requires full control of the configuration or requires manual custom configuration of your Azure network.
 
-By default, all pods in an AKS cluster can send and receive traffic without limitations. However, Kubernetes network policies can be used to improve security and filter network traffic between pods in an AKS cluster. Two network policy models are available for AKS: Azure network policies and Calico.
+### Reference network topology
 
-Finally, AKS sets up a network security group (NSG) on the subnet in which the cluster is deployed. It's recommended not to manually edit this NSG, but services deployed in AKS can influence it.
+The following architecture diagram shows the reference architecture for an AIS enterprise deployment:
 
-Overall, selecting the appropriate network model and carefully planning network resources can help optimize the performance, security, and cost of your AKS cluster.
+[![Diagram that shows Azure Integration Services landing zone accelerator architecture.](./media/integration-services-enterprise-deployment_highres.png)](./media/integration-services-enterprise-deployment_HighRes.png#lightbox)
+
+An AIS enterprise deployment that uses App Service Environment (ASE) to host the Logic Apps & Function Apps would be similar, but it would have a single subnet for the ASE, with all of the Logic Apps & Function Apps inside it instead of separate subnets for the 2 services.
+
+## Plan for IP addressing
+
+Enterprise deployments of AIS should include the use of [Private Endpoints](/azure/private-link/private-endpoint-overview) and VNets. The following design considerations should be taken into account when planning your IP addressing:
+
+- Private Endpoints are needed to enable private network ingress to most Platform-as-a-Service (PaaS) services. Enabling private ingress allows you to then remove public network access from these services.
+
+- Some AIS services require [dedicated subnets](/azure/virtual-network/virtual-network-for-azure-services#services-that-can-be-deployed-into-a-virtual-network) to enable private networking (sometimes for ingress, always for egress)
+
+  - [API Management](/azure/api-management/api-management-using-with-vnet?toc=%2Fazure%2Fvirtual-network%2Ftoc.json&tabs=stv2#enable-vnet-connectivity-using-the-azure-portal-stv2-compute-platform)
+  
+  - [Logic Apps](/azure/logic-apps/secure-single-tenant-workflow-virtual-network-private-endpoint#prerequisites)
+  
+  - You can designate a given subnet to a given service to create instances of that service within the subnet. For example, you can designate a subnet to App Service Plans so that you can add more apps over time.
+  
+  - Azure VPN Gateway can connect overlapping, on-premises sites with overlapping IP address spaces through its [network address translation (NAT) capability](/azure/vpn-gateway/nat-howto).
+  
+## Custom DNS
+
+Most AIS services allow customers to use their own DNS names for public endpoints, either using their own DNS servers, or via the [Azure DNS](/azure/dns/dns-overview) offering. Configuration is done on a resource-by-resource basis.
+
+- API Management supports [custom domains](/azure/api-management/configure-custom-domain?tabs=custom).
+
+- Function Apps and Logic Apps support [custom domains](/azure/app-service/app-service-web-tutorial-custom-domain?tabs=a%2Cazurecli), when hosted by an App Service Plan or [App Service Environment](/azure/app-service/environment/overview).
+
+- Storage accounts support [custom domains](/azure/storage/blobs/storage-custom-domain-name?tabs=azure-portal) for blob storage endpoints.
+
+- Event Grid supports [custom domains](/azure/event-grid/assign-custom-domain-name).
+
+- Data Factory and Service Bus do not support custom domains.
+
+## Private DNS
+
+[Azure Private DNS](/azure/dns/private-dns-overview) provides a reliable and secure DNS service for your virtual network. Azure Private DNS manages and resolves domain names in the virtual network without the need to configure a custom DNS solution.
+
+To resolve the records of a private DNS zone from your virtual network, you must [link the virtual network with the zone](/azure/dns/private-dns-virtual-network-links). Linked virtual networks have full access to and can resolve all DNS records published in the private zone.
+
+### Design considerations
+
+- It's important to correctly configure your DNS settings to resolve the private endpoint IP address to the fully qualified domain name (FQDN) of your resources.
+
+- Existing Microsoft Azure services might already have a DNS configuration for a public endpoint. This configuration must be overridden to connect using your private endpoint.
+
+## Encryption and certificate authentication
+
+If your network design requires encryption of in-transit traffic, and/or certificate-based authentication, you may need to consider where and how this encryption/authentication is performed. For example, you need to identify which service performs TLS termination.
+
+### Design considerations
+
+- Does your design require that traffic between Azure services be encrypted? Can your encryption be terminated at an [Azure Front Door](/azure/frontdoor/front-door-overview) or [Application Gateway](/azure/application-gateway/ssl-overview), and then be non-encrypted while traversing Azure backbone or within your vNet?
+
+- Will you need to terminate encryption at multiple places?
+
+- Do you need to handle authentication at multiple places, or can it be performed once for an external request?
+
+### Design recommendations
+
+- If using an enterprise hub-and-spoke design, consider using Azure Front Door as your entry point for internet-based requests.
+
+- Consider using [Azure Application Gateway](/azure/application-gateway/create-ssl-portal) as the termination point for any external TLS-based requests or [API Management](/azure/api-management/api-management-howto-mutual-certificates) for certificate authentication and/or SSL termination.
+
+## Connectivity to on-premises resources
+
+Many enterprise integration scenarios require connecting your on-premises systems to Azure. It is important to consider the recommended models to provide this connectivity.
+
+### Design considerations
+
+- [Azure ExpressRoute](/azure/expressroute/expressroute-introduction) provides dedicated private connectivity to Azure Infrastructure as a Service (IaaS) and Platform as a Service (PaaS) resources from on-premises locations.
+
+- [Azure VPN Gateway](/azure/vpn-gateway/vpn-gateway-about-vpngateways) provides Site-to-Site (S2S) shared connectivity over the public internet to Azure Infrastructure as a Service (IaaS) virtual network resources from on-premises locations.
+
+- Azure ExpressRoute and Azure VPN Gateway have [different capabilities, costs and performance](/azure/vpn-gateway/vpn-gateway-about-vpngateways#planningtable).
+
+- The [on-premises data gateway](/data-integration/gateway/service-gateway-onprem) (OPDG) or [Azure Hybrid Connections](/azure/app-service/app-service-hybrid-connections) can be used where ExpressRoute or VPN Gateway is not practical. OPDG & Hybrid Connections are both examples of relay services. They make connections outbound from your on-premises network to Azure Service Bus to receive requests from Azure, without having to open ports in your external firewall/network.
+
+    - OPDG is limited in the number of requests per minute it supports (the throttling limit), has specific data size limits, and only works with limited Azure resources (Logic Apps, Power BI, Power Apps, Power Automate, Analysis Services).
+    
+    - Hybrid connections work with App Services (Function Apps or Web Apps) and has its own throttling and sizing limits.
+    
+  - [Azure Relay Hybrid Connections](/azure/azure-relay/relay-hybrid-connections-protocol) is a key part of Service Bus, which allows for relays outside of App Services or OPDG.
+    
+### Design recommendations
+
+- Use Azure **ExpressRoute** as the primary connectivity channel for connecting an on-premises network to Azure.
+
+- Ensure that you are using the right SKU for the ExpressRoute and/or VPN Gateway based on bandwidth and performance requirements.
+
+- Use Azure **VPN Gateway** to connect branches or remote locations to Azure.
+
+- Use **OPDG** and/or **Hybrid Connections** where ExpressRoute or VPN Gateway can't be used, where the throughput limits will not be an issue, and where you are using a support Azure Resource (e.g. Logic Apps, Function Apps).
+
+## Connectivity to AIS PaaS services
+
+Azure AIS PaaS services are typically accessed over public endpoints. The Azure platform provides capabilities for securing these endpoints or even making them entirely private.
+
+Securing these endpoints can be achieved using [private endpoints](/azure/private-link/private-endpoint-overview). 
+
+- To block all internet traffic to a target resource, use a private endpoint.
+
+- If you want to secure a specific sub-resource to your VNet resources, use a private endpoint.
+
+- If you want to secure a specific storage account to your VNet resources, you can use a private endpoint.
 
 
-### Private clusters
+[Azure Private Link](/azure/private-link/private-link-overview) enables you to [access Azure AIS Services](/azure/private-link/availability#integration) (for example, Service Bus and API Management) and Azure-hosted customer-owned/partner services over a private endpoint in your virtual network.
 
-AKS cluster IP visibility can be either public or private. [Private clusters](/azure/aks/private-clusters) expose the Kubernetes API over a private IP address, but not over a public one. This private IP address is represented in the AKS virtual network through a [private endpoint](/azure/private-link/private-endpoint-overview). The Kubernetes API shouldn't be accessed through its IP address, but instead through its fully qualified domain name (FQDN). The resolution from the Kubernetes API FQDN to its IP address will typically be performed by an [Azure Private DNS zone](/azure/dns/private-dns-overview). This DNS zone can be created by Azure in the [AKS node resource group](/azure/aks/faq#why-are-two-resource-groups-created-with-aks), or you can specify an [existing DNS zone](/azure/aks/private-clusters#no-private-dns-zone-prerequisites).
+When using Private Link, traffic between your virtual network and the service traverses the Microsoft backbone network, so exposing your service to the public internet is no longer necessary. You can create your own private link service in your virtual network and deliver it to your customers. Setup and consumption using Azure Private Link is consistent across Azure PaaS, customer-owned, and shared partner services.
 
-Following enterprise-scale proven practices, DNS resolution for Azure workloads is offered by centralized DNS servers deployed in the connectivity subscription, either in a hub virtual network or in a shared services virtual network connected to an Azure Virtual WAN. These servers will conditionally resolve Azure-specific and public names using Azure DNS (IP address `168.63.129.16`), and private names using corporate DNS servers. However, these centralized DNS servers won't be able to resolve the AKS API FQDN until they're connected with the DNS private zone created for the AKS cluster. Each AKS has a unique DNS private zone, since a random GUID is prepended to the zone name. So, for each new AKS cluster, its corresponding private DNS zone should be connected to the virtual network where the central DNS servers are located.
+### Design considerations
 
-All virtual networks should be configured to use these central DNS servers for name resolution. However, if the AKS virtual network is configured to use the central DNS servers, and these DNS servers aren't connected to the private DNS zone yet, the AKS nodes won't be able to resolve the FQDN of the Kubernetes API, and the creation of the AKS cluster will fail. The AKS virtual network should be configured to use the central DNS servers only after cluster creation.
+- Virtual network injection provides dedicated private deployments for supported services. Management plane traffic still flows through public IP addresses.
 
-Once the cluster is created, the connection is created between the DNS private zone and the virtual network where the central DNS servers are deployed. The AKS virtual network has also been configured to use the central DNS servers in the connectivity subscription, and administrator access to the AKS Kubernetes API will follow this flow:
+- Azure Private Link provides dedicated access by using private IP addresses for Azure PaaS instances or custom services behind Azure Load Balancer Standard tier.
 
-![Diagram showing a network for a private cluster.](./media/network-private-cluster.png)
+- Enterprise customers often have concerns about public endpoints for PaaS services that must be appropriately mitigated.
 
-> [!NOTE]
-> The images in this article reflect the design using the traditional hub and spoke connectivity model. Enterprise-scale landing zones can opt for the Virtual WAN connectivity model, in which the central DNS servers would be in a shared services virtual network connected to a Virtual WAN hub.
+### Design recommendations
 
-1. The administrator resolves the FQDN of the Kubernetes API. The on-premises DNS servers forward the request to the authoritative servers: the DNS resolvers in Azure. These servers forward the request to the Azure DNS server (`168.63.129.16`), which will get the IP address from the Azure Private DNS zone.
-2. After resolving the IP address, traffic to the Kubernetes API is routed from on-premises to the VPN or ExpressRoute gateway in Azure, depending on the connectivity model.
-3. The private endpoint will have introduced a `/32` route in the hub virtual network. The VPN and ExpressRoute gateways send traffic straight to the Kubernetes API private endpoint deployed in the AKS virtual network.
+- Use virtual network injection for supported Azure services to make them available from within your virtual network.
 
-### Traffic from application users to the cluster
+- Azure PaaS services injected into a virtual network still perform management plane operations by using service specific public IP addresses. Connectivity must be guaranteed for the service to operate correctly.
 
-Incoming (ingress) controllers can be used to expose applications running in the AKS clusters.
+- Access Azure PaaS services from on-premises through ExpressRoute with private peering. Use either virtual network injection for dedicated Azure services or Azure Private Link for available shared Azure services.
 
-- Ingress controllers provide application-level routing at the cost of a slight complexity increase.
-- Ingress controllers can incorporate Web Application Firewall (WAF) functionality.
-- Ingress controllers can run off-cluster and in-cluster:
-  - An off-cluster ingress controller offloads compute (such as HTTP traffic routing or TLS termination) to another service outside of AKS, like the [Azure Application Gateway Ingress Controller (AGIC) add-on](/azure/application-gateway/ingress-controller-overview).
-  - An in-cluster solution consumes AKS cluster resources for compute (such as HTTP traffic routing or TLS termination). In-cluster ingress controllers can offer lower cost, but they require careful resource planning and maintenance.
-- The basic HTTP application routing add-on is easy to use, but has some restrictions as documented in [HTTP application routing](/azure/aks/http-application-routing).
+- To access Azure PaaS services from on-premises when virtual network injection or Private Link isn't available, use [ExpressRoute with Microsoft peering](/azure/expressroute/expressroute-circuit-peerings), which lets you avoid traversing the public internet.
 
-Ingress controllers can expose applications and APIs with a public or a private IP address.
+- Accessing Azure PaaS services from on-premises via ExpressRoute with Microsoft peering doesn't prevent access to the public endpoints of the PaaS service. You must configure and restrict that separately as required.
 
-- The configuration should be aligned with the egress filtering design to avoid asymmetric routing. UDRs can cause asymmetric routing (potentially), but not necessarily. Application Gateway can SNAT on traffic, meaning return traffic goes back to Application Gateway node and not to UDR route if UDR is only set up for internet traffic.
-- If TLS termination is required, management of TLS certificates must be considered.
+- Don't enable [virtual network service endpoints](/azure/virtual-network/virtual-network-service-endpoints-overview) by default on all subnets.
 
-Application traffic can come from either on-premises or the public internet. The following picture describes an example where an [Azure Application Gateway](/azure/application-gateway/overview) is configured to reverse-proxy connections to the clusters both from on-premises and from the public internet.
+- Disable public access to AIS PaaS services.
 
-![Diagram showing application-related network traffic.](./media/network-app-access.png)
+## Network design for API Management
 
-Traffic from on-premises follows the flow of the numbered blue callouts in the previous diagram.
+### Design considerations
 
-1. The client resolves the FQDN assigned to the application, either using the DNS servers deployed in the connectivity subscription or on-premises DNS servers.
-2. After resolving the application FQDN to an IP address (the private IP address of the application gateway), traffic is routed through a VPN or ExpressRoute gateway.
-3. Routing in the gateway subnet is configured to send the request to the web application firewall.
-4. The web application firewall sends valid requests to the workload running in the AKS cluster.
+- Decide if APIs are accessible externally, internally, or a hybrid of both.
 
-The Azure Application Gateway in this example can be deployed in the same subscription as the AKS cluster, since its configuration is closely related to the workloads deployed in AKS and is therefore managed by the same application team. Access from the internet follows the flow of the numbered green callouts in the previous diagram.
+- Decide if you want to use the internal [API Management gateway](/azure/api-management/virtual-network-concepts?tabs=stv2#limitations) as your main endpoint or if you want to use a Web Application Firewall (WAF) service like [Azure Application Gateway](/azure/web-application-firewall/ag/ag-overview) or [Azure Front Door](/azure/web-application-firewall/afds/afds-overview).
 
-1. Clients from the public internet resolve the DNS name for the application using [Azure Traffic Manager](/azure/traffic-manager/traffic-manager-overview). Alternatively, other global load-balancing technologies like [Azure Front Door](/azure/frontdoor/front-door-overview) can be used.
-2. The application public FQDN will be resolved by Traffic Manager to the public IP address of the application gateway, which clients access over the public internet.
-3. The application gateway accesses the workload deployed in AKS.
+- Decide if there should be multiple gateways deployed and how these are load balanced - for example, by using [Application Gateway in front of the API Management gateway](/azure/architecture/reference-architectures/apis/protect-apis).
 
-> [!NOTE]
-> These flows are only valid for web applications. Non-web applications are outside the scope of this article, and they can be exposed through the Azure Firewall in the hub virtual network, or the secure virtual hub if using the Virtual WAN connectivity model.
+- Decide whether connectivity to on-premises or multicloud environments is required.
 
-Alternatively, the traffic flows for web-based applications can be made to traverse both the Azure Firewall in the connectivity subscription and the WAF in the AKS virtual network. This approach has the advantage of offering some more protection, such as using [Azure Firewall intelligence-based filtering](/azure/firewall/threat-intel) to drop traffic from known malicious IP addresses in the internet. However, it has some drawbacks too. For example, the loss of the original client IP address, and the extra coordination required between the firewall and the application teams when exposing applications. This is because destination network address translation (DNAT) rules will be needed in the Azure Firewall.
+### Design recommendations
 
-### Traffic from the AKS pods to backend services
+- Deploy your API Management instance [in a VNet](/azure/api-management/api-management-using-with-vnet) to allow access to backend services in the network.
 
-The pods running inside of the AKS cluster might need to access backend services such as Azure Storage, Azure SQL databases, or Azure Cosmos DB NoSQL databases. [Virtual network service endpoints](/azure/virtual-network/virtual-network-service-endpoints-overview) and [Private Link](/azure/private-link/private-link-overview) can be used to secure connectivity to these Azure managed services.
+- Use [Application Gateway](/azure/api-management/api-management-howto-integrate-internal-vnet-appgateway) for external access to API Management when the API Management instance is deployed in a VNet in Internal mode.
 
-If you're using Azure private endpoints for backend traffic, DNS resolution for the Azure services can be performed using Azure Private DNS zones. Since the DNS resolvers for the whole environment are in the hub virtual network (or the shared services virtual network if using the Virtual WAN connectivity model), these private zones should be created in the connectivity subscription. To create the A-record required to resolve the FQDN of the private service, you can associate the private DNS zone (in the connectivity subscription) with the private endpoint (in the application subscription). This operation requires certain privileges in those subscriptions.
+- Use a [private endpoint for your API Management](/azure/api-management/private-endpoint) instance to allow clients in your private network to securely access the instance over Azure Private Link.
 
-It's possible to create the A-records manually, but associating the private DNS zone with the private endpoint results in a setup less prone to misconfigurations.
+## Network design for Storage Accounts
 
-Backend connectivity from AKS pods to Azure PaaS services exposed through private endpoints follows this sequence:
+Azure Storage is used as the storage solution for Azure Logic Apps and Azure Functions.
 
-![Backend traffic](./media/network-backend-access.png)
+### Design recommendations
 
-1. The AKS pods resolve the FQDN of the Azure platform as a service (PaaS) using the central DNS servers in the connectivity subscription, which are defined as custom DNS servers in the AKS virtual network.
-2. The resolved IP is the private IP address of the private endpoints, which are accessed directly from the AKS pods.
+- For best performance, your Logic App/Function App should use a storage account in the same region, which reduces latency.
 
-Traffic between the AKS pods and the private endpoints by default won't go through the Azure Firewall in the hub virtual network (or the secure virtual hub if using Virtual WAN), even if the AKS cluster is configured for [egress filtering with Azure Firewall](/azure/aks/limit-egress-traffic). The reason is that the private endpoint creates a `/32` route in the subnets of the application virtual network, where AKS is deployed.
+- Use [private endpoints](/azure/storage/common/storage-private-endpoints) for Azure Storage accounts to allow clients on a virtual network (VNet) to securely access data over a Private Link.
 
-## Design recommendations
+- Different private endpoints are created for each table, queue, file and blob storage service.
 
-- If your security policy mandates having the Kubernetes API with a private IP address (instead of a public IP address), [deploy a private AKS cluster](/azure/aks/private-clusters).
-  - Use custom private DNS zones when creating a private cluster, rather than letting the creation process use a [system private DNS zone](/azure/aks/private-clusters#configure-private-dns-zone).
-- Use Azure Container Networking Interface (CNI) as a network model, unless you have a limited range of IP addresses that can be assigned to the AKS cluster.
-  - Follow the documentation about [IP address planning](/azure/aks/configure-azure-cni#plan-ip-addressing-for-your-cluster) with CNI.
-  - To use Windows Server node pools and virtual nodes to verify eventual limitations, refer to the [Windows AKS support FAQ](/azure/aks/windows-faq).
-- Use Azure DDoS Protection to protect the virtual network used for the AKS cluster **unless you use Azure Firewall or WAF in a centralized subscription**.
-- Use the DNS configuration linked to the overall network setup with Azure Virtual WAN or hub and spoke architecture, Azure DNS zones, and your own DNS infrastructure.
-- Use Private Link to secure network connections and use private IP-based connectivity to other managed Azure services used that support Private Link, such as Azure Storage, Azure Container Registry, Azure SQL Database, and Azure Key Vault.
-- Use an ingress controller to provide advanced HTTP routing and security, and to offer a single endpoint for applications.
-- All web applications configured to use an ingress should use TLS encryption and not allow access over unencrypted HTTP. This policy is already enforced if the subscription includes the recommended policies in [Policies included reference implementations of enterprise-scale landing zones](https://github.com/Azure/Enterprise-Scale/blob/main/docs/ESLZ-Policies.md).
-- Optionally, to conserve the compute and storage resources of your AKS cluster, use an off-cluster ingress controller.
-  - Use the [Azure Application Gateway Ingress Controller (AGIC)](/azure/application-gateway/ingress-controller-overview) add-on, which is a first-party managed Azure service.
-  - With AGIC, deploy a dedicated Azure Application Gateway for each AKS cluster and don't share the same Application Gateway across multiple AKS clusters.
-  - If there are no resource or operational constraints, or AGIC doesn't provide the required features, use an in-cluster ingress controller solution like NGINX, Traefik, or any other Kubernetes-supported solution.
-- For internet-facing and security-critical, internal-facing web applications, use a web application firewall with the ingress controller.
-  - Azure Application Gateway and Azure Front Door both integrate the [Azure Web Application Firewall](/azure/web-application-firewall/ag/ag-overview) to protect web-based applications.
-- If your security policy mandates inspecting all outbound internet traffic generated in the AKS cluster, secure egress network traffic using Azure Firewall or a third-party network virtual appliance (NVA) deployed in the managed hub virtual network. For more information, see [Limit egress traffic](/azure/aks/limit-egress-traffic). The AKS [outbound type UDR](/azure/aks/egress-outboundtype#deploy-a-cluster-with-outbound-type-of-udr-and-azure-firewall) requires associating a route table to the AKS node subnet, so it can't be used today with the dynamic route injection supported by Azure Virtual WAN or Azure Route Server.
-- For non-private clusters, use authorized IP ranges.
-- Use the Standard tier rather than the Basic tier of Azure Load Balancer.
-- When designing a Kubernetes cluster in Azure, one of the key considerations is selecting the appropriate network model for your specific requirements. Azure Kubernetes Service (AKS) offers three different networking models: Kubenet, Azure CNI, and Azure CNI Overlay. To make an informed decision, it's essential to understand the capabilities and characteristics of each model.
+- Place your private endpoint in its own dedicated subnet reserved for private endpoints.
 
-For a feature comparison between the three network models in AKS, Kubenet, Azure CNI, and Azure CNI Overlay, see [Compare network models in AKS](/azure/aks/concepts-network#compare-network-models).
+- Add a DNS record using private DNS zone for the private endpoint.
+
+## Network design for App Service Environments
+
+An [App Service Environment](/azure/app-service/environment/overview) (ASE) is a dedicated, isolated environment for running App Services (web apps), Function Apps, and Logic Apps (Standard). It is deployed in your VNet, and contains App Service Plans, each of which are used to host your App Services, Function Apps & Logic Apps.
+
+### Design considerations
+
+- An ASE is deployed onto a single subnet within your VNet. An ASE can be deployed using a Virtual IP Address (VIP) allowing external connections to use a publicly visible IP address, which can be added to a public DNS record.
+
+- Applications within an ASE have access to all other resources within the Virtual Network, depending on network access rules. Access to resources in other VNets can be achieved using Virtual Network peering.
+
+- Applications within an ASE don't need to be configured to belong to a VNet – they are automatically within the VNet by virtue of being deployed to the ASE. This means that instead of having to configure network access on a per-resource basis, you can configure it once at the ASE level.
+
+### Design recommendations
+
+- Use ASE v3 where possible, as it gives the greatest amount of [network flexibility](/azure/app-service/environment/overview#virtual-network-support), while reducing configuration needed for individual resources within the ASE. ASE v3 also supports Zone Redundancy.
+
+## Network design for App Service Plans
+
+- App Services in a multi-tenanted environment can be deployed with a private or a public endpoint. When deployed with a [private endpoint](/azure/app-service/networking/private-endpoint), public exposure of the App Service can be removed. If there's a requirement for the private endpoint of the App Service to also be reachable via the internet, consider the use of Application Gateway to expose the app service.
+
+- Plan your subnets carefully for outbound VNet integration considering the number of IP addresses that are required. VNet integration requires a dedicated subnet. When planning your subnet size, be aware that Azure [reserves 5 IP addresses](/azure/virtual-network/virtual-networks-faq#are-there-any-restrictions-on-using-ip-addresses-within-these-subnets) in each subnet. Additionally, one address is used from the integration subnet for each plan instance. When you scale your app to four instances, then four addresses are used. When you scale up or down in size, the required address space is doubled for a short period of time. This affects the real, available supported instances in your subnet.
+
+When there is a need to connect from an App Service to on-premises, private, or IP-restricted services, consider that:
+
+- When running in the multi-tenanted environment, the App Service call can originate from a wide range of IP addresses, and VNet integration may be needed to meet your networking requirements.
+
+- Services like API Management (APIM) can be used to proxy calls between networking boundaries and can provide a static IP if needed.
+
+### Design recommendations
+
+- Since subnet sizes can't be changed after assignment, use a subnet that is large enough to accommodate whatever scale your app might reach. To avoid any issues with subnet capacity, you should use a /26 suffix (64 addresses) for VNet integration.
+
+## Network design for Azure Data Factory (ADF)
+
+### Design considerations
+
+- To connect Data Factory to a data source located in your on-premises network, or perhaps on an Azure service that has been configured to block access from all Azure services unless they are specifically permitted, you need to consider integrating your Data Factory with a virtual network that provides network access to the target data source.
+
+- Data Factory employs separate environments called [integration runtimes](/azure/data-factory/concepts-integration-runtime). The default Data Factory runtime, the Azure integration runtime, is not associated with a VNet and as such it cannot be used to connect to data sources that are secured with the most restrictive firewalls. Consider [which of these runtimes](/azure/data-factory/choose-the-right-integration-runtime-configuration) best meet your requirements.
+
+- Managed VNets take some time to start up, whereas normal Azure runtimes are available almost instantly. This is something you need to keep in mind when both scheduling your pipelines and debugging them.
+
+- SSIS runtimes with a VNet-integrated runtime will take up to 30 minutes to start.
+
+- Self-hosted integration runtimes can only execute the copy activity, which copies data from one source to another as-is. If you want to perform any transformations to the data, you can't do those using Data Factory's data flows.
+
+- [Managed Private Endpoints](/azure/data-factory/managed-virtual-network-private-endpoint#managed-private-endpoints) are private endpoints created in the Azure Data Factory Managed Virtual Network establishing a private link to Azure resources (generally data sources for ADF). Azure Data Factory manages these private endpoints on your behalf.
+
+- [Private endpoints](/azure/data-factory/data-factory-private-link) are only available for self-hosted integration runtimes to connect to Data Factory.
+
+## Network design for Logic Apps (Standard) - VNet integrated apps
+
+### Design considerations
+
+- Do not use the [Logic Apps consumption hosting option](/azure/logic-apps/single-tenant-overview-compare) as it does not support private endpoints or VNet integration.
+
+- Inbound traffic to your Logic Apps comes through private endpoints. Refer to the [considerations for inbound traffic through private endpoints](/azure/logic-apps/secure-single-tenant-workflow-virtual-network-private-endpoint#considerations-for-inbound-traffic-through-private-endpoints) documentation when planning your Logic Apps networking design.
+
+- Place your private endpoint in its own dedicated subnet reserved for private endpoints.
+
+- Add a DNS record using private DNS zone for the private endpoint.
+
+- Outbound traffic from your Logic Apps flows through the VNet. Refer to the [considerations for outbound traffic through virtual network integration](/azure/logic-apps/secure-single-tenant-workflow-virtual-network-private-endpoint#considerations-for-outbound-traffic-through-virtual-network-integration) documentation when planning your Logic Apps networking design.
+
+- Consider App Service Environment (ASE) hosting instead of multi-tenant hosting for simplified networking & more scaling options.
+
+## Network design for Service Bus
+
+### Design considerations
+
+- Are you using [Private DNS zones](/azure/private-link/private-endpoint-dns) or your own DNS server (with DNS forwarding) to resolve to a private link resource?
+
+- IP Filtering and VNets are only supported in the Premium SKU tier for Service Bus. If the Premium Tier isn't practical, look at using [SAS Tokens](/azure/service-bus-messaging/service-bus-authentication-and-authorization#shared-access-signature) as your primary way of locking down access to your namespace.
+
+### Design recommendations
+
+- Public network access should be disabled using [IP Filtering](/azure/service-bus-messaging/service-bus-ip-filtering), which applies to all supported protocols (for example, AMQP and HTTPS).
+
+- Traffic to this namespace should be restricted over [private endpoints](/azure/service-bus-messaging/private-link-service) only, by restricting public network access (using IP Filtering).
+
+- Place your private endpoint in its own dedicated subnet reserved for private endpoints.
+
+- Add a DNS record using the private DNS zone for the private endpoint. Enable trusted services within Azure to access your namespace directly (thereby bypassing the firewall) to prevent issues with your integration design.
+
+## Network design for Function Apps
+
+### Design considerations
+
+- Are you using [Private DNS zones](/azure/private-link/private-endpoint-dns) or your own DNS server (with DNS forwarding) to resolve to a private link resource?
+
+### Design recommendations
+
+- Public network access should be disabled.
+
+- Inbound traffic to your Function Apps comes through private endpoints. Refer to the [considerations for inbound traffic through private endpoints](/azure/azure-functions/functions-networking-options?tabs=azure-portal) documentation when planning your Function Apps networking design.
+
+- Place your private endpoint in its own dedicated subnet reserved for private endpoints.
+
+- Outbound traffic from your logic apps flows through the VNet. Refer to the [considerations for outbound traffic through virtual network integration](/azure/logic-apps/secure-single-tenant-workflow-virtual-network-private-endpoint#considerations-for-outbound-traffic-through-virtual-network-integration) documentation when planning your Function Apps networking design.
+
+- Add a DNS record using private DNS zone for the private endpoint.
+
+- Consider App Service Environment (ASE) hosting instead of multi-tenant hosting for simplified networking & more scaling options.
+
+## Network design for Azure Key Vault
+
+### Design recommendations
+
+- Public network access should be disabled.
+
+- Create a private endpoint for [restricting access](/azure/key-vault/general/private-link-service?tabs=portal) via VNets only.
+
+- Place your private endpoint in its own dedicated subnet reserved for Key Vault.
+
+- Add a DNS record using private DNS zone for the private endpoint.
+
+## Network design for Event Grid
+
+### Design considerations
+
+- Are you using [Private DNS zones](/azure/private-link/private-endpoint-dns) or your own DNS server (with DNS forwarding) to resolve to a PrivateLink resource?
+
+### Design recommendations
+
+- Public network access should be disabled using IP Filtering.
+
+- Traffic to your topics and domain should be restricted over Private Endpoints only.
+
+- Place your private endpoint in its own dedicated subnet reserved for private endpoints.
+
+- Add a DNS record using private DNS zone for the private endpoint.
+
+## Network design for Event Hubs
+
+### Design considerations
+
+- Restricting network access does not work with the Basic SKU tier in Event Hubs
+
+### Design recommendations
+
+- Public network access should be disabled using IP Filtering.
+
+- Public network access should be disabled using Service Endpoints: Create a Virtual Network Service Endpoint in your VNet and bind this to your Event Hubs namespace using a virtual network rule
+
+- Enable the Trusted Services option to allow select Azure resources to access your namespace.
+
+- Traffic to your namespaces should be restricted over Private Endpoints only.
+
+- Place your private endpoint in its own dedicated subnet reserved for private endpoints.
+
+- Add a DNS record using private DNS zone for the private endpoint.
+
+## Next step
+
+Review the critical design areas to make complete considerations and recommendations for your architecture. 
+
+> [!div class="nextstepaction"] 
+> [Security](./security.md)
+
+## Recommended content
+
+- [What is Azure Private Link](/azure/private-link/private-link-overview)
+
+- [Azure Private Link availability](/azure/private-link/availability#integration)
+
+- [Virtual Network Service Endpoints Overview](/azure/virtual-network/virtual-network-service-endpoints-overview)
+
+- [Azure Private Endpoint DNS configuration](/azure/private-link/private-endpoint-dns)
+
+- [App Service Environments (ASE) Overview](/azure/app-service/environment/overview)
+
+- [Integrate Key Vault with Azure Private Link](/azure/key-vault/general/private-link-service?tabs=portal)
+
+- [Protect APIs with Application Gateway and API Management](/azure/architecture/reference-architectures/apis/protect-apis)
+
+- [Network Security for Azure Event Grid](/azure/event-grid/network-security)
+
+- [Network Security for Azure Event Hubs](/azure/event-hubs/network-security)
+
+- [Allow access to Azure Event Hubs namespaces from specific virtual networks](/azure/event-hubs/event-hubs-service-endpoints)
+
+- [Overview of TLS termination using Application Gateway](/azure/application-gateway/ssl-overview)
+

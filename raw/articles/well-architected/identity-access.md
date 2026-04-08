@@ -1,165 +1,354 @@
 ---
-title: Identity and Access Management for SaaS Workloads on Azure
-description: Learn about the design considerations for identity and access management in your SaaS workload environment.
+title: Architecture strategies for identity and access management 
+description: Learn about recommendations for authenticating and authorizing identities that are attempting to access workload resources.
 author: PageWriter-MSFT
-ms.author: prwilk
-ms.date: 11/04/2025
+ms.author: prwilk 
+ms.date: 11/15/2023
 ms.topic: concept-article
-ms.collection: learn-startups
+ms.custom: sfi-image-nochange
 ---
 
-# Identity and access management for SaaS workloads on Azure
+# Architecture strategies for identity and access management 
 
-Application identity is a critical area for SaaS workloads because it serves as the first line of defense for protecting data. It's often overlooked until late in a project, but many decisions about other elements of the application depend on a solid identity strategy. Don't underestimate the importance of identity in helping to protect your customers' data.
+**Applies to this Azure Well-Architected Framework Security checklist recommendation:**
 
-In the context of SaaS workloads, there are two distinct types of identity.
-
-- **Application identity**, also known as *customer identity and access management (CIAM)*, enables end users to authenticate and use your SaaS application. There are two main methods for signing users in to an application identity provider:
-  
-    - **Federated identities.**  Users sign in with existing credentials that are maintained by another identity provider. That provider could be a social identity provider such as Google, Facebook, or LinkedIn, or an enterprise identity provider that your customers use, such as Microsoft Entra or Okta. Maintenance of the user's account is the responsibility of the federated identity provider.
-
-    - **Local identities.** Users create an account just for your application. The account is secured by username and password, passkey, or other authentication methods. Maintenance of the user's account is your responsibility.
-
-- **Enterprise identity** is the identity solution that's used to authenticate internal users and workloads to business productivity tools, internal tools or services, and Azure services. You use an enterprise identity solution for your internal users and workloads to authenticate them to business productivity tools, internal tools or services, and Azure services. 
-
-    > Refer to [SE:05 Identity and access management](/azure/well-architected/security/identity-access).
-
-A SaaS solution commonly uses both identity types together:
-
-:::image type="content" source="./images/identity-types.svg" alt-text="Diagram that shows the relationship between application identity and enterprise identity." border="false":::
-
-Application and enterprise identities serve different purposes and might use different identity providers. This article focuses on design considerations for application identity, though both types are likely to be present in your SaaS workload environment. 
-
-Identity management involves two related concerns: authentication (verifying a user's identity) and authorization (granting permissions based on identity). The first three sections of this article focus on authentication for SaaS. The final section addresses authorization considerations for SaaS providers.
-
-## Identity in a multitenant application
-
-Keeping tenant (customer) data separate in a multitenant application is critical. That segmentation is driven by your choice of effective user authentication and authorization. Also, the choice of tenancy model significantly influences your decisions about the identity provider. Prioritize identity as your primary perimeter. 
-
-> Refer to [SE:04 Recommendations for segmentation](/azure/well-architected/security/segmentation#establish-identity-as-the-primary-security-perimeter).
-
-### Design considerations
-
-**Understand the tenancy and deployment models for your application.** There might be nuances that influence your identity strategy. For example, it's a misconception that the Deployment Stamps pattern requires an identity provider in each stamp. For most identity providers, you can often use an alternative isolation model, like sharing an identity provider across all your stamps.
-  
-When you choose your identity provider for multitenancy, evaluate the impact of failures. Misconfigurations can potentially bring down your entire application for all tenants. Weigh the overhead costs against the risk of the potential radius of impact. 
-
-If you deploy your solution into a customer's Azure environment and manage it on their behalf, you might need to integrate with their enterprise identity provider. Have a clear understanding of these aspects:
-
-  - The types of users and their access needs when they interact with your application tenants. For example, User A might only need access to sign in to tenant 1, but user B might need access to sign in to both tenant 1 and tenant 2.
-  - Compliance with data residency regulations, if they're applicable to your identity provider. In some cases, data that's stored by an identity provider might be subject to regulations. Many identity providers provide specific guidance and capabilities for this scenario. Assess whether this scenario is relevant to you and take necessary steps to ensure compliance.
-
-### Design recommendations
-
-| Recommendation | Benefit |
+|**SE:05**|Implement strict, conditional, and auditable identity and access management (IAM) across all workload users, team members, and system components. Limit access exclusively to *as necessary*. Use modern industry standards for all authentication and authorization implementations. Restrict and rigorously audit access that's not based on identity.|
 |---|---|
-| Follow your identity provider's best practices and guidelines for partitioning the solution for multiple tenants. | Tenant isolation helps you to achieve your security and compliance goals. |
-| Avoid having multiple accounts for the same user. A user should have a single account with one set of credentials, even if they need access to multiple tenants. Grant access to each tenant as needed rather than creating multiple accounts for the same user. | Creating multiple accounts for the same user increases security risks and can confuse users who need to remember multiple usernames and passwords for the same software.|
-| When you consider data residency, plan how to store user data in separate locations. If you deploy a separate deployment stamp for your users in other geographies, you might also need separate identity providers. <br><br>Make sure you have a way to identify where users' data is stored so you can direct them to the correct region for sign-in, if you need to. | You'll be able to support your compliance requirements and enhance the user experience by routing users to the sign-in experience that's appropriate for their location.|
 
-## Identity provider selection
+This guide describes the recommendations for authenticating and authorizing identities that are attempting to access your workload resources.
 
-Each identity provider offers unique features, limitations, pricing models, and implementation patterns. Microsoft Entra and Okta are popular identity as a service (IDaaS) options. There are also other open source providers, such as Keycloak and Authentik.
+From a technical control perspective, **identity is always the primary perimeter**. This scope doesn't just include the edges of your workload. It also includes individual components that are inside your workload. Typical identities include:
 
-### Design considerations
+-   **Humans**. Application users, admins, operators, auditors, and bad actors.
 
-- **Document your identity requirements.** Start by listing the features that your application needs now and will need in the future. Typical features to consider include:
+-   **Systems**. Workload identities, managed identities, API keys, service principals, and Azure resources.
 
-    - Federated identity provider support to integrate with customers' identity solutions. This feature enables you to avoid creating new identities.
-    - Customizable sign-in/sign-up flow to modify the look and feel to maintain your branding. This feature also provides the ability to inject custom business logic into the sign-in/sign-up process.
-    - Separation of tenant data into distinct silos to maintain tenant isolation.
-    - Audit support to retain or export sign-in logs for security management.
+-   **Anonymous**. Entities who haven't provided any evidence about who they are.
 
-    > [!IMPORTANT]
-    > Consider your planned user growth when you evaluate the cost of an identity solution. A solution might not remain cost effective or scalable in the long term, but it could be useful for now. Have a migration plan that you can use if the need arises.
-    >
-    > For example, a solution might be affordable for 500 users but unsustainable for 5 million. If it requires minimal setup and is user-friendly and easy to migrate from, it could still be the right choice until scaling costs justify switching to a different solution.
 
-- **Research the identity provider capabilities thoroughly.** Make sure the identity solution matches your list of required features. Even if you don't currently need complex scenarios like federated identity, consider future needs. For business-to-business (B2B) SaaS solutions, federated identity will probably be necessary eventually.
 
-- **Factor in management overhead.** Different identity providers require varying levels of management overhead. Well-known IDaaS solutions usually have less overhead because they handle hosting, maintenance, and security. However, the additional overhead of an open source solution might be worthwhile if the solution is a better fit for your specialized needs.
+**Terminology** 
 
-### Design recommendations
 
-| Recommendation | Benefit |
-|---|---|
-| Don't create your own identity solution. Identity is a highly specialized area, and creating an identity solution is complex and expensive. It's difficult to create an identity solution that's secure and reliable. |You'll avoid the antipattern of creating your own provider and enhance the security, reliability, and operational efficiency of your solution.|
-| Create a capability matrix of the features offered by identity providers and map it against your identity requirements.|You'll ensure your ability to evolve without being constrained by a limited set of identity features.|
-| Prefer IDaaS options over open source solutions. <br> <br> Hosting an open source solution yourself incurs significant operational overhead and security risks. However, you might choose that option to meet specific requirements for compliance, data residency, or reliability that a provider can't fulfill. For more information, see [IDaaS identity providers](/azure/architecture/guide/design-principles/identity).| By using an IDaaS identity provider, you'll avoid unnecessary complexity and can focus your efforts on your core business.|
+|Terms   |Definition   |
+|---------|---------|
+|Authentication (AuthN)     | A process that verifies that an identity is who or what it says it is.       |
+|Authorization (AuthZ)     | A process that verifies whether an identity has permission to perform a requested action.       |
+|Conditional access|A set of rules that allows actions based on specified criteria. |
+|IdP     |  An identity provider, like Microsoft Entra ID.       |
+|Persona     |   A job function or a title that has a set of responsibilities and actions.      |
+|Preshared keys     |  A type of secret that's shared between a provider and consumer and used through a secure and agreed upon mechanism.       |
+|Resource identity     |   An identity defined for cloud resources that's managed by the platform.      |
+|Role     |  A set of permissions that define what a user or group can do.      |
+|Scope     | Different levels of organizational hierarchy where a role is permitted to operate. Also a group of features in a system.        |
+|Security principal     | An identity that provides permissions. It can be a user, a group, or a service principal. Any group members get the same level of access.   |
+|User identity      |  An identity for a person, like an employee or an external user.     |
+|Workload identity       |   A system identity for an application, service, script, container, or other component of a workload that's used to authenticate itself to other services and resources.    |
 
-## Federated identity
+> [!Note] 
+> An identity can be grouped with other, similar identities under a parent called a *security principal*. A security group is an example of a security principal. This hierarchical relationship simplifies maintenance and improves consistency. Because identity attributes aren't handled at the individual level, chances of errors are also reduced. In this article, the term *identity* is inclusive of security principals.
 
-Federated identity, also known as *single sign-on (SSO)*, allows users to sign in with credentials they already use elsewhere. You enable federated identity by establishing a trust relationship between your application identity provider and the customer's existing identity provider. Federated identity is a common requirement for SaaS solutions, especially in B2B, because customers prefer their employees to use corporate credentials. It offers several benefits for B2B solutions, such as centralized identity management and automatic lifecycle management. In B2C SaaS products, integrating with social identity providers is common to allow users to sign in with existing credentials.
+### The role of an identity provider
 
-> :::image type="icon" source="../_images/trade-off.svg"::: **Tradeoff: Complexity and operational efficiency.** By working with federated identity providers, you offload the complexity of managing your users' identities. However, you take on the cost of integrating with another identity provider. Decide where you want to focus your operational efforts.
+An identity provider (IdP) is a cloud-hosted service that stores and manages users as digital identities.
 
-Although implementing federated identity is initially simple, it becomes more complex as the number of supported identity providers increases. Careful planning is essential, especially if each customer uses a unique identity provider. Even if they use the same identity provider, unique trust relationships are often required for each customer because of specific configuration details.
+**Take advantage of the capabilities provided by a trusted IdP** for your identity and access management. Don't implement custom systems to replace an IdP. IdP systems are improved frequently based on the latest attack vectors by capturing billions of signals across multiple tenants each day. Microsoft Entra ID is the IdP for Azure cloud platform.
 
-This image shows the relationship between your application, your application identity provider, and the downstream identity providers that you might choose to implement by using identity federation.  
+#### Authentication
 
-:::image type="content" source="./images/federated-identity.svg" alt-text="Diagram that shows an application trusting a single identity provider, which in turn federates with multiple customer identity providers." border="false":::
+Authentication is a process that verifies identities. The requesting identity is required to provide some form of verifiable identification. For example:
 
-### Design considerations
+-   A user name and password.
 
-- **Estimate the types and number of identity providers you need to support.** You might need a static number of social identity providers, or you might need unique federated identity providers for each customer. You should know whether your customers will use OpenID Connect (OIDC), Security Assertion Markup Language (SAML), or both for integration.
+-   A preshared secret, like an API key that grants access.
 
-- **Map out the sign-in experience.** Visualize the user flow of the sign-up and sign-in process. Note any special requirements that might alter your user flow design. For example:
+-   A shared access signature (SAS) token.
 
-    - **Custom branding.** White labeling or custom sign-in domains per customer.
+-   A certificate that's used in TLS mutual authentication.
 
-    - **Custom information.** Collecting additional user information during sign-up or sign-in, such as tenant selection for users with access to multiple tenants.
+As much as possible, the verification process should be handled by your IdP.
 
-    - **Identity provider selection.** If you use a single application identity provider that has many federated identity providers trusting it, decide how to select a provider. This selection might be done manually via a button or automatically based on known user information. As the number of providers increases, automatic selection becomes more practical. This capability is known as *Home Realm Discovery*.
+#### Authorization
 
-### Design recommendations
+Authorization is a process that allows or denies actions that are requested by the verified identity. The action might be operational or related to resource management.
 
-| Recommendation | Benefit |
-|---|---|
-| Choose an identity provider that can scale to accommodate the number of federated identity providers you need. <br><br> Be aware of the hard limits of the provider, which can't be exceeded.|You'll ensure that your identity solution can scale as you grow.|
-| Plan the onboarding of each federated identity provider and automate the process as much as possible. <br><br>This collaborative effort between your organization and your customers involves exchanging information to establish a trust relationship, typically via OIDC or SAML protocols.| Identity integration can take time and effort for both you and your customers. By planning the process, you'll improve your operational efficiency. |
-| Reflect the complexity and cost of federated identity in your pricing and business model.<br><br>Allowing customers to use their own identity provider increases operational complexity and costs because of the overhead of maintaining multiple federated identity trust relationships. It's common in SaaS solutions for enterprises to pay for a higher tier that enables federated sign-in.|Federating with a customer's identity provider can be a hidden cost in SaaS solutions. By planning for it, you'll avoid unexpected costs during implementation.|
-| Plan for how a user's identity provider will be selected during the sign-in flow. Consider using Home Realm Discovery. <br><br>Microsoft Entra ID provides built-in [Home Realm Discovery](/entra/identity/enterprise-apps/home-realm-discovery-policy).| You'll streamline your customer experience and ensure that users are directed to the right sign-in process. |
+Authorization requires that you assign permissions to the identities, which you need to do by using the functionality provided by your IdP.
 
-## Authorization
 
-User authorization is crucial for SaaS applications, which often store data for multiple tenants. Clearly define how users will be authorized to access only their data without inadvertently accessing other tenants' data. Additionally, provide granular authorization within a tenant, allowing users to read or access certain information while restricting updates or access to other data.
+To get a holistic view of the identity needs for a workload, you need to catalog the flows, workload assets, and personas, and the actions the assets and personas will perform. Your strategy must cover all use cases that handle **the flows that reach the workload or its components (outside-in access) and flows that reach out from the workload to other sources (inside-out access)**.
 
-### Design considerations
+Each use case will probably have its own set of controls that you need to design with an assume-breach mindset. Based on the identity requirements of the use case or the personas, identify the conditional choices. Avoid using one solution for all use cases. Conversely, the controls shouldn't be so granular that you introduce unnecessary management overhead.
 
-- **Choose the right authorization model for the use case.** There are two main types:
-  
-    - **Role-based authorization.** Users are assigned roles or groups, and specific features are restricted to certain roles. For example, administrators can perform any action, but users in other roles have limited permissions.  
-    - **Resource-based authorization.**  Each resource has its own set of permissions. A user might be an administrator for one resource but have no access to another.
+You need to log the identity access trail. Doing so helps validate the controls, and you can use the logs for compliance audits.
 
-- **Decide where to store authorization data.** Authorization data for your application can be stored in:
-  
-    - **Your identity provider.** Take advantage of the built-in groups or roles, surfacing permissions as claims in the token issued to your application. Your application can then enforce authorization rules by using these token claims.
-    - **Your application.**  Develop your own authorization logic and store user permissions in a database or similar system, allowing for fine-grained role-based or resource-level authorization controls.
+## Determine all identities for authentication
 
-    > :::image type="icon" source="../_images/trade-off.svg"::: **Tradeoff: Complexity, flexibility, and security.** Storing authorization data in an identity provider and surfacing through token claims is usually simpler than managing your own authorization system. However, claim-based authorization limits your flexibility, and you need to accept that claims are only refreshed when a token is reissued, which can cause a delay in applying changed permissions.
+-   **Outside-in access**. Your identity design must authenticate all users that access the workload for various purposes. For example, an end user who accesses the application by calling APIs.
 
-- **Assess the impact of delegated management.** In most SaaS applications, especially in B2B applications, role and permission management is delegated to customers. Without this functionality, you might increase your management overhead if customers frequently change their users' permissions.
-  
-- **Evaluate multitenant access.** In some systems, a single user might need to access data from multiple tenants. For example, consultants might need to access data from multiple tenants. Plan how customers will grant access to these users and how your sign-in flow will support selecting and switching among tenants.
+    At a granular level, components of the workload might also need access from outside. For example, an operator who needs access through the portal or access to the compute to run commands.
 
-### Design recommendations
+    Both are examples of **user identities** that have different personas.
 
-| Recommendation | Benefit |
-|---|---|
-| Prevent users from accessing data across tenant boundaries unless that access is explicitly permitted. | Unauthorized access to another tenant's data, even accidental access, can be seen as a major security incident and erode customer trust in your platform. Blocking unnecessary access will help you avoid these situations. |
-| If the data is static and changes infrequently, store it in the identity provider. If frequent changes are needed while the user is using the software, store the authorization data in your application. |Selecting the best data store for your authorization data will enhance your operational efficiency and help you meet your scalability needs. |
-| If you delegate permission management to customers, provide a clear method for them to manage permissions. For instance, create a web portal that's accessible only to tenant administrators for changing user permissions. | You'll provide more control to your customers and avoid unnecessary operational burden on your support team. |
+-   **Inside-out access**. Your application will need to access other resources. For example, reading from or writing to the data platform, retrieving secrets from the secret store, and logging telemetry to monitoring services. It might even need to access third-party services. These access needs require **workload identity**, which enables the application to authenticate itself against the other resources.
 
-## Additional resources
+    The concept applies at the component level. In the following example, the container might need access to deployment pipelines to get its configuration. These access needs require **resource identity**.
 
-Multitenancy is a core business methodology for designing SaaS workloads. These articles provide more information about identity and access management:
+All these identities should be authenticated by your IdP.
 
-- [Architectural considerations for identity in multitenant solutions](/azure/architecture/guide/multitenant/considerations/identity)
-- [Architectural approaches for identity in multitenant solutions](/azure/architecture/guide/multitenant/approaches/identity)
+Here's an example of how identity can be implemented in an architecture:
 
-## Next step
+:::image type="content" source="images/identity-access/architecture-identity.svg" alt-text="Diagram that shows how identity can be implemented in an architecture." border="false" lightbox="images/identity-access/architecture-identity-highres.png":::
 
-Learn about choosing your compute hosting model, the operational aspects, and how to optimize the technology options to help you meet your service level agreements and objectives.
+## Determine actions for authorization
+
+Next, you need to know what each authenticated identity is trying to do so that those actions can be authorized. The actions can be divided by the type of access that they require:
+
+-   **Data plane access**. Actions that take place in the data plane cause data transfer for inside-out or outside-in access. For example, an application reading data from a database and writing data to a database, fetching secrets, or writing logs to a monitoring sink. At the component level, compute that's pulling or pushing images to or from a registry are considered data plane operations.
+
+-   **Control plane access**. Actions that take place in the control plane cause an Azure resource to be created, modified, or deleted. For example, changes to resource properties.
+
+Applications typically target data plane operations, while operations often access both control and data planes. To identify authorization needs, note the operational actions that can be performed on the resource. For information about the permitted actions for each resource, see [Azure resource provider operations](/azure/role-based-access-control/resource-provider-operations).
+
+## Provide role-based authorization
+
+Based on the responsibility of each identity, authorize actions that should be permitted. **An identity must not be allowed to do more than it needs to do**. Before you set authorization rules, you need to have a clear understanding of who or what is making requests, what that role is allowed to do, and to what extent it can do it. Those factors lead to choices that combine identity, role, and scope.
+
+Consider a workload identity as an example. The application must have data plane access to the database, so read and write actions to the data resource must be allowed. However, does the application need control plane access to the secret store? If the workload identity is compromised by a bad actor, what would the impact to the system be, in terms of confidentiality, integrity, and availability?
+
+#### Role assignment
+
+A role is a *set of permissions* that's assigned to an identity. Assign roles that only allow the identity to complete the task, and no more. When user's permissions are restricted to their job requirements, it's easier to identify suspicious or unauthorized behavior in the system.
+
+Ask questions like these: 
+
+- Is read-only access enough? 
+- Does the identity need permissions to delete resources?
+
+**Limiting the level of access that users, applications, or services have to Azure resources reduces the potential attack surface.** If you grant only the minimum permissions that are required to perform specific tasks, the risk of a successful attack or unauthorized access is significantly reduced. For example, security teams only need read-only access to security attributes for all technical environments. That level is enough to assess risk factors, identify potential mitigations, and report on the risks.
+
+There are scenarios in which users need more access because of the organizational structure and team organization. There might be an overlap between various roles, or single users might perform multiple standard roles. In this case, use multiple role assignments that are based on the business function instead of creating a custom role for each of these users. Doing so makes the roles easier to manage.
+
+**Avoid permissions that specifically reference individual resources or users.** Granular and custom permissions create complexity and confusion because they don't pass on the intention to new resources that are similar. This can create  a complex legacy configuration that's difficult to maintain and negatively impact both security and reliability.
+
+> :::image type="icon" source="../_images/trade-off.svg"::: **Tradeoff**: A granular access control approach enables better auditing and monitoring of user activities.
+
+A role also has an *associated scope*. The role can operate at the allowed management group, subscription, resource group, or resource scope, or at another custom scope. Even if the identity has a limited set of permissions, widening the scope to include resources that are outside the identity's job function is risky. For example, read access to all source code and data can be dangerous and must be controlled.
+
+You assign roles to identities by using role-based access control (RBAC). **Always use IdP-provided RBAC** to take advantage of features that enable you to apply access control consistently and revoke it rigorously.
+
+**Use built-in roles.** They're designed to cover most use cases. Custom roles are powerful and sometimes useful, but you should reserve them for scenarios in which built-in roles won't work. Customization leads to complexity that increases confusion and makes automation more complex, challenging, and fragile. These factors all negatively impact security.
+
+**Grant roles that start with least privilege and add more based your operational or data access needs**. Your technical teams must have clear guidance to implement permissions.
+
+If you want fine-grained control on RBAC, add conditions on the role assignment based on context, such as actions and attributes.
+
+## Make conditional access choices
+
+Don't give all identities the same level of access. Base your decisions on two main factors:
+
+-   **Time**. How long the identity can access your environment.
+
+-   **Privilege**. The level of permissions.
+
+Those factors aren't mutually exclusive. A compromised identity that has more privileges and unlimited duration of access can gain more control over the system and data or use that access to continue to change the environment. Constrain those access factors both as a preventive measure and to control the blast radius.
+
+-   *Just in Time (JIT)* approaches provide the required privileges only when they're needed.
+
+-   *Just Enough Access (JEA)* provides only the required privileges.
+
+Although time and privilege are the primary factors, there are other conditions that apply. For example, you can also use the device, network, and location from which the access originated to set policies.
+
+**Use strong controls that filter, detect, and block unauthorized access**, including parameters like user identity and location, device health, workload context, data classification, and anomalies.
+
+For example, your workload might need to be accessed by third-party identities like vendors, partners, and customers. They need the appropriate level of access rather than the default permissions that you provide to full-time employees. Clear differentiation of external accounts makes it easier to prevent and detect attacks that come from these vectors.
+
+Your choice of IdP must be able to provide that differentiation, provide built-in features that grant permissions based on the least privilege, and provide built-in threat intelligence. This includes monitoring of access requests and sign-ins. The Azure IdP is Microsoft Entra ID. For more information, see the [Azure facilitation section](#azure-facilitation) of this article.
+
+## Protect critical impact accounts
+
+Administrative identities introduce some of the highest impact security risks because the tasks they perform require privileged access to a broad set of these systems and applications. Compromise or misuse can have a detrimental effect on your business and its information systems. Security of administration is one of the most critical security areas.
+
+Protecting privileged access against determined adversaries requires you to take a complete and thoughtful approach to isolate these systems from risks. Here are some strategies:
+
+-   **Minimize the number of critical impact accounts.**
+
+-   **Use separate roles** instead of elevating privileges for existing identities.
+
+-   **Avoid permanent or standing access** by using the JIT features of your IdP. For break glass situations, follow an emergency access process.
+
+-   **Use modern access protocols** like passwordless authentication or multifactor authentication. Externalize those mechanisms to your IdP.
+
+-   Enforce key security attributes by using **conditional access policies**.
+
+-   **Decommission administrative accounts** that aren't being used.
+
+Use a single identity across environments and associate a single identity with the user or principal. Consistency of identities across cloud and on-premises environments reduces human errors and the resulting security risks. Teams in both environments that manage resources need a consistent, authoritative source in order to meet security assurances. Work with your central identity team to ensure that identities in hybrid environments are synchronized.
+
+> :::image type="icon" source="../_images/risk.svg"::: **Risk**: There's a risk associated with synchronizing high privilege identities. An attacker can get full control of on-premises assets, and this can lead to a successful compromise of a cloud account. Evaluate your synchronization strategy by filtering out accounts that can add to the attack surface.
+
+## Establish processes to manage the identity lifecycle
+
+**Access to identities must not last longer than the resources that the identities access.** Ensure that you have a process for disabling or deleting identities when there are changes in team structure or software components.
+
+This guidance applies to source control, data, control planes, workload users, infrastructure, tooling, the monitoring of data, logs, metrics, and other entities.
+
+**Establish an identity governance process** to manage the lifecycle of digital identities, high-privileged users, external/guest users, and workload users. Implement access reviews to ensure that when identities leave the organization or the team, their workload permissions are removed.
+
+## Protect nonidentity based secrets
+
+Application secrets like preshared keys should be considered vulnerable points in the system. In the two-way communication, if the provider or consumer is compromised, significant security risks can be introduced. Those keys can also be burdensome because they introduce operational processes.
+
+**When you can, avoid using secrets** and consider using identity-based authentication for user access to the application itself, not just to its resources.
+
+The following list provides a summary of guidance. For more information, see [Recommendations for application secrets](./application-secrets.md).
+
+-   Treat these secrets as entities that can be dynamically pulled from a secret store. They shouldn't be hard coded in your application code, IaC scripts, deployment pipelines, or in any other artifact.
+
+-   Be sure that you have the **ability to revoke secrets**.
+
+-   Apply operational practices that handle tasks like **key rotation and expiration**.
+
+For information about rotation policies, see [Automate the rotation of a secret for resources that have two sets of authentication credentials](/azure/key-vault/secrets/tutorial-rotation-dual) and [Tutorial: Updating certificate auto-rotation frequency in Key Vault](/azure/key-vault/certificates/tutorial-rotate-certificates).
+
+## Keep development environments safe
+
+All code and scripts, pipeline tooling, and source control systems should be considered workload assets. **Access to writes should be gated** with automation and peer review. **Read access to source code should be limited** to roles on a need-to-know basis. Code repositories must have versioning, and **security code reviews** by peers must be a regular practice that's integrated with the development lifecycle. You need to have a process in place that **scans resources regularly** and identifies the latest vulnerabilities.
+
+Use workload identities to grant access to resources from deployment environments, such as GitHub.
+
+## Maintain an audit trail
+
+One aspect of identity management is ensuring that the system is auditable. Audits validate whether assume-breach strategies are effective. Maintaining an audit trail helps you:
+
+-   Verify that identity is authenticated with strong authentication. **Any action must be traceable** to prevent repudiation attacks.
+
+-   **Detect weak or missing authentication protocols** and get visibility into and insights about user and application sign-ins.
+
+-   Evaluate access from identities to the workload based on security and **compliance requirements** and consider user account risk, device status, and other criteria and policies that you set.
+
+-   **Track progress or deviation** from compliance requirements.
+
+Most resources have data plane access. You need to know the identities that access resources and the actions that they perform. You can use that information for security diagnostics.
+
+For more information, see [Recommendations on security monitoring and threat analysis](./monitor-threats.md).
+
+## Azure facilitation
+
+We recommend that you always use modern authentication protocols that take into account all available data points and use conditional access. **Microsoft Entra ID provides identity and access management in Azure**. It covers the management plane of Azure and is integrated with the data planes of most Azure services. Microsoft Entra ID is the tenant that's associated with the workload subscription. It tracks and manages identities and their allowed permissions and simplifies overall management to minimize the risk of oversight or human error.
+
+These capabilities natively integrate into the same Microsoft Entra identity and permission model for user segments:
+
+-   [Microsoft Entra ID](/azure/active-directory/). Employees and enterprise resources.
+
+-   [Microsoft Entra External ID](/azure/active-directory/b2b/). Partners.
+
+-   [Microsoft Entra federation compatibility list](/azure/active-directory/hybrid/connect/how-to-connect-fed-compatibility). Third-party federation solutions.
+
+You can use Microsoft Entra ID for authentication and authorization of custom applications via Microsoft Authentication Library (MSAL) or platform features, like authentication for web apps. It covers the management plane of Azure, the data planes of most of Azure services, and integration capabilities for your applications.
+
+You can stay current by visiting [What's new in Microsoft Entra ID](/azure/active-directory/fundamentals/whats-new).
+
+> :::image type="icon" source="../_images/trade-off.svg"::: **Tradeoff**: Microsoft Entra ID is a single point of failure just like any other foundational service. There's no workaround until the outage is fixed by Microsoft. However, the rich feature set of Microsoft Entra outweighs the risk of using custom solutions.
+
+Azure supports open protocols like OAuth2 and OpenID Connect. We recommend that you use these standard authentication and authorization mechanisms instead of designing your own flows.
+
+### Azure RBAC
+
+Azure RBAC represents security principals in Microsoft Entra ID. All role assignments are done via Azure RBAC. Take advantage of built-in roles that provide most of the permissions that you need. For more information, see [Microsoft Entra built-in roles](/azure/active-directory/roles/permissions-reference).
+
+Here are some use cases:
+
+-   By assigning users to roles, you can control access to Azure resources. For more information, see [Overview of role-based access control in Microsoft Entra ID](/azure/active-directory/roles/custom-overview).
+
+-   You can use Privileged Identity Management to provide time-based and approval-based role activation for roles that are associated with high-impact identities. For more information, see [What is Privileged Identity Management?](/azure/active-directory/privileged-identity-management/pim-configure).
+
+For more information about RBAC, see [Best practices for Azure RBAC](/azure/role-based-access-control/best-practices).
+
+For information about attribute-based controls, see [What is Azure ABAC?](/azure/role-based-access-control/conditions-overview).
+
+### Workload identity
+
+**Microsoft Entra ID can handle your application's identity.** The service principal that's associated with the application can dictate its access scope.
+
+For more information, see [What are workload identities?](/azure/active-directory/workload-identities/workload-identities-overview).
+
+**The service principal is also abstracted when you use a managed identity.** The advantage is that Azure manages all credentials for the application.
+
+Not all services support managed identities. If you can't use managed identities, you can use service principals. However, using service principals increases your management overhead. For more information, see [What are managed identities for Azure resources?](/azure/active-directory/managed-identities-azure-resources/overview).
+
+### Resource identity
+
+The concept of **managed identities can be extended to Azure resources**. Azure resources can use managed identities to authenticate themselves to other services that support Microsoft Entra authentication. For more information, see [Azure services that can use managed identities to access other services](/azure/active-directory/managed-identities-azure-resources/services-support-managed-identities).
+
+### Conditional access policies
+
+**Conditional access describes your policy** for an access decision. To use conditional access, you need to understand the restrictions that are required for the use case. Configure Microsoft Entra Conditional Access by setting up an access policy for that's based on your operational needs.
+
+For more information, see [Conditional access: Users, groups, and workload identities](/azure/active-directory/conditional-access/concept-conditional-access-users-groups).
+
+### Group access management
+
+Instead of granting permissions to specific users, assign access to groups in Microsoft Entra ID. If a group doesn't exist, work with your identity team to create one. You can then add and remove group members outside of Azure and make sure that permissions are current. You can also use the group for other purposes, like mailing lists.
+
+For more information, see [Secure access control using groups in Microsoft Entra ID](/azure/active-directory/develop/secure-group-access-control).
+
+### Threat detection
+
+Microsoft Entra ID Protection can help you detect, investigate, and remediate identity-based risks. For more information, see [What is Identity Protection?](/azure/active-directory/identity-protection/overview-identity-protection).
+
+Threat detection can take the form of reacting to an alert of suspicious activity or proactively searching for anomalous events in activity logs. User and Entity Behavior Analytics (UEBA) in Microsoft Sentinel makes it easy to detect suspicious activities. For more information, see [Identify advanced threats with UEBA](/azure/sentinel/identify-threats-with-entity-behavior-analytics).
+
+### Hybrid systems
+
+On Azure, **don't synchronize accounts to Microsoft Entra ID that have high privileges in your existing Active Directory**. This synchronization is blocked in the default Microsoft Entra Connect Sync configuration, so you only need to confirm that you haven't customized this configuration.
+
+For information about filtering in Microsoft Entra ID, see [Microsoft Entra Connect Sync: Configure filtering](/azure/active-directory/hybrid/connect/how-to-connect-sync-configure-filtering).
+
+### Identity logging
+
+**Enable diagnostic settings on Azure resources** to emit information that you can use as an audit trail. The diagnostic information shows which identities attempt to access which resources and the outcome of those attempts. The collected logs are sent to Azure Monitor.
+
+> :::image type="icon" source="../_images/trade-off.svg"::: **Tradeoff**: Logging incurs costs because of the data storage that's used to store the logs. It also might cause a performance impact, especially on the code and on logging solutions that you add to the application.
+
+## Example
+
+The following example shows an identity implementation. Different types of identities are used together to provide the required levels of access.
+
+:::image type="content" source="images/identity-access/identity-architecture-design.svg" alt-text="Diagram that shows an identity implementation." border="false" lightbox="images/identity-access/identity-architecture-design-highres.png":::
+
+### Identity components
+
+-   **System-managed identities**. Microsoft Entra ID provides access to service data planes that don't face users, like Azure Key Vault and data stores. These identities also control access, via RBAC, to the Azure management plane for workload components, deployment agents, and team members.
+
+-   **Workload identities**. The application services in the Azure Kubernetes Service (AKS) cluster use workload identities to authenticate themselves to other components in the solution.
+
+-   **Managed identities**. System components in the client role use system-managed identities, including build agents.
+
+-   **Human identities**. User and operator authentication is delegated to Microsoft Entra ID or Microsoft Entra ID (native, B2B, or B2C).
+
+The security of preshared secrets is critical for any application. Azure Key Vault provides a secure storage mechanism for these secrets, including Redis and third-party secrets. 
+
+A rotation mechanism is used to help ensure that secrets aren't compromised. Tokens for the Microsoft identity platform implementation of OAuth 2 and OpenID Connect are used to authenticate users. 
+
+Azure Policy is used to ensure that identity components like Key Vault use RBAC instead of access policies. JIT and JEA provide traditional standing permissions for human operators. 
+
+Access logs are enabled across all components via Azure Diagnostics, or via code for code components.
+
+## Related links
+
+- [Tutorial: Automate the rotation of a secret for resources that have two sets of authentication credentials](/azure/key-vault/secrets/tutorial-rotation-dual) 
+- [Tutorial: Updating certificate auto-rotation frequency in Key Vault](/azure/key-vault/certificates/tutorial-rotate-certificates)
+- [What's new in Microsoft Entra ID?](/azure/active-directory/fundamentals/whats-new)
+- [Microsoft Entra built-in roles](/azure/active-directory/roles/permissions-reference)
+- [Overview of role-based access control in Microsoft Entra ID](/azure/active-directory/roles/custom-overview)
+- [What are workload identities?](/azure/active-directory/workload-identities/workload-identities-overview)
+- [What are managed identities for Azure resources?](/azure/active-directory/managed-identities-azure-resources/overview)
+- [Conditional access: Users, groups, and workload identities](/azure/active-directory/conditional-access/concept-conditional-access-users-groups)
+- [Microsoft Entra Connect Sync: Configure filtering](/azure/active-directory/hybrid/connect/how-to-connect-sync-configure-filtering)
+ 
+## Security checklist
+
+Refer to the complete set of recommendations. 
 
 > [!div class="nextstepaction"]
-> [Design area: Compute for SaaS workloads on Azure](./compute.md)
+> [Security checklist](checklist.md)

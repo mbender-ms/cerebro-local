@@ -3,7 +3,7 @@ title: "Troubleshooting: Azure VPN Gateway"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
-  - support-vpn-gateway/*.md
+  - support-vpn-gateway/*.md (removed upstream 2026-04-08)
 tags:
   - support
   - troubleshooting
@@ -11,6 +11,8 @@ tags:
 ---
 
 # Troubleshooting: Azure VPN Gateway
+
+> **Note**: Support articles for this service were removed from the upstream MicrosoftDocs/SupportArticles-docs repository as of April 2026. Articles may have been consolidated into the main service documentation.
 
 12 troubleshooting articles for VPN Gateway connectivity issues.
 

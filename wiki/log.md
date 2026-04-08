@@ -133,3 +133,28 @@ performed during initial build-out.
 
 Final state: 342 wiki pages, 11,652 raw articles, 176 service areas,
 68,464 qmd vectors.
+
+## [2026-04-07] ingest | Azure Compute docs (1,788 articles, 5 service areas)
+
+Source: `azure-compute-docs-pr/articles/` (copied from local clone)
+Syncs from: `MicrosoftDocs/azure-compute-docs` (public)
+
+Service areas: virtual-machines (1,166), service-fabric (422),
+virtual-machine-scale-sets (97), container-instances (89),
+azure-impact-reporting (14).
+
+Deep wiki pages created (7):
+- entities/azure-virtual-machines — size families, disk types, availability options
+- entities/azure-vmss — orchestration modes (Flexible vs Uniform), features
+- entities/azure-container-instances — features, when to use vs AKS/Container Apps
+- entities/azure-service-fabric — stateful services, programming models
+- concepts/managed-disks — disk type comparison (Ultra/PremiumV2/Premium/Standard)
+- concepts/vm-availability — zones, VMSS, availability sets, decision guide
+- comparisons/container-compute-options — AKS vs Container Apps vs ACI vs Service Fabric
+
+5 source summary pages created.
+
+Sync scripts updated: sync-raw.sh routes VM/VMSS/ACI/ServiceFabric/ImpactReporting
+to MicrosoftDocs/azure-compute-docs. sync-all.sh has --compute flag.
+
+Totals: 352 wiki pages, 13,389 raw articles, 181 service areas.

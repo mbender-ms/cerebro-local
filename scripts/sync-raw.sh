@@ -6,8 +6,9 @@
 # Downloads new/modified files, detects deletions, and produces a
 # change report for the LLM to re-ingest affected articles.
 #
-# Supports two source repos:
+# Supports three source repos:
 #   - MicrosoftDocs/azure-docs (MS Learn articles)
+#   - MicrosoftDocs/azure-compute-docs (Compute articles: VMs, VMSS, ACI, Service Fabric)
 #   - MicrosoftDocs/SupportArticles-docs (Support articles)
 #
 # Usage:
@@ -46,6 +47,13 @@ if [[ "$SERVICE" == support-* ]]; then
   REMOTE_PATH="support/azure/$UPSTREAM_SVC"
   LOCAL_DIR="$RAW_DIR/$SERVICE"
   # Support articles have nested subdirs — we need recursive fetch
+  RECURSIVE=true
+elif [[ "$SERVICE" == virtual-machines || "$SERVICE" == virtual-machine-scale-sets || "$SERVICE" == container-instances || "$SERVICE" == service-fabric || "$SERVICE" == azure-impact-reporting ]]; then
+  # Compute docs: MicrosoftDocs/azure-compute-docs
+  REPO="MicrosoftDocs/azure-compute-docs"
+  BRANCH="main"
+  REMOTE_PATH="articles/$SERVICE"
+  LOCAL_DIR="$RAW_DIR/$SERVICE"
   RECURSIVE=true
 else
   # MS Learn articles: MicrosoftDocs/azure-docs

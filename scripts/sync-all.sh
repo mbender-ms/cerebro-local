@@ -42,7 +42,16 @@ LEARN_SERVICES=(
   web-application-firewall
 )
 
-# --- Support articles (MicrosoftDocs/SupportArticles-docs-pr) ---
+# --- Compute service areas (MicrosoftDocs/azure-compute-docs) ---
+COMPUTE_SERVICES=(
+  azure-impact-reporting
+  container-instances
+  service-fabric
+  virtual-machine-scale-sets
+  virtual-machines
+)
+
+# --- Support articles (MicrosoftDocs/SupportArticles-docs) ---
 SUPPORT_SERVICES=(
   support-api-mgmt
   support-app-service
@@ -78,13 +87,15 @@ SUPPORT_SERVICES=(
 # --- Parse args ---
 EXTRA_ARGS=""
 SYNC_LEARN=true
+SYNC_COMPUTE=true
 SYNC_SUPPORT=true
 
 for arg in "$@"; do
   case "$arg" in
     --dry-run) EXTRA_ARGS="--dry-run" ;;
-    --learn) SYNC_SUPPORT=false ;;
-    --support) SYNC_LEARN=false ;;
+    --learn) SYNC_COMPUTE=false; SYNC_SUPPORT=false ;;
+    --compute) SYNC_LEARN=false; SYNC_SUPPORT=false ;;
+    --support) SYNC_LEARN=false; SYNC_COMPUTE=false ;;
   esac
 done
 
@@ -96,6 +107,28 @@ if [ "$SYNC_LEARN" = true ]; then
   echo ""
 
   for svc in "${LEARN_SERVICES[@]}"; do
+    result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
+
+    if echo "$result" | grep -q "Everything up to date"; then
+      count=$(echo "$result" | grep "Unchanged:" | awk '{print $2}')
+      printf "  ✓ %-35s %s files\n" "$svc" "$count"
+    else
+      added=$(echo "$result" | grep "Added:" | awk '{print $2}')
+      modified=$(echo "$result" | grep "Modified:" | awk '{print $2}')
+      deleted=$(echo "$result" | grep "Deleted:" | awk '{print $2}')
+      printf "  ⚡ %-35s +%s ~%s -%s\n" "$svc" "$added" "$modified" "$deleted"
+      CHANGED_SERVICES+=("$svc")
+    fi
+  done
+  echo ""
+fi
+
+# --- Sync Compute articles ---
+if [ "$SYNC_COMPUTE" = true ]; then
+  echo "=== Syncing ${#COMPUTE_SERVICES[@]} Compute service areas (MicrosoftDocs/azure-compute-docs) ==="
+  echo ""
+
+  for svc in "${COMPUTE_SERVICES[@]}"; do
     result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
 
     if echo "$result" | grep -q "Everything up to date"; then

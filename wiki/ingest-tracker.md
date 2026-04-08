@@ -167,6 +167,19 @@ All 21 networking service areas have entity pages + cross-cutting concept/compar
 | update-manager | 34 | ✅ | 2026-04-07 |
 | vmware-cloudsimple | 15 | ✅ | 2026-04-07 |
 
+
+## Azure Compute Docs (Deep Ingest)
+
+Source:  — synced via .
+
+| Service Area | Articles | Entity Page | Deep Pages | Date |
+|-------------|----------|-------------|------------|------|
+| virtual-machines | 1,166 | ✅ azure-virtual-machines | concepts: managed-disks, vm-availability; troubleshooting-virtual-machines (support) | 2026-04-07 |
+| virtual-machine-scale-sets | 97 | ✅ azure-vmss | comparisons: container-compute-options | 2026-04-07 |
+| container-instances | 89 | ✅ azure-container-instances | comparisons: container-compute-options | 2026-04-07 |
+| service-fabric | 422 | ✅ azure-service-fabric | — | 2026-04-07 |
+| azure-impact-reporting | 14 | ✅ | — | 2026-04-07 |
+
 ## Microsoft Support Articles (Deep Troubleshooting)
 
 Source: `MicrosoftDocs/SupportArticles-docs` — Symptom/Cause/Solution format.
@@ -214,21 +227,22 @@ Synced via `./scripts/sync-raw.sh support-<service>`.
 
 | Metric | Count |
 |--------|-------|
-| **Total service areas** | 176 (146 MS Learn + 29 Support + 1 other) |
+| **Total service areas** | 181 (146 MS Learn + 5 Compute + 29 Support + 1 other) |
 | **All ingested** | ✅ Yes |
-| **Total raw articles** | 11,652 |
-| **Total wiki pages** | 342 |
-| — Entities | 125 |
-| — Concepts | 31 |
-| — Comparisons | 18 |
+| **Total raw articles** | 13,389 |
+| **Total wiki pages** | 355 |
+| — Entities | 129 |
+| — Concepts | 33 |
+| — Comparisons | 19 |
 | — Patterns | 5 |
-| — Sources | 160 |
+| — Sources | 165 |
 | — System | 3 (index, log, tracker) |
-| **qmd vectors** | 68,464 chunks |
+| **qmd vectors** | 77,022 chunks |
 
 ## Sync Sources
 
 | Repo | Script | Service areas |
 |------|--------|--------------|
 | `MicrosoftDocs/azure-docs` | `sync-raw.sh <service>` | 21 networking + 125 other |
+| `MicrosoftDocs/azure-compute-docs` | `sync-raw.sh <service>` | virtual-machines, vmss, aci, service-fabric, impact-reporting |
 | `MicrosoftDocs/SupportArticles-docs` | `sync-raw.sh support-<service>` | 29 support areas |

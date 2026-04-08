@@ -1,0 +1,103 @@
+---
+title: DC family VM size series 
+description: List of size series in the DC family.
+author: mattmcinnes
+ms.service: azure-virtual-machines
+ms.subservice: sizes
+ms.topic: concept-article
+ms.date: 04/16/2024
+ms.author: mattmcinnes
+# Customer intent: As a cloud architect, I want to explore the DC family VM size series and their specifications, so that I can choose the most suitable virtual machine types for my projects based on workload requirements.
+---
+
+# 'DC' family general purpose VM size series
+
+**Applies to:** :heavy_check_mark: Linux VMs :heavy_check_mark: Windows VMs :heavy_check_mark: Flexible scale sets :heavy_check_mark: Uniform scale sets
+
+[!INCLUDE [dc-family-summary](./includes/dc-family-summary.md)]
+
+## Workloads and use cases
+
+[!INCLUDE [dc-family-workloads](./includes/dc-family-workloads.md)]
+
+## Series in family
+
+### DCasv6 and DCadsv6-series
+#### [DCasv6-series](#tab/dcasv6)
+[!INCLUDE [dcasv6-series-summary](./includes/dcasv6-series-summary.md)]
+[View the full DCasv6-series page](./dcasv6-series.md).
+[!INCLUDE [dcasv6-series-specs](./includes/dcasv6-series-specs.md)]
+
+#### [DCadsv6-series](#tab/dcadsv6)
+[!INCLUDE [dcadsv6-series-summary](./includes/dcadsv6-series-summary.md)]
+[View the full DCadsv6-series page](./dcadsv6-series.md).
+[!INCLUDE [dcadsv6-series-specs](./includes/dcadsv6-series-specs.md)]
+
+---
+### DCasv5 and DCadsv5-series
+#### [DCasv5-series](#tab/dcasv5)
+[!INCLUDE [dcasv5-series-summary](./includes/dcasv5-series-summary.md)]
+
+[View the full DCasv5-series page](./dcasv5-series.md).
+
+[!INCLUDE [dcasv5-series-specs](./includes/dcasv5-series-specs.md)]
+
+#### [DCadsv5-series](#tab/dcadsv5)
+[!INCLUDE [dcadsv5-series-summary](./includes/dcadsv5-series-summary.md)]
+
+[View the full DCadsv5-series page](./dcadsv5-series.md).
+
+[!INCLUDE [dcadsv5-series-specs](./includes/dcadsv5-series-specs.md)]
+
+---
+### DCesv6-series
+[!INCLUDE [dcesv6-series-summary](./includes/dcesv6-series-summary.md)]
+[View the full DCesv6-series page](./dcesv6-series.md).
+
+---
+### DCas_cc_v5 and DCads_cc_v5-series
+#### [DCas_cc_v5-series](#tab/dcasccv5)
+[!INCLUDE [dcasccv5-series-summary](./includes/dcasccv5-series-summary.md)]
+
+[View the full DCas_cc_v5-series page](./dcasccv5-series.md).
+
+[!INCLUDE [dcasccv5-series-specs](./includes/dcasccv5-series-specs.md)]
+
+#### [DCads_cc_v5-series](#tab/dcadsccv5)
+[!INCLUDE [dcadsccv5-series-summary](./includes/dcadsccv5-series-summary.md)]
+
+[View the full DCads_cc_v5-series page](./dcadsccv5-series.md).
+
+[!INCLUDE [dcadsccv5-series-specs](./includes/dcadsccv5-series-specs.md)]
+
+---
+### DCsv3 and DCdsv3-series
+#### [DCsv3-series](#tab/dcsv3)
+[!INCLUDE [dcsv3-series-summary](./includes/dcsv3-series-summary.md)]
+
+[View the full DCsv3-series page](./dcsv3-series.md).
+
+[!INCLUDE [dcsv3-series-specs](./includes/dcsv3-series-specs.md)]
+
+#### [DCdsv3-series](#tab/dcdsv3)
+[!INCLUDE [dcdsv3-series-summary](./includes/dcdsv3-series-summary.md)]
+
+[View the full DCdsv3-series page](./dcdsv3-series.md).
+
+[!INCLUDE [dcdsv3-series-specs](./includes/dcdsv3-series-specs.md)]
+
+---
+### DCsv2-series
+[!INCLUDE [dcsv2-series-summary](./includes/dcsv2-series-summary.md)]
+
+[View the full DCsv2-series page](./dcsv2-series.md).
+
+[!INCLUDE [dcsv2-series-specs](./includes/dcsv2-series-specs.md)]
+
+
+
+---
+### Previous-generation DC family series
+For older sizes, see [previous generation sizes](../previous-gen-sizes-list.md#general-purpose-previous-gen-sizes).
+
+[!INCLUDE [sizes-footer](../includes/sizes-footer.md)]

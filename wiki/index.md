@@ -6,11 +6,11 @@ updated: 2026-04-07
 
 # Knowledge Base Index
 
-> Master catalog of all wiki pages. Use `qmd query` for search. Total: 386 pages.
+> Master catalog of all wiki pages. Use `qmd query` for search. Total: 391 pages.
 
 ## Entities
 
-_139 Azure services, tools, and people._
+_140 Azure services, tools, frameworks._
 
 - [[entities/active-directory-b2c]] — Azure Active Directory B2C provides business-to-customer identity as a service. Your customers can use their preferred s...
 - [[entities/andrej-karpathy]] — AI researcher and educator. Former Director of AI at Tesla, founding member of OpenAI. Known for neural network lectures...
@@ -79,6 +79,7 @@ _139 Azure services, tools, and people._
 - [[entities/batch]] — Azure service. See raw articles in `raw/articles/batch/` for details.
 - [[entities/business-process-tracking]] — Azure service. See raw articles in `raw/articles/business-process-tracking/` for details.
 - [[entities/certification]] — Edge Secured-Core is Microsoft's recommended standard for highly secured embedded devices. Such devices must include har...
+- [[entities/cloud-adoption-framework]] — Microsoft's comprehensive guidance for cloud adoption on Azure. Covers the full lifecycle from strategy through operatio...
 - [[entities/cloud-services-extended-support]] — Azure service. See raw articles in `raw/articles/cloud-services-extended-support/` for details.
 - [[entities/cloud-shell]] — Azure Cloud Shell is an interactive, authenticated, browser-accessible terminal for managing Azure
 - [[entities/communication-services]] — <!-- [!INCLUDE [Survey Request](includes/survey-request.md)] -->
@@ -154,7 +155,7 @@ _139 Azure services, tools, and people._
 
 ## Concepts
 
-_44 Technical concepts, protocols, troubleshooting, WAF pillars._
+_46 Technical concepts, WAF pillars, CAF phases, troubleshooting._
 
 - [[concepts/aks-networking]] — How networking works in Azure Kubernetes Service — CNI models, egress control, network policies, and DNS. (source: conce...
 - [[concepts/availability-zones-nat]] — How Azure NAT Gateway handles availability zones differs significantly between the two SKUs. This is the primary reliabi...
@@ -163,6 +164,8 @@ _44 Technical concepts, protocols, troubleshooting, WAF pillars._
 - [[concepts/azure-rbac]] — Authorization system that manages who has access to Azure resources, what they can do, and what scope. Built on Azure Re...
 - [[concepts/azure-realtime-services]] — - [[comparisons/messaging-options]] — broader messaging comparison
 - [[concepts/backup-and-dr]] — Two complementary services for data protection and business continuity.
+- [[concepts/caf-governance]] — Cloud governance ensures consistent, compliant, and cost-controlled use of Azure. Five disciplines from the Cloud Adopti...
+- [[concepts/caf-landing-zones]] — Pre-configured Azure environment that provides the foundation for workload deployment. Implements enterprise-scale archi...
 - [[concepts/default-outbound-access]] — Azure provides default outbound internet connectivity to VMs that don't have explicit outbound configuration (no NAT Gat...
 - [[concepts/dns-alias-records]] — Alias records are qualifications on a DNS record set that dynamically reference Azure resources instead of static IP val...
 - [[concepts/dns-security-policy]] — Filter, log, and control DNS queries at the virtual network level. Applies to both public and private DNS traffic within...
@@ -203,10 +206,11 @@ _44 Technical concepts, protocols, troubleshooting, WAF pillars._
 
 ## Comparisons
 
-_22 Decision matrices and side-by-side analyses._
+_23 Decision matrices and side-by-side analyses._
 
 - [[comparisons/app-gateway-vs-front-door]] — Both are L7 load balancers with WAF support. Key difference: scope (regional vs global).
 - [[comparisons/caching-options]] — - **Session store** — share session state across web app instances
+- [[comparisons/caf-vs-waf]] — Complementary frameworks operating at different scopes.
 - [[comparisons/compute-options]] — Choosing the right compute service for your workload.
 - [[comparisons/container-compute-options]] — Choosing the right container hosting service.
 - [[comparisons/data-analytics-services]] — Azure Data and Analytics Services
@@ -240,7 +244,7 @@ _5 Deployment architectures._
 
 ## Sources
 
-_176 Source summary pages._
+_177 Source summary pages._
 
 - [[sources/active-directory-b2c-docs]]
 - [[sources/aks-docs]]
@@ -281,6 +285,7 @@ _176 Source summary pages._
 - [[sources/business-process-tracking-docs]]
 - [[sources/cdn-docs]]
 - [[sources/certification-docs]]
+- [[sources/cloud-adoption-framework-docs]]
 - [[sources/cloud-services-extended-support-docs]]
 - [[sources/cloud-shell-docs]]
 - [[sources/communication-services-docs]]

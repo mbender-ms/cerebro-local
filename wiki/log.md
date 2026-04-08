@@ -160,3 +160,16 @@ Source: `well-architected-pr/well-architected/`
 Index rebuilt: 386 pages. Source summary created.
 
 Totals: 386 wiki pages, 14,869 raw articles, 192 service areas.
+
+## [2026-04-07] ingest | Cloud Adoption Framework (473 articles)
+
+Source: `cloud-adoption-framework-pr/docs/`
+9 methodology phases, 202 landing zone articles, scenario guidance (VMware, SAP, AKS, data, AI, Oracle, HPC).
+
+Deep wiki pages (5):
+- entities/cloud-adoption-framework — 9 phases, landing zones, scenarios, anti-patterns
+- concepts/caf-landing-zones — 8 design areas, network topology options, subscription vending, accelerators
+- concepts/caf-governance — 5 governance disciplines, Azure Policy, governance MVP
+- comparisons/caf-vs-waf — scope/audience/output comparison, when to use which
+
+Totals: 393 wiki pages, 15,229 raw articles, 193 service areas.

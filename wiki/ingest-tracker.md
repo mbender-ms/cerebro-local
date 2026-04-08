@@ -13,16 +13,16 @@ updated: 2026-04-07
 
 | Metric | Count |
 |--------|-------|
-| **Total service areas** | 192 (146 MS Learn + 5 Compute + 3 AKS + 7 Management + 29 Support + 1 other) |
+| **Total service areas** | 193 (146 MS Learn + 5 Compute + 3 AKS + 7 Management + 29 Support + 1 other) |
 | **All ingested** | ✅ Yes |
 | **Deep coverage (entity→concept/comparison links)** | 129/129 (100%) |
-| **Total raw articles** | 14,869 |
-| **Total wiki pages** | 386 |
-| — Entities | 139 |
-| — Concepts | 44 |
-| — Comparisons | 22 |
+| **Total raw articles** | 15,229 |
+| **Total wiki pages** | 393 |
+| — Entities | 140 |
+| — Concepts | 47 |
+| — Comparisons | 23 |
 | — Patterns | 5 |
-| — Sources | 176 |
+| — Sources | 177 |
 | — System | 3 (index, log, tracker) |
 | **qmd vectors** | ~82,000 chunks |
 
@@ -120,6 +120,18 @@ Source: `MicrosoftDocs/azure-management-docs` — synced via `sync-raw.sh <servi
 | azure-linux | 28 | entity + container-compute |
 | quotas | 15 | entity (portal-quotas) |
 
+
+
+## Cloud Adoption Framework (Deep Ingest)
+
+Source: `cloud-adoption-framework-pr/docs/` — 473 articles. 9 methodology phases, 202 landing zone articles, scenario guidance.
+
+| Page | Content |
+|------|---------|
+| entities/cloud-adoption-framework | 9 phases, landing zones overview, scenarios |
+| concepts/caf-landing-zones | 8 design areas, hub-spoke vs vWAN, subscription vending |
+| concepts/caf-governance | 5 governance disciplines, Azure Policy, governance MVP |
+| comparisons/caf-vs-waf | CAF vs WAF scope/audience comparison |
 
 ## Azure Well-Architected Framework (Deep Ingest)
 

@@ -1,0 +1,67 @@
+---
+title: Azure identity and access management design area
+description: Learn about the identity and access management design area, which provides best practices to establish the foundation of your public cloud architecture.
+author: soderholmd
+ms.author: dsoderholm
+ms.topic: concept-article
+ms.date: 10/15/2025
+---
+
+# Identity and access management design area
+
+The identity and access management design area helps you build the foundations of secure and fully compliant public cloud architecture.
+
+Enterprises can have complex and heterogeneous technological landscapes, so security is critical. Robust identity and access management forms the basis of modern protection by creating a security perimeter in a public cloud. Authorization and access controls ensure that only authenticated users with verified devices can access and administer applications and resources. It ensures that the right individual can access the right resources at the right time, and for the right reason. It also provides reliable audit logging and nonrepudiation of user or workload identity actions. You should provide consistent [enterprise access control](/security/privileged-access-workstations/privileged-access-access-model), including user access, control and management planes, external access, and privileged access. Effective access control helps improve productivity and mitigate the risk of unauthorized privilege escalation or data exfiltration.
+
+Poorly secured identity and access in Azure introduces significant risks, as compromised credentials or misconfigured permissions can allow attackers to escalate privileges, gain unauthorized access to sensitive data, and disrupt critical workloads.
+
+Azure offers a comprehensive set of services, tools, and reference architectures to help your organization create highly secure and operationally efficient environments. There are several options for managing identity in a cloud environment. Each option varies in cost and complexity. Determine your cloud-based identity services based on how much you need to integrate them with your existing on-premises identity infrastructure.
+
+## Identity and access management in Azure landing zones
+
+Identity and access management is a core consideration in both platform and application landing zones. Under the design principle of [subscription democratization](../design-principles.md#subscription-democratization), application owners should have the autonomy to manage their own applications and resources with minimal intervention from the platform team. Landing zones are a security boundary, and identity and access management provides a way to control the separation of one landing zone from another, along with components such as networking and Azure Policy. Apply a robust identity and access management design to help achieve application landing zone isolation.
+
+In Azure Landing Zones, identity infrastructure is a core platform responsibility because it underpins the security of all dependent services. The identity team is accountable for deploying and managing centralized directory services, including Microsoft Entra ID, Microsoft Entra Domain Services, and Active Directory Domain Services (AD DS). The platform identity services are consumed by other teams, including application administrators and owners, as well as other downstream platform administrators. 
+
+The application administrator is responsible for the identity and access management of their applications, including securing user access to applications and between application components, such as Azure SQL Database, virtual machines, and Azure Storage. In a well-implemented landing zone architecture, the application administrator can effortlessly consume services that the platform provides.
+
+Many of the fundamental concepts of identity and access management are the same in both platform and application landing zones, such as role-based access control (RBAC) and the principle of least privilege. 
+
+## Design area review
+
+**Scope:** The goal of this design area is to help you evaluate options for your identity and access foundation. When you design your identity strategy, you should perform the following tasks:
+
+- Authenticate users and workload identities.
+- Assign access to resources.
+- Determine core requirements for the separation of duties.
+- Synchronize hybrid identities with Microsoft Entra ID.
+
+**Out of scope:** Identity and access management forms a foundation for proper access control, but it doesn't cover more advanced aspects like:
+
+- The [Zero Trust](/azure/security/fundamentals/zero-trust) model.
+- The operational management of elevated privileges.
+- Automated guardrails to prevent common identity and access mistakes.
+
+The compliance design areas for [security](./security.md) and [governance](./governance.md) address the out-of-scope aspects. For comprehensive recommendations for identity and access management, see [Azure identity management and access control security best practices](/azure/security/fundamentals/identity-management-best-practices).
+
+## Design area overview
+
+Identity forms the foundation of security assurance in the cloud. It enables access through authentication and authorization controls, ensuring that only approved requests are granted. These access controls safeguard data and resources by determining who can do what.
+
+Identity and access management (IAM) is essential for protecting both internal and external boundaries in a public cloud environment. It serves as the cornerstone of any secure, compliant cloud architecture.
+
+The following articles examine design considerations and recommendations for identity and access management in a cloud environment:
+
+- [Hybrid identity with Active Directory and Microsoft Entra ID](identity-access-active-directory-hybrid-identity.md)
+- [Landing zone identity and access management](identity-access-landing-zones.md)
+- [Application identity and access management](identity-access-application-access.md)
+
+For guidance about designing solutions on Azure by using established patterns and practices, see [Identity architecture design](/azure/architecture/identity/identity-start-here).
+
+> [!TIP]
+> If you have multiple Microsoft Entra ID tenants, see [Azure landing zones and multiple Microsoft Entra tenants](multi-tenant/overview.md).
+
+## Next steps
+>
+> [!div class="nextstepaction"]
+> [Hybrid identity with Active Directory and Microsoft Entra ID](identity-access-active-directory-hybrid-identity.md)

@@ -51,6 +51,13 @@ COMPUTE_SERVICES=(
   virtual-machines
 )
 
+# --- AKS service areas (MicrosoftDocs/azure-aks-docs) ---
+AKS_SERVICES=(
+  aks
+  application-network
+  kubernetes-fleet
+)
+
 # --- Support articles (MicrosoftDocs/SupportArticles-docs) ---
 SUPPORT_SERVICES=(
   support-api-mgmt
@@ -88,14 +95,16 @@ SUPPORT_SERVICES=(
 EXTRA_ARGS=""
 SYNC_LEARN=true
 SYNC_COMPUTE=true
+SYNC_AKS=true
 SYNC_SUPPORT=true
 
 for arg in "$@"; do
   case "$arg" in
     --dry-run) EXTRA_ARGS="--dry-run" ;;
-    --learn) SYNC_COMPUTE=false; SYNC_SUPPORT=false ;;
-    --compute) SYNC_LEARN=false; SYNC_SUPPORT=false ;;
-    --support) SYNC_LEARN=false; SYNC_COMPUTE=false ;;
+    --learn) SYNC_COMPUTE=false; SYNC_AKS=false; SYNC_SUPPORT=false ;;
+    --compute) SYNC_LEARN=false; SYNC_AKS=false; SYNC_SUPPORT=false ;;
+    --aks) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_SUPPORT=false ;;
+    --support) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_AKS=false ;;
   esac
 done
 
@@ -129,6 +138,28 @@ if [ "$SYNC_COMPUTE" = true ]; then
   echo ""
 
   for svc in "${COMPUTE_SERVICES[@]}"; do
+    result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
+
+    if echo "$result" | grep -q "Everything up to date"; then
+      count=$(echo "$result" | grep "Unchanged:" | awk '{print $2}')
+      printf "  ✓ %-35s %s files\n" "$svc" "$count"
+    else
+      added=$(echo "$result" | grep "Added:" | awk '{print $2}')
+      modified=$(echo "$result" | grep "Modified:" | awk '{print $2}')
+      deleted=$(echo "$result" | grep "Deleted:" | awk '{print $2}')
+      printf "  ⚡ %-35s +%s ~%s -%s\n" "$svc" "$added" "$modified" "$deleted"
+      CHANGED_SERVICES+=("$svc")
+    fi
+  done
+  echo ""
+fi
+
+# --- Sync AKS articles ---
+if [ "$SYNC_AKS" = true ]; then
+  echo "=== Syncing ${#AKS_SERVICES[@]} AKS service areas (MicrosoftDocs/azure-aks-docs) ==="
+  echo ""
+
+  for svc in "${AKS_SERVICES[@]}"; do
     result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
 
     if echo "$result" | grep -q "Everything up to date"; then

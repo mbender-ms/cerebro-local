@@ -158,3 +158,20 @@ Sync scripts updated: sync-raw.sh routes VM/VMSS/ACI/ServiceFabric/ImpactReporti
 to MicrosoftDocs/azure-compute-docs. sync-all.sh has --compute flag.
 
 Totals: 352 wiki pages, 13,389 raw articles, 181 service areas.
+
+## [2026-04-07] ingest | Azure AKS docs (620 articles, 3 service areas)
+
+Source: `azure-aks-docs-pr/articles/` (copied from local clone)
+Syncs from: `MicrosoftDocs/azure-aks-docs` (public)
+
+Service areas: aks (551), kubernetes-fleet (58), application-network (11).
+
+Deep wiki pages created (5):
+- entities/azure-aks — features table, networking models, security layers, storage options
+- entities/azure-kubernetes-fleet — multi-cluster management, update orchestration
+- entities/azure-application-network — preview app networking for AKS
+- concepts/aks-networking — CNI models (overlay/flat/kubenet/BYO), egress control, DNS, network policies
+
+3 source summary pages. Sync scripts updated for 4 repos.
+
+Totals: 362 wiki pages, 14,009 raw articles, 184 service areas.

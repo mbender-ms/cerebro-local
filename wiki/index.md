@@ -12,6 +12,7 @@ updated: 2026-04-07
 
 _Service pages, tools, people, organizations._
 
+- [[entities/azure-nat-gateway]] — Fully managed NAT service for outbound internet connectivity; Standard and StandardV2 SKUs (27 sources)
 - [[entities/andrej-karpathy]] — AI researcher, author of the LLM Wiki pattern (1 source)
 - [[entities/obsidian]] — Local-first markdown knowledge base app; viewing interface for the wiki (1 source)
 - [[entities/qmd]] — Local hybrid search engine for markdown files (BM25 + vector + LLM reranking) (1 source)
@@ -20,6 +21,10 @@ _Service pages, tools, people, organizations._
 
 _Protocols, patterns, principles, mental models._
 
+- [[concepts/snat]] — Source Network Address Translation: how NAT Gateway rewrites private IPs to public IPs for outbound (3 sources)
+- [[concepts/default-outbound-access]] — Azure's implicit outbound connectivity; being deprecated, replace with NAT Gateway (3 sources)
+- [[concepts/availability-zones-nat]] — Zone behavior: Standard is zonal, StandardV2 is zone-redundant (4 sources)
+- [[concepts/troubleshooting-nat-gateway]] — Common failure modes, causes, and fixes for NAT Gateway (3 sources)
 - [[concepts/llm-wiki-pattern]] — Core methodology: LLM incrementally builds a persistent wiki from raw sources (1 source)
 - [[concepts/three-layer-architecture]] — Raw sources → wiki → schema; the foundational structure (1 source)
 - [[concepts/ingest]] — Operation: process a new source into the wiki, touching 10-15 pages (1 source)
@@ -32,16 +37,19 @@ _Protocols, patterns, principles, mental models._
 
 _Side-by-side analysis across topics._
 
-<!-- No entries yet. -->
+- [[comparisons/nat-gateway-standard-vs-standardv2]] — Feature-by-feature SKU comparison, migration path, regional availability (3 sources)
 
 ## Patterns
 
 _Recurring solutions, deployment patterns, workflows._
 
+- [[patterns/nat-gateway-hub-spoke]] — Hub-and-spoke patterns: NAT Gateway + Firewall, NAT Gateway + NVA, per-spoke NAT (3 sources)
+- [[patterns/nat-gateway-with-load-balancer]] — Integration with internal/public load balancers, outbound priority rules (3 sources)
 - [[patterns/karpathy-wiki-setup]] — Practical setup pattern: directory structure, toolchain, steps, pros/cons (1 source)
 
 ## Sources
 
 _Per-source summary pages._
 
+- [[sources/nat-gateway-docs]] — Azure NAT Gateway documentation: 27 articles, ~60K words from MicrosoftDocs/azure-docs
 - [[sources/karpathy-llm-wiki]] — "LLM Wiki" by Andrej Karpathy, GitHub Gist, April 2026 (5,000+ stars)

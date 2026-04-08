@@ -1,22 +1,19 @@
 ---
-title: "Get up to $5,000 in Azure Credits for Startups"
+title: "Azure Sign-Up and Onboarding"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - signups/*.md
 tags:
-  - azure-service
-  - identity
-  - azure
+  - account
+  - billing
+  - onboarding
 ---
 
-# Get up to $5,000 in Azure Credits for Startups
+# Azure Sign-Up and Onboarding
 
-Microsoft is here to support your startup from idea to scale. Get started with $1,000 USD in Azure credits–no application needed. Then, verify your startup to unlock up to $5,000 USD in credits to keep building and growing on Azure.
-
-(source: signups/*.md — 3 articles)
+Resources for Azure account creation, trial subscriptions, billing setup, and initial onboarding. Includes free tier details, pay-as-you-go setup, and enterprise agreement enrollment.
 
 ## Links
 
-- [[sources/signups-docs]]
-- [[concepts/azure-rbac]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

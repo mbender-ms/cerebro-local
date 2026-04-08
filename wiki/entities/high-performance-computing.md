@@ -1,24 +1,47 @@
 ---
-title: "Plan your on-premises HPC migration to cloud"
+title: Azure High-Performance Computing (HPC)
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - high-performance-computing/*.md
 tags:
-  - azure-service
+  - hpc
   - compute
-  - azure-virtual-machines
+  - migration
+  - batch
 ---
 
-# Plan your on-premises HPC migration to cloud
+# Azure High-Performance Computing (HPC)
 
-Azure service. See raw articles in `raw/articles/high-performance-computing/` for details.
+Azure HPC provides infrastructure and services for running compute-intensive workloads: scientific simulations, financial modeling, rendering, genomics, and AI training.
 
-(source: high-performance-computing/*.md — 20 articles)
+## HPC Services Stack
+
+| Service | Role |
+|---------|------|
+| **Azure CycleCloud** | Cluster orchestration with Slurm/PBS/Grid Engine |
+| **Azure Batch** | Managed job scheduling and compute pool management |
+| **Azure HPC Cache** | High-speed caching layer for NFS/Blob storage |
+| **Azure Managed Lustre (AMLFS)** | High-performance parallel file system |
+| **Azure NetApp Files** | Enterprise NFS/SMB for HPC workloads |
+| **InfiniBand VMs** | HB/HC/ND-series with RDMA networking |
+
+## VM Families for HPC
+
+| Series | Optimized For | InfiniBand |
+|--------|--------------|------------|
+| **HB-series** | Memory bandwidth (HPC) | ✅ HDR |
+| **HC-series** | Dense compute (HPC) | ✅ EDR |
+| **HX-series** | Large memory HPC | ✅ HDR |
+| **ND-series** | GPU AI/ML training | ✅ HDR |
+| **NC-series** | GPU compute/inference | Some models |
+
+## Migration from On-Premises
+
+Lift-and-shift approach: replicate on-prem scheduler config → CycleCloud templates → auto-scaling in Azure. Key personas: HPC admin, app developer, end user.
 
 ## Links
 
-- [[sources/high-performance-computing-docs]]
-- [[entities/azure-virtual-machines]]
-- [[entities/azure-virtual-machines]]
-- [[concepts/managed-disks]]
+- [[entities/azure-virtual-machines]] — HPC VM families
+- [[comparisons/compute-options]] — HPC vs other compute
+- [[entities/azure-batch]] — managed job scheduling alternative to CycleCloud

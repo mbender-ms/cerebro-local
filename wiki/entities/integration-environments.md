@@ -1,22 +1,19 @@
 ---
-title: "Overview"
+title: "Azure Integration Environments"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - integration-environments/*.md
 tags:
-  - azure-service
   - integration
-  - azure
+  - logic-apps
+  - api-management
 ---
 
-# Overview
+# Azure Integration Environments
 
-Azure service. See raw articles in `raw/articles/integration-environments/` for details.
-
-(source: integration-environments/*.md — 4 articles)
+Organize and manage integration resources (Logic Apps, API Management, Service Bus, Event Grid) in logical groupings. Provides unified view and governance for enterprise integration landscapes.
 
 ## Links
 
-- [[sources/integration-environments-docs]]
-- [[comparisons/integration-api-services]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

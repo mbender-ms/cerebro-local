@@ -1,22 +1,19 @@
 ---
-title: "Use service principals to automate workflows in firmware analysis"
+title: "Azure Firmware Analysis"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - firmware-analysis/*.md
 tags:
-  - azure-service
   - security
-  - azure
+  - iot
+  - firmware
 ---
 
-# Use service principals to automate workflows in firmware analysis
+# Azure Firmware Analysis
 
-Many users of the firmware analysis service may need to automate their workflow. The command `az login` creates an interactive login experience with two-factor authentication that makes it difficult for users to fully automate their workflow. A [service principal](/entra/identity-platform/app-objec
-
-(source: firmware-analysis/*.md — 16 articles)
+Analyzes IoT/OT device firmware images for security vulnerabilities. Extracts embedded credentials, certificates, CVEs, and software bill of materials (SBOM). Integrates with Defender for IoT for end-to-end device security.
 
 ## Links
 
-- [[sources/firmware-analysis-docs]]
-- [[comparisons/security-services]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

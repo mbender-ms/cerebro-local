@@ -1,23 +1,19 @@
 ---
-title: "Microsoft Azure Data Box Gateway overview"
+title: "Azure Data Box Gateway"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - databox-gateway/*.md
 tags:
-  - azure-service
+  - data-transfer
+  - edge
   - storage
-  - azure-data-box-gateway
 ---
 
-# Microsoft Azure Data Box Gateway overview
+# Azure Data Box Gateway
 
-Azure Data Box Gateway is a storage solution that enables you to seamlessly send data to Azure. This article provides you an overview of the Azure Data Box Gateway solution, benefits, key capabilities, and the scenarios where you can deploy this device.
-
-(source: databox-gateway/*.md — 27 articles)
+Virtual appliance that runs on-premises as a VM (Hyper-V or VMware). Provides cloud storage gateway for seamless data transfer to Azure Storage. Acts as NFS/SMB share locally while automatically tiering data to Azure Blob. Use for continuous cloud ingestion, archive, and disaster recovery data transfer.
 
 ## Links
 
-- [[sources/databox-gateway-docs]]
-- [[comparisons/storage-options]]
-- [[comparisons/migration-services]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

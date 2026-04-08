@@ -1,22 +1,19 @@
 ---
-title: "Azure guidance for secure isolation"
+title: "Azure Government"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - azure-government/*.md
 tags:
-  - azure-service
-  - other
-  - azure-government
+  - sovereign
+  - compliance
+  - government
 ---
 
-# Azure guidance for secure isolation
+# Azure Government
 
-Microsoft Azure is a hyperscale public multitenant cloud services platform that provides you with access to a feature-rich environment incorporating the latest cloud innovations such as artificial intelligence, machine learning, IoT services, big-data analytics, intelligent edge, and many more to he
-
-(source: azure-government/*.md — 35 articles)
+Separate Azure cloud for US government agencies and their partners. Physically isolated datacenters, FedRAMP High, DoD IL2-IL6, CJIS, IRS 1075, ITAR compliance. Same APIs and tools as commercial Azure with additional compliance controls.
 
 ## Links
 
-- [[sources/azure-government-docs]]
-- [[concepts/azure-rbac]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

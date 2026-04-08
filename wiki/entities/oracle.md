@@ -5,20 +5,15 @@ updated: 2026-04-07
 sources:
   - oracle/*.md
 tags:
-  - azure-service
-  - other
-  - oracle-on-azure
+  - database
+  - oracle
+  - multicloud
 ---
 
 # Oracle on Azure
 
-Azure service. See raw articles in `raw/articles/oracle/` for details.
-
-(source: oracle/*.md — 1 articles)
+Run Oracle Database workloads on Azure infrastructure. Options include Oracle Database@Azure (Oracle-managed Exadata in Azure datacenters), Oracle on Azure VMs, and Azure Interconnect with OCI (Oracle Cloud Infrastructure).
 
 ## Links
 
-- [[sources/oracle-docs]]
-- [[entities/azure-virtual-machines]]
-
-- [[concepts/vm-availability]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

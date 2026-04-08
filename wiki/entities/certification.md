@@ -1,22 +1,19 @@
 ---
-title: "Overview of the Edge Secured-core standard"
+title: "Microsoft Certification Resources"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - certification/*.md
 tags:
-  - azure-service
-  - devops
-  - azure-certified-device
+  - certification
+  - training
+  - exams
 ---
 
-# Overview of the Edge Secured-core standard
+# Microsoft Certification Resources
 
-Edge Secured-Core is Microsoft's recommended standard for highly secured embedded devices. Such devices must include hardware security features, must be shipped in a secured state, and must be able to connect to services that enable that security monitoring and maintenance for the lifetime of the de
-
-(source: certification/*.md — 4 articles)
+Guidance and resources for Microsoft certification exams. Study guides, practice assessments, learning paths for Azure certifications (AZ-900, AZ-104, AZ-305, etc.).
 
 ## Links
 
-- [[sources/certification-docs]]
-- [[comparisons/developer-services]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

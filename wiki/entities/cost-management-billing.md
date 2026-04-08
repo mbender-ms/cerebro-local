@@ -1,22 +1,19 @@
 ---
-title: "Overview of Billing"
+title: "Azure Cost Management + Billing"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - cost-management-billing/*.md
 tags:
-  - azure-service
-  - management
-  - cost-management-billing
+  - cost
+  - billing
+  - finops
 ---
 
-# Overview of Billing
+# Azure Cost Management + Billing
 
-Billing is where you can manage your accounts, invoices, and payments. Billing is available to anyone with access to a billing account or other billing scope, like billing profiles and invoice sections. The cloud finance team and organizational leaders are typically included.
-
-(source: cost-management-billing/*.md — 1 articles)
+Tools for monitoring, allocating, and optimizing Azure cloud spending. Cost analysis, budgets, alerts, advisor recommendations, reserved instance management, and billing account administration.
 
 ## Links
 
-- [[sources/cost-management-billing-docs]]
-- [[concepts/azure-operations-management]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

@@ -5,33 +5,63 @@ updated: 2026-04-07
 sources:
   - kubernetes-fleet/*.md
 tags:
-  - azure-service
   - kubernetes
   - multi-cluster
-  - management
+  - fleet
+  - aks
 ---
 
 # Azure Kubernetes Fleet Manager
 
-At-scale management of multiple Kubernetes clusters. Provides automated safe multi-cluster updates, intelligent resource placement, and centralized monitoring. (source: kubernetes-fleet/overview.md — 58 articles)
+At-scale management of multiple Kubernetes clusters. Provides automated safe multi-cluster updates, intelligent resource placement, and centralized monitoring.
 
 ## Key Capabilities
 
-- **Multi-cluster updates** — orchestrated, staged upgrades across member clusters with configurable failure tolerance
-- **Resource placement** — intelligent scheduling of Kubernetes resources across clusters based on cost, availability, or custom policies
-- **Fleet-managed namespaces** — enforce resource quotas, network policies, and RBAC across clusters
-- **Member cluster types** — join AKS clusters (cross-region, cross-subscription) + Arc-enabled Kubernetes clusters (preview)
-- **Centralized monitoring** — aggregated health and update status across all member clusters
+| Feature | Description |
+|---------|-------------|
+| **Update orchestration** | Safely apply Kubernetes version and node image upgrades across clusters |
+| **Resource placement** | Intelligently deploy workloads across member clusters based on labels/properties |
+| **Managed namespaces** | Enforce resource quotas, network policies, RBAC at namespace level across clusters |
+| **Auto-upgrade profiles** | Automatically trigger upgrades when new versions are published |
+| **DNS load balancing** | Load balance incoming traffic across service endpoints on multiple clusters (preview) |
+| **Automated deployments** | Stage resources from Git repos to Fleet hub cluster (preview) |
+
+## Member Cluster Types
+
+- **AKS clusters** — across regions and subscriptions
+- **Arc-enabled Kubernetes** — across clouds and on-premises (preview)
+
+## Update Orchestration
+
+Safe multi-cluster updates with:
+- **Update runs** — define which clusters update and in what order
+- **Update strategies** — reusable strategies attached to update runs
+- **Update groups and stages** — control timing and ordering
+- **Manual/automated approvals** — fine-grained control over when updates apply (preview)
+- **Auto-upgrade profiles** — triggered by new Kubernetes/node image versions
+
+## Resource Placement
+
+Fleet hub cluster acts as control plane for multi-cluster workload deployment:
+- **Cluster-scoped placement** — deploy resources to member clusters based on cluster labels
+- **Namespace-scoped placement** — more granular resource propagation
+- Scheduling based on: resource availability, cluster labels, affinity/anti-affinity
 
 ## Architecture
 
-Fleet Manager acts as a hub. Member clusters register with the fleet. The fleet hub can:
-1. Push update runs (Kubernetes version + node image upgrades) to members in stages
-2. Place workloads across members based on scheduling policies
-3. Propagate configurations (namespaces, policies) to all members
+```
+Fleet Manager (Hub)
+├── Member Cluster A (AKS, East US)
+├── Member Cluster B (AKS, West Europe)
+├── Member Cluster C (Arc, on-premises)
+└── Member Cluster D (AKS, Southeast Asia)
+```
+
+Hub cluster enables: centralized policy, resource propagation, update coordination.
 
 ## Links
 
-- [[entities/azure-aks]] — the clusters it manages
-- [[concepts/troubleshooting-aks]] — AKS troubleshooting (includes fleet issues)
-- [[sources/kubernetes-fleet-docs]]
+- [[entities/azure-aks]] — primary member cluster type
+- [[entities/azure-arc]] — Arc-enabled K8s as fleet members
+- [[concepts/aks-networking]] — networking within member clusters
+- [[comparisons/container-compute-options]] — when to use AKS Fleet vs other container platforms

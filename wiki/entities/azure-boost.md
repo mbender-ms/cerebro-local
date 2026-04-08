@@ -1,23 +1,19 @@
 ---
-title: "Overview of Azure Boost"
+title: "Azure Boost"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - azure-boost/*.md
 tags:
-  - azure-service
-  - hybrid
-  - azure-virtual-machines
+  - compute
+  - performance
+  - hardware
 ---
 
-# Overview of Azure Boost
+# Azure Boost
 
-Azure service. See raw articles in `raw/articles/azure-boost/` for details.
-
-(source: azure-boost/*.md — 1 articles)
+Hardware and software system that offloads virtualization processes (networking, storage, host management) to dedicated hardware/software. Improves VM performance, reduces jitter, and enhances security by moving hypervisor functions off the main CPU.
 
 ## Links
 
-- [[sources/azure-boost-docs]]
-- [[entities/azure-virtual-machines]]
-- [[concepts/vm-availability]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

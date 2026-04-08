@@ -1,22 +1,19 @@
 ---
-title: "Azure Device Update for IoT Hub agent overview"
+title: "Azure IoT Hub Device Update"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - iot-hub-device-update/*.md
 tags:
-  - azure-service
   - iot
-  - azure-iot-hub
+  - device-management
+  - updates
 ---
 
-# Azure Device Update for IoT Hub agent overview
+# Azure IoT Hub Device Update
 
-The Device Update agent consists of two conceptual layers:
-
-(source: iot-hub-device-update/*.md — 52 articles)
+Managed service for deploying over-the-air (OTA) updates to IoT devices connected via IoT Hub. Supports A/B image updates, package-based updates, and proxy updates for connected devices. Integrates with Device Twin for targeting and compliance reporting.
 
 ## Links
 
-- [[sources/iot-hub-device-update-docs]]
-- [[comparisons/iot-services]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

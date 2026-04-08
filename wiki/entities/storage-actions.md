@@ -1,22 +1,19 @@
 ---
-title: "About Azure Storage Actions"
+title: "Azure Storage Actions"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - storage-actions/*.md
 tags:
-  - azure-service
   - storage
-  - azure-storage-actions
+  - automation
+  - lifecycle
 ---
 
-# About Azure Storage Actions
+# Azure Storage Actions
 
-Azure Storage Actions is a fully managed platform designed to automate data management tasks for Azure Blob Storage and Azure Data Lake Storage. You can use it to perform common data operations on millions of objects across multiple storage accounts without provisioning extra compute capacity and w
-
-(source: storage-actions/*.md — 2 articles)
+Serverless framework for automating data management tasks on Azure Blob Storage. Define conditions and actions (move, delete, set tier, tag) that execute automatically on blobs matching specified criteria.
 
 ## Links
 
-- [[sources/storage-actions-docs]]
-- [[comparisons/storage-options]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

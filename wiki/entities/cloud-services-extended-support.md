@@ -1,23 +1,44 @@
 ---
-title: "About Azure Cloud Services (extended support)"
+title: Azure Cloud Services (Extended Support)
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - cloud-services-extended-support/*.md
 tags:
-  - azure-service
   - compute
-  - azure-cloud-services-classic
+  - legacy
+  - paas
+  - migration
 ---
 
-# About Azure Cloud Services (extended support)
+# Azure Cloud Services (Extended Support)
 
-Azure service. See raw articles in `raw/articles/cloud-services-extended-support/` for details.
+ARM-based deployment model for Cloud Services, replacing Cloud Services (classic). Provides feature parity with classic while adding ARM benefits (RBAC, tags, templates, deployment slots).
 
-(source: cloud-services-extended-support/*.md — 45 articles)
+## Migration from Classic
+
+Cloud Services (classic) is deprecated. Migration to extended support provides:
+- ARM-based resource management
+- Regional resiliency (availability zones)
+- Same web/worker role model
+- Minimal code changes required
+
+## Key Differences from Classic
+
+| Feature | Classic | Extended Support |
+|---------|---------|-----------------|
+| Resource Manager | ❌ | ✅ |
+| RBAC | ❌ | ✅ |
+| Tags | ❌ | ✅ |
+| ARM templates | ❌ | ✅ |
+| Availability zones | ❌ | ✅ |
+| VNet injection | Limited | ✅ |
+
+## Recommendation
+
+For new workloads, use [[entities/azure-container-instances]], [[entities/azure-aks]], or App Service instead. Extended support is for migrating existing classic cloud services.
 
 ## Links
 
-- [[sources/cloud-services-extended-support-docs]]
-- [[entities/azure-virtual-machines]]
-- [[concepts/vm-availability]]
+- [[comparisons/compute-options]] — modern compute alternatives
+- [[comparisons/container-compute-options]] — container-based alternatives

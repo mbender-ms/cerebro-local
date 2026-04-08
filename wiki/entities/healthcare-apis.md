@@ -1,22 +1,19 @@
 ---
-title: "What is Azure Health Data Services?"
+title: "Azure Health Data Services"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - healthcare-apis/*.md
 tags:
-  - azure-service
-  - ai-health
-  - azure-health-data-services
+  - healthcare
+  - fhir
+  - dicom
 ---
 
-# What is Azure Health Data Services?
+# Azure Health Data Services
 
-Azure Health Data Services is a cloud-based solution that helps you collect, store, and analyze health data from different sources and formats. It supports various healthcare standards, such as FHIR&reg; and DICOM&reg;, and converts data from legacy or proprietary device formats to FHIR.
-
-(source: healthcare-apis/*.md — 29 articles)
+Managed platform for health data including FHIR Server (clinical data), DICOM Service (medical imaging), and MedTech Service (device data ingestion). HIPAA/HITRUST compliant. Enables interoperability via HL7 FHIR standard.
 
 ## Links
 
-- [[sources/healthcare-apis-docs]]
-- [[concepts/azure-data-services]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

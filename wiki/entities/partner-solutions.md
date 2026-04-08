@@ -1,22 +1,19 @@
 ---
-title: "Overview of Azure Native Integrations"
+title: "Azure Partner Solutions"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - partner-solutions/*.md
 tags:
-  - azure-service
-  - other
-  - partner-solutions
+  - marketplace
+  - partners
+  - monitoring
 ---
 
-# Overview of Azure Native Integrations
+# Azure Partner Solutions
 
-Azure Native Integrations are services that Microsoft and software development companies jointly develop and natively integrate into the Azure platform. Customers manage and operate these services through Azure, which provides a consistent experience for deployment, management, and monitoring.
-
-(source: partner-solutions/*.md — 3 articles)
+Third-party solutions integrated natively into Azure: Datadog, Elastic, Apache Kafka (Confluent), Dynatrace, NGINX, Qumulo, New Relic, etc. Deployed and managed through Azure portal with unified billing.
 
 ## Links
 
-- [[sources/partner-solutions-docs]]
-- [[concepts/azure-operations-management]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

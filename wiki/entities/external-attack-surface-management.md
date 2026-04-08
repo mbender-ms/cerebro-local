@@ -1,22 +1,19 @@
 ---
-title: "Defender EASM Overview"
+title: "Microsoft Defender EASM"
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - external-attack-surface-management/*.md
 tags:
-  - azure-service
   - security
-  - defender-easm
+  - attack-surface
+  - reconnaissance
 ---
 
-# Defender EASM Overview
+# Microsoft Defender EASM
 
-Microsoft Defender External Attack Surface Management (Defender EASM) continuously discovers and maps your digital attack surface to give you an external view of your online infrastructure.
-
-(source: external-attack-surface-management/*.md — 22 articles)
+Discovers and maps your external attack surface — internet-facing assets that attackers can see. Continuously monitors for: exposed services, dangling DNS, expired certificates, open ports, shadow IT, and vulnerable components. Helps prioritize remediation of externally visible risks.
 
 ## Links
 
-- [[sources/external-attack-surface-management-docs]]
-- [[comparisons/security-services]]
+- [[comparisons/compute-options]] — service positioning in Azure compute landscape

@@ -1,47 +1,78 @@
 ---
-title: Azure Container Registry (ACR)
+title: Azure Container Registry
 created: 2026-04-07
 updated: 2026-04-07
 sources:
   - container-registry/*.md
 tags:
-  - azure-service
   - containers
   - registry
+  - docker
+  - aks
 ---
 
 # Azure Container Registry (ACR)
 
-Managed Docker registry service for storing and managing container images and OCI artifacts. Based on open-source Docker Registry 2.0. (source: container-registry-intro.md — 133 articles)
+Managed Docker registry service for storing, building, and deploying container images and OCI artifacts.
 
-## Tiers
+## SKUs
 
-| Tier | Storage | Throughput | Features |
-|------|---------|-----------|----------|
-| **Basic** | 10 GiB | Lower | Dev/test, learning |
-| **Standard** | 100 GiB | Medium | Most production workloads |
-| **Premium** | 500 GiB | Highest | Geo-replication, private link, content trust, customer-managed keys |
+| Feature | Basic | Standard | Premium |
+|---------|-------|----------|---------|
+| Storage | 10 GB | 100 GB | 500 GB+ |
+| Webhooks | ✅ | ✅ | ✅ |
+| Entra ID auth | ✅ | ✅ | ✅ |
+| Geo-replication | ❌ | ❌ | ✅ |
+| Content trust (signing) | ❌ | ❌ | ✅ |
+| Private endpoints | ❌ | ❌ | ✅ |
+| Customer-managed keys | ❌ | ❌ | ✅ |
+| Connected registries | ❌ | ❌ | ✅ |
+| Artifact cache | ❌ | ✅ | ✅ |
 
 ## Key Features
 
-- **Geo-replication** (Premium) — replicate registry across regions for low-latency pulls
-- **Private Link** — private endpoint for VNet-only access
-- **Content trust** — sign images for integrity verification
-- **Artifact cache** — cache images from public registries (Docker Hub, MCR, GitHub)
-- **Connected registry** — sync images to on-premises/edge for disconnected scenarios
-- **ACR Tasks** — automated image builds on code commit, base image update, or schedule
-- **Helm chart support** — store and manage Helm charts as OCI artifacts
-- **Vulnerability scanning** — Microsoft Defender for Containers integration
+### ACR Tasks
+Automate container image builds in the cloud:
+- **Quick tasks** — on-demand `docker build` in Azure
+- **Auto-triggered builds** — on source code commit, base image update, or schedule
+- **Multi-step tasks** — build, test, and patch in parallel
+- **Base image update triggers** — automatically rebuild when base image updates
 
-## Integration
+### Geo-Replication (Premium)
+Replicate registry across Azure regions for network-close pulls and HA. Single registry, multiple regions, local push/pull latency.
 
-- **AKS** — `AcrPull` role on managed identity for seamless pulls
-- **App Service / Container Apps** — direct ACR integration for deployments
-- **Azure DevOps / GitHub Actions** — CI/CD build and push workflows
+### Artifact Cache
+Cache public container images (Docker Hub, MCR, GitHub) in your private registry. Reduces pull failures from rate limits and improves reliability.
+
+### Connected Registries
+Extend ACR to on-premises/edge devices (IoT, Arc). Sync images from cloud registry to nested edge registries for disconnected scenarios.
+
+## Security
+
+| Feature | Description |
+|---------|-------------|
+| **Private endpoints** | Access registry over private IP (Premium) |
+| **Managed identity** | Authenticate without credentials |
+| **RBAC roles** | AcrPull, AcrPush, AcrDelete, AcrImageSigner |
+| **Content trust** | Sign images with Notary v2 (Premium) |
+| **Defender scanning** | Vulnerability scanning via Microsoft Defender |
+| **Token/scope maps** | Fine-grained repository-level access |
+| **Zone redundancy** | HA within a region (Premium) |
+
+## Supported Artifacts
+
+- Docker container images (Windows + Linux)
+- Helm charts
+- OCI images and artifacts
+- Singularity images (SIF)
+
+## Deployment Targets
+
+Pull images to: AKS, App Service, Batch, Service Fabric, Container Instances, Container Apps, Azure Functions, IoT Edge, Docker Swarm.
 
 ## Links
 
-- [[entities/azure-aks]] — primary consumer of ACR images
-- [[comparisons/container-compute-options]] — container hosting choices
-- [[comparisons/security-services]] — Defender for Containers
-- [[sources/container-registry-docs]]
+- [[entities/azure-aks]] — primary consumer; `az aks create --attach-acr`
+- [[entities/azure-container-instances]] — pull images for serverless containers
+- [[comparisons/container-compute-options]] — where ACR images deploy
+- [[entities/azure-private-link]] — private endpoint for Premium ACR

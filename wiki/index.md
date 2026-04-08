@@ -12,6 +12,7 @@ updated: 2026-04-07
 
 _Service pages, tools, people, organizations._
 
+- [[entities/azure-virtual-network]] — Foundational private networking; subnets, NSGs, UDRs, peering, service endpoints (76 sources)
 - [[entities/azure-dns]] — DNS hosting service: Public DNS, Private DNS, and DNS Private Resolver (73 sources)
 - [[entities/azure-public-dns]] — Public DNS zone hosting with anycast, DNSSEC, alias records (4 sources)
 - [[entities/azure-private-dns]] — Private DNS zones for VNets with autoregistration and split-horizon (5 sources)
@@ -25,6 +26,10 @@ _Service pages, tools, people, organizations._
 
 _Protocols, patterns, principles, mental models._
 
+- [[concepts/network-security-groups]] — Stateful L3/L4 packet filter: rules, defaults, ASGs, service tags (3 sources)
+- [[concepts/user-defined-routes]] — Custom routes overriding Azure system routes; next hop types, route selection (1 source)
+- [[concepts/vnet-peering]] — Connect VNets via backbone; types, gateway transit, service chaining (1 source)
+- [[concepts/service-endpoints]] — Extend VNet identity to PaaS; optimal routing, limitations (2 sources)
 - [[concepts/dns-zones-and-records]] — DNS zones, record types (A/AAAA/CNAME/MX/PTR/SRV/TXT/CAA/DS/TLSA), TTL, wildcards (1 source)
 - [[concepts/dns-alias-records]] — Dynamic Azure resource references, dangling DNS prevention, zone apex support (1 source)
 - [[concepts/dnssec]] — Zone signing for origin authenticity, chain of trust, Azure public DNS support (3 sources)
@@ -46,6 +51,7 @@ _Protocols, patterns, principles, mental models._
 
 _Side-by-side analysis across topics._
 
+- [[comparisons/private-endpoints-vs-service-endpoints]] — Full comparison table: scope, security, access, cost, complexity (2 sources)
 - [[comparisons/nat-gateway-standard-vs-standardv2]] — Feature-by-feature SKU comparison, migration path, regional availability (3 sources)
 
 ## Patterns
@@ -61,6 +67,7 @@ _Recurring solutions, deployment patterns, workflows._
 
 _Per-source summary pages._
 
+- [[sources/virtual-network-docs]] — Azure Virtual Network documentation: 76 articles (NSGs, UDRs, peering, service endpoints, encryption)
 - [[sources/dns-docs]] — Azure DNS documentation: 73 articles from MicrosoftDocs/azure-docs (Public DNS, Private DNS, Private Resolver)
 - [[sources/nat-gateway-docs]] — Azure NAT Gateway documentation: 27 articles, ~60K words from MicrosoftDocs/azure-docs
 - [[sources/karpathy-llm-wiki]] — "LLM Wiki" by Andrej Karpathy, GitHub Gist, April 2026 (5,000+ stars)

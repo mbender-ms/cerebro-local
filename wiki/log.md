@@ -81,3 +81,23 @@ Pages created (11):
 
 Pages updated (1):
 - `wiki/index.md` — added all 11 new pages
+
+## [2026-04-07] ingest | Azure Virtual Network Documentation (76 articles)
+
+Source: `raw/articles/virtual-network/*.md` (76 MS Learn articles)
+
+Downloaded from: https://github.com/MicrosoftDocs/azure-docs/tree/main/articles/virtual-network
+
+Article types: 3 overviews, 16 concepts, 25 how-to, 4 tutorials, 4 troubleshooting.
+
+Pages created (7):
+- `wiki/entities/azure-virtual-network.md` — foundational VNet entity
+- `wiki/concepts/network-security-groups.md` — NSGs, rules, ASGs, service tags
+- `wiki/concepts/user-defined-routes.md` — UDRs, next hop types, route selection
+- `wiki/concepts/vnet-peering.md` — peering types, gateway transit, service chaining
+- `wiki/concepts/service-endpoints.md` — VNet-to-PaaS direct backbone path
+- `wiki/comparisons/private-endpoints-vs-service-endpoints.md` — full comparison
+- `wiki/sources/virtual-network-docs.md` — source summary for all 76 articles
+
+Pages updated (1):
+- `wiki/index.md`

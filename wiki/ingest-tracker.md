@@ -28,7 +28,7 @@ updated: 2026-04-07
 | private-link | 48 | ⬜ Not started | — | — |
 | route-server | 21 | ⬜ Not started | — | — |
 | traffic-manager | 44 | ⬜ Not started | — | — |
-| virtual-network | 76 | ⬜ Not started | — | — |
+| virtual-network | 76 | ✅ Complete | 7 pages | 2026-04-07 |
 | virtual-network-manager | 52 | ⬜ Not started | — | — |
 | virtual-wan | 133 | ⬜ Not started | — | — |
 | vpn-gateway | 122 | ⬜ Not started | — | — |
@@ -43,7 +43,7 @@ updated: 2026-04-07
 ## Summary
 
 - **Total service areas**: 21
-- **Ingested**: 2 (nat-gateway, dns)
-- **Remaining**: 19
+- **Ingested**: 3 (nat-gateway, dns, virtual-network)
+- **Remaining**: 18
 - **Total raw articles**: 1,331
-- **Total wiki pages**: 34
+- **Total wiki pages**: 41

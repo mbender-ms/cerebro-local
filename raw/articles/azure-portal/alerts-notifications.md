@@ -1,0 +1,104 @@
+---
+title: Manage alerts and notifications in the Azure mobile app
+description: Use Azure mobile app notifications to get up-to-date alerts and information on your resources and services.
+ms.date: 01/21/2026
+ms.topic: how-to
+# Customer intent: As an Azure user, I want to configure push notifications in the mobile app for alerts and service health updates, so that I can monitor my resources and respond quickly to issues from my mobile device.
+---
+
+# Manage alerts and notifications in the Azure mobile app
+
+Use Azure mobile app notifications to get up-to-date alerts and information on your resources and services.
+
+Azure mobile app notifications offer users flexibility in how they receive push notifications.
+
+Azure mobile app notifications are a way to monitor and manage your Azure resources from your mobile device. You can use the Azure mobile app to view the status of your resources, get alerts on issues, and take corrective actions.
+
+This article describes different options for configuring your notifications in the Azure mobile app.
+
+> [!TIP]
+> To receive push notifications on your mobile device, make sure that your device settings allow notifications for the Azure mobile app.
+
+## Enable push notifications for Service Health alerts
+
+To enable push notifications for Service Health alerts on a subscription in the Azure mobile app, you must have a role that includes write permissions on that subscription, such as Contributor. This requirement exists because when you enable these notifications, the mobile app creates a resource group that contains all the resources required for the alerts. You can [check your access to the subscription in the Azure portal](/azure/role-based-access-control/check-access).
+
+You must also ensure that the `microsoft.insights` resource provider is [registered on the subscription](/azure/azure-resource-manager/management/resource-providers-and-types#register-resource-provider).
+
+To enable push notifications for Service Health on specific subscriptions:
+
+1. Open the Azure mobile app and sign in with your Azure account.
+1. Select the menu icon on the top left corner, and then select **Settings**.
+1. Select **Service Health issue alerts**.
+1. Use the toggle switches to select subscriptions for which you want to receive push notifications.
+1. Select **Save** to confirm your changes.
+
+## Enable push notifications for custom alerts
+
+You can enable push notifications in the Azure mobile app for custom alerts that you define. To do so, first [create a new alert rule](/azure/azure-monitor/alerts/alerts-create-metric-alert-rule) in the Azure portal.
+
+1. Sign in to the [Azure portal](https://portal.azure.com) with the same Azure account information that you use in the Azure mobile app.
+1. In the Azure portal, open **Azure Monitor**.
+1. Select **Alerts**.
+1. Select **Create alert rule** and select the target resource that you want to monitor.
+1. Configure the condition, severity, and action group for your alert rule. You can use an existing [action group](/azure/azure-monitor/alerts/action-groups) or create a new one.
+1. In the action group, add a notification type of **Push Notification** and select the Azure mobile app as the destination. This step enables notifications in your Azure mobile app.
+1. Select **Create alert rule** to save your changes.
+
+## View alerts
+
+There are several ways to view current alerts on the Azure mobile app.
+
+### Notifications list view
+
+Select the **Notifications** icon on the bottom toolbar to see a list view of all current alerts.
+
+:::image type="content" source="media/alerts-notifications/notifications-icon-toolbar.png" alt-text="Screenshot showing the Notifications icon on the bottom toolbar of the Azure mobile app.":::
+
+In the list view, you can search for specific alerts or use the filter option near the top of the screen to filter by specific subscriptions.
+
+When you select a specific alert, you see an alert details page that provides more information, including:
+
+- Severity
+- Fired time
+- App Service plan
+- Alert condition
+- User response
+- Why the alert fired
+- Additional details
+  - Description
+  - Monitor service
+  - AlertID
+  - Suppression status
+  - Target resource type
+  - Signal type
+
+You can change the user response by selecting the edit option (pencil icon) next to the current response. Select **New**, **Acknowledged**, or **Closed**, and then select **Done** in the top right corner. You can also select **History** near the top of the screen to view the timeline of events for the alert.
+
+:::image type="content" source="media/alerts-notifications/alert-details.png" alt-text="Screenshot of the Alert details page in the Azure mobile app.":::
+
+### Latest alerts card on Home
+
+You can also view alerts on the **Latest alerts** card on your [Azure mobile app **Home**](home.md).
+
+**Latest alerts** includes two viewing options: **List** or **Chart**.
+
+The **List** view shows your latest alerts along with top level information including:
+
+- Title
+- Alert state
+- Severity
+- Time
+
+Select **See All** to display the notifications list view showing all of your alerts.
+
+:::image type="content" source="media/alerts-notifications/home-notifications-list-view.png" alt-text="Screenshot showing the notifications List view on Azure mobile app Home.":::
+
+Alternately, select the **Chart** view to see the severity of the latest alerts on a bar chart.
+
+:::image type="content" source="media/alerts-notifications/home-notifications-chart-view.png" alt-text="Screenshot showing the notifications Chart view on Azure mobile app Home.":::
+
+## Next steps
+
+- Learn more about the [Azure mobile app](overview.md).
+- Download the Azure mobile app for free from the [Apple App Store](https://aka.ms/ReferAzureIOSAlertsNotifsMobileAppDocs) or [Google Play](https://aka.ms/azureapp/android/doc).

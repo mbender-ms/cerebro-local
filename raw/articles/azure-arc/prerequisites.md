@@ -1,0 +1,220 @@
+---
+title: Connected Machine agent prerequisites
+description: Learn about the prerequisites for installing the Connected Machine agent for Azure Arc-enabled servers.
+ms.date: 10/15/2025
+ms.topic: concept-article
+ms.custom: devx-track-azurepowershell
+# Customer intent: "As an IT administrator managing physical and virtual servers, I want to understand the prerequisites for installing the Connected Machine agent for Azure Arc, so that I can ensure successful onboarding and optimal operation within my environment."
+---
+
+# Connected Machine agent prerequisites
+
+This article outlines the technical prerequisites, supported environments, and specifications required for successfully onboarding physical and virtual servers to Azure Arc-enabled servers. Administrators and engineers planning to implement Azure Arc in their environments should review this information. Some [onboarding methods](deployment-options.md) may have more requirements.
+
+## Supported environments
+
+Azure Arc-enabled servers support the installation of the Connected Machine agent on physical servers and virtual machines hosted outside of Azure, including on platforms like:
+
+* VMware (including Azure VMware Solution)
+* Azure Local
+* Other cloud environments
+
+> [!NOTE]
+> You shouldn't install Azure Arc on virtual machines hosted in Azure, Azure Stack Hub, or Azure Stack Edge, as they already have similar capabilities. You can [use an Azure VM to simulate an on-premises environment](plan-evaluate-on-azure-virtual-machine.md) for testing purposes only.
+
+### Cloned and golden image considerations
+
+Take extra care when using Azure Arc on systems that are:
+
+* Cloned
+* Restored from backup as a second instance of the server
+* Used to create a "golden image" from which other virtual machines are created
+
+If two agents use the same source ID, you'll encounter inconsistent behaviors when both agents try to act as one Azure resource. The best practice for these situations is to use an automation tool or script to onboard the server to Azure Arc after it's cloned, restored from backup, or created from a golden image. For more information about cloning machines to use as Arc-enabled servers, see [Cloning guidelines](agent-overview.md#cloning-guidelines).
+
+> [!NOTE]
+> For more information on using Azure Arc-enabled servers in VMware environments, see the [VMware FAQ](vmware-faq.md).
+
+## Supported operating systems
+
+Azure Arc supports Windows and Linux operating systems as listed in the table. If an OS version isn't listed, it's not supported by Azure Arc.
+
+x86-64 (64-bit) architecture is fully supported, while [only some features may be supported on Arm64](#arm64-architecture-support). The Azure Connected Machine agent doesn't run on 32-bit architectures.
+
+| Operating system                    | Version     | x86-64 | ARM64 | Notes                                                                                            |
+| ----------------------------------- | ----------- | ------ | ----- | ------------------------------------------------------------------------------------------------ |
+| AlmaLinux                           | 8           | ✅    | ✅    |                                                                                                  |
+| AlmaLinux                           | 9           | ✅    | ❌    |                                                                                                  |
+| Amazon Linux                        | 2           | ✅    | ✅    | Expected [limited support](#limited-support-operating-systems) date: 07/03/2026                  |
+| Amazon Linux                        | 2023        | ✅    | ✅    |                                                                                                  |
+| Azure Linux (CBL-Mariner)           | 2.0         | ✅    | ❌    |                                                                                                  |
+| Azure Linux (CBL-Mariner)           | 3.0         | ✅    | ❌    |                                                                                                  |
+| Azure Local                         |             |        |       |                                                                                                  |
+| Debian                              | 11          | ✅    | ❌    | Expected [limited support](#limited-support-operating-systems) date: 07/03/2026                  |
+| Debian                              | 12          | ✅    | ✅    |                                                                                                  |
+| Debian                              | 13          | ✅    | ✅    |                                                                                                  |
+| Oracle Linux                        | 7           | ✅    | ❌    |                                                                                                  |
+| Oracle Linux                        | 8           | ✅    | ✅    |                                                                                                  |
+| Oracle Linux                        | 9           | ✅    | ❌    |                                                                                                  |
+| Oracle Linux                        | 10          | ✅    | ❌    |                                                                                                  |
+| Red Hat Enterprise Linux (RHEL)     | 7           | ✅    | ❌    |                                                                                                  |
+| Red Hat Enterprise Linux (RHEL)     | 8           | ✅    | ❌    |                                                                                                  |
+| Red Hat Enterprise Linux (RHEL)     | 9           | ✅    | ❌    |                                                                                                  |
+| Red Hat Enterprise Linux (RHEL)     | 10          | ✅    | ❌    |                                                                                                  |
+| Rocky Linux                         | 8           | ✅    | ❌    |                                                                                                  |
+| Rocky Linux                         | 9           | ✅    | ❌    |                                                                                                  |
+| SUSE Linux Enterprise Server (SLES) | 12 SP5      | ✅    | ❌    |                                                                                                  |
+| SUSE Linux Enterprise Server (SLES) | 15 SP3      | ⚠️    | ⚠️    | [Limited support](#limited-support-operating-systems)                                            |
+| SUSE Linux Enterprise Server (SLES) | 15 SP4      | ✅    | ✅    | Expected [limited support](#limited-support-operating-systems) date: 07/03/2026                  |
+| SUSE Linux Enterprise Server (SLES) | 15 SP5-7    | ✅    | ✅    |                                                                                                  |
+| Ubuntu                              | 18.04       | ✅    | ❌    |                                                                                                  |
+| Ubuntu                              | 20.04       | ✅    | ✅    |                                                                                                  |
+| Ubuntu                              | 22.04       | ✅    | ✅    |                                                                                                  |
+| Ubuntu                              | 24.04       | ✅    | ✅    |                                                                                                  |
+| Windows Client                      | 10          | ✅    | ❌    | see [client operating system guidance](#client-operating-systems)                                |
+| Windows Client                      | 11          | ✅    | ❌    | see [client operating system guidance](#client-operating-systems)                                |
+| Windows IoT Enterprise              | 10 (22H2)   | ✅    | ❌    | see [client operating system guidance](#client-operating-systems)                                |
+| Windows IoT Enterprise              | 11          | ✅    | ❌    | see [client operating system guidance](#client-operating-systems)                                |
+| Windows IoT Enterprise LTSC         | 10 (2021)   | ✅    | ❌    | see [client operating system guidance](#client-operating-systems)                                |
+| Windows IoT Enterprise LTSC         | 11 (2024)   | ✅    | ❌    | see [client operating system guidance](#client-operating-systems)                                |
+| Windows Server                      | 2012        | ✅    | ❌    |                                                                                                  |
+| Windows Server                      | 2012 R2     | ✅    | ❌    |                                                                                                  |
+| Windows Server                      | 2016        | ✅    | ❌    |                                                                                                  |
+| Windows Server                      | 2019        | ✅    | ❌    |                                                                                                  |
+| Windows Server                      | 2022        | ✅    | ❌    |                                                                                                  |
+| Windows Server                      | 2025        | ✅    | ❌    |                                                                                                  |
+
+For Windows Server, both Desktop and Server Core experiences are supported. Azure Editions are supported on Azure Local.
+
+The Azure Connected Machine agent isn't tested on operating systems hardened by the Center for Information Security (CIS) Benchmark.
+
+### Arm64 architecture support
+
+Not all features, virtual machine extensions, and services are supported on Arm64 at this point. For full details on Arm64 compatibility or to check if other services are supported, refer to the documentation for the service you wish to use. The following are a few features known to be supported on Arm64:
+
+* RunCommand
+* CustomScriptExtension
+* Azure Monitor Agent
+
+> [!NOTE]
+> Machine configuration isn't compatible with Arm64 at this time.
+
+## Limited support operating systems
+
+The operating system versions listed in this section currently have **limited support**. Newer agent versions won't support these operating systems. The last agent version that supports the operating system is listed, and newer agent releases won't be made available for that system.
+
+The listed version is supported on the specified agent version until the **End of Arc support date**. If critical security issues are identified that affect these agent versions, the fixes can be backported to the last supported version. However, those versions won't be updated with new functionality or other bug fixes.
+
+| Operating system | Last supported agent version | End of Arc support date | Notes |
+|--|--|--|--|
+| SUSE Linux Enterprise Server (SLES) 15 SP3 | 1.58  | 07/03/2026 |  |
+
+### Connect new limited support servers
+
+To connect a new server running a limited support operating system to Azure Arc, you may need to make adjustments to the onboarding script.
+
+For Windows, modify the installation script to specify the version required, using the -AltDownload parameter.
+
+Instead of the standard command:
+
+```powershell
+    # Install the hybrid agent
+    & "$env:TEMP\install_windows_azcmagent.ps1";
+```
+
+Use the following command, replacing the URL with the one for the last supported agent version:
+
+```powershell
+    # Install the hybrid agent
+    & "$env:TEMP\install_windows_azcmagent.ps1" -AltDownload https://aka.ms/AzureConnectedMachineAgent-1.39;
+```
+
+For Linux, the relevant package repository will only contain releases that are applicable, so no special considerations are required.
+
+## Client operating systems
+
+The Azure Arc service and Azure Connected Machine Agent are supported on Windows 10 and 11 client operating systems only when using those computers in a server-like environment. That is, the computer should always be:
+
+* Connected to the internet
+* Connected to a power source
+* Powered on
+
+For example, a computer running Windows 11 that's responsible for digital signage, point-of-sale solutions, and general back office management tasks is a good candidate for Azure Arc. End-user productivity machines that may go offline for long periods of time shouldn't use Azure Arc. Consider using [Microsoft Intune](/mem/intune) or [Microsoft Configuration Manager](/mem/configmgr) for those scenarios.
+
+## Short-lived servers and virtual desktop infrastructure
+
+Microsoft doesn't recommend running Azure Arc on short-lived (ephemeral) servers or virtual desktop infrastructure (VDI) VMs. Azure Arc is designed for long-term management of servers and isn't optimized for scenarios where you are regularly creating and deleting servers. For example, Azure Arc doesn't know if the agent is offline due to planned system maintenance or because the VM was deleted, so it doesn't automatically clean up server resources that stopped sending heartbeats. As a result, you could encounter a conflict if you recreate a deleted VM with the same name and there's an existing Azure Arc resource with the same name.
+
+[Azure Virtual Desktop on Azure Local](/azure/virtual-desktop/azure-local-overview) doesn't use short-lived VMs and supports running Azure Arc on the desktop VMs.
+
+## Software and system requirements
+
+This section details the software requirements for the Azure Connected Machine agent.
+
+### Linux operating system requirements
+
+* systemd
+* wget (to download the installation script)
+* openssl
+* gnupg (Debian-based systems only)
+
+## Local user logon right for Windows systems
+
+The Azure Hybrid Instance Metadata Service runs under a low-privileged virtual account, `NT SERVICE\himds`. This account needs the "log on as a service" right in Windows to run. In most cases, there's nothing you need to do, because this right is granted to virtual accounts by default. However, if your organization uses Group Policy to customize this setting, you'll need to add `NT SERVICE\himds` to the list of accounts allowed to log on as a service.
+
+You can check the current policy on your machine by opening the Local Group Policy Editor (`gpedit.msc`) from the Start menu and navigating to the following policy item:
+
+Computer Configuration > Windows Settings > Security Settings > Local Policies > User Rights Assignment > Log on as a service
+
+Check if any of `NT SERVICE\ALL SERVICES`, `NT SERVICE\himds`, or `S-1-5-80-4215458991-2034252225-2287069555-1155419622-2701885083` (the static security identifier for NT SERVICE\\himds) are in the list. If none are in the list, you'll need to work with your Group Policy administrator to add `NT SERVICE\himds` to any policies that configure user rights assignments on your servers. The Group Policy administrator needs to make the change on a computer with the Azure Connected Machine agent installed so the object picker resolves the identity correctly. The agent doesn't need to be configured or connected to Azure to make this change.
+
+:::image type="content" source="media/prerequisites/arc-server-user-rights-assignment.png" alt-text="Screen capture of the Local Group Policy Editor showing which users have permissions to log on as a service." border="true":::
+
+## Required permissions
+
+You'll need the following Azure built-in roles for different aspects of managing connected machines:
+
+* To onboard machines, you must have the [Azure Connected Machine Onboarding](/azure/role-based-access-control/built-in-roles#azure-connected-machine-onboarding) or [Contributor](/azure/role-based-access-control/built-in-roles#contributor) role for the resource group where you're managing the servers.
+* To read, modify, and delete a machine, you must have the [Azure Connected Machine Resource Administrator](/azure/role-based-access-control/built-in-roles#azure-connected-machine-resource-administrator) role for the resource group.
+* To select a resource group from the drop-down list when using the **Generate script** method, you'll also need the [Reader](/azure/role-based-access-control/built-in-roles#reader) role for that resource group (or another role that includes **Reader** access).
+* When associating a Private Link Scope with an Arc Server, you must have Microsoft.HybridCompute/privateLinkScopes/read permission on the Private Link Scope Resource.
+
+## Azure resource providers
+
+The following [Azure resource providers](/azure/azure-resource-manager/management/resource-providers-and-types) must be registered in your subscription to use Azure Arc-enabled servers:
+
+* **Microsoft.HybridCompute**
+* **Microsoft.GuestConfiguration**
+* **Microsoft.HybridConnectivity**
+* **Microsoft.AzureArcData** (if you plan to Arc-enable SQL Servers)
+* **Microsoft.Compute** (for Azure Update Manager and automatic extension upgrades)
+
+You can register the resource providers using the following commands:
+
+Azure PowerShell:
+
+```azurepowershell-interactive
+Connect-AzAccount
+Set-AzContext -SubscriptionId [subscription you want to onboard]
+Register-AzResourceProvider -ProviderNamespace Microsoft.HybridCompute
+Register-AzResourceProvider -ProviderNamespace Microsoft.GuestConfiguration
+Register-AzResourceProvider -ProviderNamespace Microsoft.HybridConnectivity
+Register-AzResourceProvider -ProviderNamespace Microsoft.AzureArcData
+```
+
+Azure CLI:
+
+```azurecli-interactive
+az account set --subscription "{Your Subscription Name}"
+az provider register --namespace 'Microsoft.HybridCompute'
+az provider register --namespace 'Microsoft.GuestConfiguration'
+az provider register --namespace 'Microsoft.HybridConnectivity'
+az provider register --namespace 'Microsoft.AzureArcData'
+```
+
+You can also register the resource providers in the [Azure portal](/azure/azure-resource-manager/management/resource-providers-and-types#azure-portal).
+
+## Next steps
+
+* Review the [networking requirements for deploying Azure Arc-enabled servers](network-requirements.md).
+* Before you deploy the Azure Connected Machine agent and integrate with other Azure management and monitoring services, review the [Planning and deployment guide](plan-at-scale-deployment.md).* To resolve problems, review the [agent connection issues troubleshooting guide](troubleshoot-agent-onboard.md).

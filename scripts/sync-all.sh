@@ -58,6 +58,17 @@ AKS_SERVICES=(
   kubernetes-fleet
 )
 
+# --- Management service areas (MicrosoftDocs/azure-management-docs) ---
+MGMT_SERVICES=(
+  azure-arc
+  azure-linux
+  azure-portal
+  container-registry
+  copilot
+  lighthouse
+  quotas
+)
+
 # --- Support articles (MicrosoftDocs/SupportArticles-docs) ---
 SUPPORT_SERVICES=(
   support-api-mgmt
@@ -96,15 +107,17 @@ EXTRA_ARGS=""
 SYNC_LEARN=true
 SYNC_COMPUTE=true
 SYNC_AKS=true
+SYNC_MGMT=true
 SYNC_SUPPORT=true
 
 for arg in "$@"; do
   case "$arg" in
     --dry-run) EXTRA_ARGS="--dry-run" ;;
-    --learn) SYNC_COMPUTE=false; SYNC_AKS=false; SYNC_SUPPORT=false ;;
-    --compute) SYNC_LEARN=false; SYNC_AKS=false; SYNC_SUPPORT=false ;;
-    --aks) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_SUPPORT=false ;;
-    --support) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_AKS=false ;;
+    --learn) SYNC_COMPUTE=false; SYNC_AKS=false; SYNC_MGMT=false; SYNC_SUPPORT=false ;;
+    --compute) SYNC_LEARN=false; SYNC_AKS=false; SYNC_MGMT=false; SYNC_SUPPORT=false ;;
+    --aks) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_MGMT=false; SYNC_SUPPORT=false ;;
+    --mgmt) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_AKS=false; SYNC_SUPPORT=false ;;
+    --support) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_AKS=false; SYNC_MGMT=false ;;
   esac
 done
 
@@ -160,6 +173,28 @@ if [ "$SYNC_AKS" = true ]; then
   echo ""
 
   for svc in "${AKS_SERVICES[@]}"; do
+    result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
+
+    if echo "$result" | grep -q "Everything up to date"; then
+      count=$(echo "$result" | grep "Unchanged:" | awk '{print $2}')
+      printf "  ✓ %-35s %s files\n" "$svc" "$count"
+    else
+      added=$(echo "$result" | grep "Added:" | awk '{print $2}')
+      modified=$(echo "$result" | grep "Modified:" | awk '{print $2}')
+      deleted=$(echo "$result" | grep "Deleted:" | awk '{print $2}')
+      printf "  ⚡ %-35s +%s ~%s -%s\n" "$svc" "$added" "$modified" "$deleted"
+      CHANGED_SERVICES+=("$svc")
+    fi
+  done
+  echo ""
+fi
+
+# --- Sync Management articles ---
+if [ "$SYNC_MGMT" = true ]; then
+  echo "=== Syncing ${#MGMT_SERVICES[@]} Management service areas (MicrosoftDocs/azure-management-docs) ==="
+  echo ""
+
+  for svc in "${MGMT_SERVICES[@]}"; do
     result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
 
     if echo "$result" | grep -q "Everything up to date"; then

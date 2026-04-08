@@ -1,0 +1,348 @@
+---
+title: ACR Transfer with Azure CLI
+description: Learn how to use ACR Transfer with Azure CLI to efficiently manage and transfer container images in Azure Container Registry.
+ms.topic: how-to
+author: rayoef
+ms.author: rayoflores
+ms.date: 02/11/2026
+ms.custom: devx-track-azurecli
+ms.service: azure-container-registry
+# Customer intent: As a DevOps engineer, I want to implement ACR Transfer using Azure CLI so that I can efficiently manage and automate the transfer of container images between Azure Container Registries.
+---
+
+# ACR Transfer with Az CLI
+
+ACR Transfer enables you to transfer container images and OCI artifacts between Azure container registries using an intermediary storage account, making it ideal for air-gapped and cross-cloud scenarios. For an overview of the feature, see [Transfer artifacts to another registry](./container-registry-transfer-prerequisites.md).
+
+This article shows how to use the ACR Transfer feature with the acrtransfer Az CLI extension.
+
+## Complete prerequisites
+
+Please complete the prerequisites outlined in [ACR Transfer prerequisites](./container-registry-transfer-prerequisites.md) prior to attempting the actions in this article. This means that:
+
+- You have an existing Premium SKU Registry in both clouds.
+- You have an existing Storage Account Container in both clouds.
+- If using **SAS Token** storage access mode, ensure you have an existing Key Vault with a secret containing a valid SAS token with the necessary permissions in both clouds.
+- If using **Managed Identity** storage access mode, ensure the pipeline's managed identity has the appropriate RBAC role (such as `Storage Blob Data Contributor`) on the storage account.
+- You have a recent version of Az CLI installed in both clouds.
+
+ACR Transfer supports two storage access modes: **SAS Token** and **Managed Identity**. You must specify which mode to use via the `--storage-access-mode` parameter when creating pipelines. For a detailed comparison, see [Storage access modes](./container-registry-transfer-prerequisites.md#storage-access-modes).
+
+> [!NOTE]
+> The `--storage-access-mode` parameter requires Azure CLI extension `acrtransfer` version 2.0.0 or later. If you're using an older version, upgrade with `az extension update --name acrtransfer`.
+
+> [!IMPORTANT]
+> ACR Transfer supports artifacts with layer sizes up to 8 GB due to technical limitations.
+
+## Install the Az CLI extension
+
+In AzureCloud, you can install the extension with the following command:
+
+```azurecli
+az extension add --name acrtransfer
+```
+
+## Create ExportPipeline with the acrtransfer Az CLI extension
+
+Create an ExportPipeline resource for your AzureCloud container registry using the acrtransfer Az CLI extension.
+
+### SAS Token mode
+
+Create an export pipeline with SAS Token storage access mode, no options, and a system-assigned identity:
+
+```azurecli
+az acr export-pipeline create \
+--resource-group $MyRG \
+--registry $MyReg \
+--name $MyPipeline \
+--secret-uri https://$MyKV.vault.azure.net/secrets/$MySecret \
+--storage-container-uri https://$MyStorage.blob.core.windows.net/$MyContainer \
+--storage-access-mode SasToken
+```
+
+Create an export pipeline with SAS Token mode, all possible options, and a user-assigned identity:
+
+```azurecli
+az acr export-pipeline create \
+--resource-group $MyRG \
+--registry $MyReg \
+--name $MyPipeline \
+--secret-uri https://$MyKV.vault.azure.net/secrets/$MySecret \
+--storage-container-uri https://$MyStorage.blob.core.windows.net/$MyContainer \
+--storage-access-mode SasToken \
+--options OverwriteBlobs ContinueOnErrors \
+--assign-identity /subscriptions/$MySubID/resourceGroups/$MyRG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$MyIdentity
+```
+
+### Managed Identity mode
+
+When using **Managed Identity** storage access mode, the pipeline authenticates directly to the storage account using the pipeline's Entra managed identity. No Key Vault or SAS token is required for storage access.
+
+Create an export pipeline with Managed Identity mode and a system-assigned identity:
+
+```azurecli
+az acr export-pipeline create \
+--resource-group $MyRG \
+--registry $MyReg \
+--name $MyPipeline \
+--storage-container-uri https://$MyStorage.blob.core.windows.net/$MyContainer \
+--storage-access-mode ManagedIdentity
+```
+
+Create an export pipeline with Managed Identity mode, all possible options, and a user-assigned identity:
+
+```azurecli
+az acr export-pipeline create \
+--resource-group $MyRG \
+--registry $MyReg \
+--name $MyPipeline \
+--storage-container-uri https://$MyStorage.blob.core.windows.net/$MyContainer \
+--storage-access-mode ManagedIdentity \
+--options OverwriteBlobs ContinueOnErrors \
+--assign-identity /subscriptions/$MySubID/resourceGroups/$MyRG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$MyIdentity
+```
+
+> [!IMPORTANT]
+> When using Managed Identity mode, do **not** provide the `--secret-uri` parameter. The `--secret-uri` parameter is only used with SAS Token mode.
+
+### Export options
+
+The `options` property for the export pipelines supports optional boolean values. The following values are recommended:
+
+|Parameter  |Value  |
+|---------|---------|
+|options | OverwriteBlobs - Overwrite existing target blobs<br/>ContinueOnErrors - Continue export of remaining artifacts in the source registry if one artifact export fails. |
+
+### Give the ExportPipeline identity keyvault policy access
+
+> [!NOTE]
+> This section only applies when using **SAS Token** storage access mode. If you are using **Managed Identity** storage access mode, skip this section and instead ensure your pipeline's managed identity has the appropriate RBAC role (such as `Storage Blob Data Contributor`) on the storage account.
+
+If you created your pipeline with a user-assigned identity, simply give this user-assigned identity `secret get` access policy permissions on the keyvault.
+
+If you created your pipeline with a system-assigned identity, you'll first need to retrieve the principalId that the system has assigned to your pipeline resource.
+
+Run the following command to retrieve your pipeline resource:
+
+```azurecli
+az acr export-pipeline show --resource-group $MyRG --registry $MyReg --name $MyPipeline
+```
+
+From this output, you'll want to copy the value in the `principalId` field.
+
+Then, you'll run the following command to give this principal the appropriate `secret get` access policy permissions on your keyvault.
+
+```azurecli
+az keyvault set-policy --name $MyKeyvault --secret-permissions get --object-id $MyPrincipalID
+```
+
+## Create ImportPipeline with the acrtransfer Az CLI extension
+
+Create an ImportPipeline resource in your target container registry using the acrtransfer Az CLI extension. By default, the pipeline is enabled to create an Import PipelineRun automatically when the attached storage account container receives a new artifact blob.
+
+### SAS Token mode
+
+Create an import pipeline with SAS Token storage access mode, no options, and a system-assigned identity:
+
+```azurecli
+az acr import-pipeline create \
+--resource-group $MyRG \
+--registry $MyReg \
+--name $MyPipeline \
+--secret-uri https://$MyKV.vault.azure.net/secrets/$MySecret \
+--storage-container-uri https://$MyStorage.blob.core.windows.net/$MyContainer \
+--storage-access-mode SasToken
+```
+
+Create an import pipeline with SAS Token mode, all possible options, source-trigger disabled, and a user-assigned identity:
+
+```azurecli
+az acr import-pipeline create \
+--resource-group $MyRG \
+--registry $MyReg \
+--name $MyPipeline \
+--secret-uri https://$MyKV.vault.azure.net/secrets/$MySecret \
+--storage-container-uri https://$MyStorage.blob.core.windows.net/$MyContainer \
+--storage-access-mode SasToken \
+--options DeleteSourceBlobOnSuccess OverwriteTags ContinueOnErrors \
+--assign-identity /subscriptions/$MySubID/resourceGroups/$MyRG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$MyIdentity \
+--source-trigger-enabled False
+```
+
+### Managed Identity mode
+
+When using **Managed Identity** storage access mode, the pipeline authenticates directly to the storage account using the pipeline's Entra managed identity. No Key Vault or SAS token is required for storage access.
+
+Create an import pipeline with Managed Identity mode and a system-assigned identity:
+
+```azurecli
+az acr import-pipeline create \
+--resource-group $MyRG \
+--registry $MyReg \
+--name $MyPipeline \
+--storage-container-uri https://$MyStorage.blob.core.windows.net/$MyContainer \
+--storage-access-mode ManagedIdentity
+```
+
+Create an import pipeline with Managed Identity mode, all possible options, source-trigger disabled, and a user-assigned identity:
+
+```azurecli
+az acr import-pipeline create \
+--resource-group $MyRG \
+--registry $MyReg \
+--name $MyPipeline \
+--storage-container-uri https://$MyStorage.blob.core.windows.net/$MyContainer \
+--storage-access-mode ManagedIdentity \
+--options DeleteSourceBlobOnSuccess OverwriteTags ContinueOnErrors \
+--assign-identity /subscriptions/$MySubID/resourceGroups/$MyRG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$MyIdentity \
+--source-trigger-enabled False
+```
+
+> [!IMPORTANT]
+> When using Managed Identity mode, do **not** provide the `--secret-uri` parameter. The `--secret-uri` parameter is only used with SAS Token mode.
+
+### Import options
+
+The `options` property for the import pipeline supports optional boolean values. The following values are recommended:
+
+|Parameter  |Value  |
+|---------|---------|
+|options | OverwriteTags - Overwrite existing target tags<br/>DeleteSourceBlobOnSuccess - Delete the source storage blob after successful import to the target registry<br/>ContinueOnErrors - Continue import of remaining artifacts in the target registry if one artifact import fails. |
+
+### Give the ImportPipeline identity keyvault policy access
+
+> [!NOTE]
+> This section only applies when using **SAS Token** storage access mode. If you are using **Managed Identity** storage access mode, skip this section and instead ensure your pipeline's managed identity has the appropriate RBAC role (such as `Storage Blob Data Contributor`) on the storage account.
+
+If you created your pipeline with a user-assigned identity, simply give this user-assigned identity `secret get` access policy permissions on the keyvault.
+
+If you created your pipeline with a system-assigned identity, you'll first need to retrieve the principalId that the system has assigned to your pipeline resource.
+
+Run the following command to retrieve your pipeline resource:
+
+```azurecli
+az acr import-pipeline show --resource-group $MyRG --registry $MyReg --name $MyPipeline
+```
+
+From this output, you'll want to copy the value in the `principalId` field.
+
+Then, you'll run the following command to give this principal the appropriate `secret get` access policy on your keyvault.
+
+```azurecli
+az keyvault set-policy --name $MyKeyvault --secret-permissions get --object-id $MyPrincipalID
+```
+
+## Create PipelineRun for export with the acrtransfer Az CLI extension
+
+Create a PipelineRun resource for your container registry using the acrtransfer Az CLI extension. This resource runs the ExportPipeline resource you created previously and exports specified artifacts from your container registry as a blob to your storage account container.
+
+Create an export pipeline-run:
+
+```azurecli
+az acr pipeline-run create \
+--resource-group $MyRG \
+--registry $MyReg \
+--pipeline $MyPipeline \
+--name $MyPipelineRun \
+--pipeline-type export \
+--storage-blob $MyBlob \
+--artifacts hello-world:latest hello-world@sha256:90659bf80b44ce6be8234e6ff90a1ac34acbeb826903b02cfa0da11c82cbc042 \
+--force-redeploy
+```
+
+If redeploying a PipelineRun resource with identical properties, you must use the --force-redeploy flag.
+
+### Pipeline run authentication logging
+
+When a pipeline run executes, the CLI displays a log message indicating which authentication method is being used to access the storage account. This helps confirm whether the pipeline is using Managed Identity or SAS Token authentication:
+
+```
+Authenticating to Storage Account using Entra Managed Identity.
+```
+
+or
+
+```
+Authenticating to Storage Account using Storage SAS Token.
+```
+
+It can take several minutes for artifacts to export. When deployment completes successfully, verify artifact export by listing the exported blob in the container of the source storage account. For example, run the [az storage blob list][az-storage-blob-list] command:
+
+```azurecli
+az storage blob list --account-name $MyStorageAccount --container-name $MyContainer --output table
+```
+
+## Transfer blob across domain
+
+In most use-cases, you'll now use a Cross Domain Solution or other method to transfer your blob from the storage account in your source domain (the storage account associated with your export pipeline) to the storage account in your target domain (the storage account associated with your import pipeline). At this point, we'll assume that the blob has arrived in the target domain storage account associated with your import pipeline.
+
+## Trigger ImportPipeline resource
+
+If you didn't use the `--source-trigger-enabled False` parameter when creating your import pipeline, the pipeline will be triggered within 15 minutes after the blob arrives in the storage account container. It can take several minutes for artifacts to import. When the import completes successfully, verify artifact import by listing the tags on the repository you're importing in the target container registry. For example, run [az acr repository show-tags][az-acr-repository-show-tags]:
+
+```azurecli
+az acr repository show-tags --name $MyRegistry --repository $MyRepository
+```
+
+> [!NOTE]
+> Source Trigger will only import blobs that have a Last Modified time within the last 60 days. If you intend to use Source Trigger to import blobs older than that, please refresh the Last Modified time of the blobs by adding blob metadata to them or else import them with manually created pipeline runs.
+
+If you did use the `--source-trigger-enabled False` parameter when creating your ImportPipeline, you'll need to create a PipelineRun manually, as shown in the following section.
+
+## Create PipelineRun for import with the acrtransfer Az CLI extension
+
+Create a PipelineRun resource for your container registry using the acrtransfer Az CLI extension. This resource runs the ImportPipeline resource you created previously and imports specified blobs from your storage account into your container registry.
+
+Create an import pipeline-run:
+
+```azurecli
+az acr pipeline-run create \
+--resource-group $MyRG \
+--registry $MyReg \
+--pipeline $MyPipeline \
+--name $MyPipelineRun \
+--pipeline-type import \
+--storage-blob $MyBlob \
+--force-redeploy
+```
+
+If redeploying a PipelineRun resource with identical properties, you must use the --force-redeploy flag.
+
+It can take several minutes for artifacts to import. When the import completes successfully, verify artifact import by listing the repositories in the target container registry. For example, run [az acr repository show-tags][az-acr-repository-show-tags]:
+
+```azurecli
+az acr repository show-tags --name $MyRegistry --repository $MyRepository
+```
+
+## Delete ACR Transfer resources
+
+Delete an ExportPipeline:
+
+```azurecli
+az acr export-pipeline delete --resource-group $MyRG --registry $MyReg --name $MyPipeline
+```
+
+Delete an ImportPipeline:
+
+```azurecli
+az acr import-pipeline delete --resource-group $MyRG --registry $MyReg --name $MyPipeline
+```
+
+Delete a PipelineRun resource. Note that this doesn't reverse the action taken by the PipelineRun. This is more like deleting the log of the PipelineRun.
+
+```azurecli
+az acr pipeline-run delete --resource-group $MyRG --registry $MyReg --name $MyPipelineRun
+```
+
+## ACR Transfer troubleshooting
+
+View [ACR Transfer Troubleshooting](container-registry-transfer-troubleshooting.md) for troubleshooting guidance.
+
+## Next steps
+
+* Learn how to [block creation of export pipelines](data-loss-prevention.md) from a network-restricted container registry.
+
+<!-- LINKS - Internal -->
+[az-storage-blob-list]: /cli/azure/storage/blob#az-storage-blob-list
+[az-acr-repository-show-tags]: /cli/azure/acr/repository#az-acr-repository-show-tags
+

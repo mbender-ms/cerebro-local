@@ -1,0 +1,133 @@
+---
+title: Plan for deployment
+description: Learn about the support matrix for Arc-enabled VMware vSphere including vCenter Server versions supported, network requirements, and more.
+ms.topic: how-to
+ms.date: 03/10/2026
+ms.service: azure-arc
+ms.subservice: azure-arc-vmware-vsphere
+ms.author: v-gajeronika
+ms.reviewer: v-gajeronika
+author: Jeronika-MS
+# Customer intent: As a VI admin, I want to understand the support matrix for Arc-enabled VMware vSphere.
+ms.custom:
+  - build-2025
+---
+
+# Support matrix for Azure Arc-enabled VMware vSphere
+
+This article documents the prerequisites and support requirements for using [Azure Arc-enabled VMware vSphere](overview.md) to manage your VMware vSphere VMs through Azure Arc.
+
+To use Azure Arc-enabled VMware vSphere, you must deploy an Azure Arc resource bridge in your VMware vSphere environment. The resource bridge provides an ongoing connection between your VMware vCenter Server and Azure. Once you connect your VMware vCenter Server to Azure, components on the resource bridge discover your vCenter inventory. You can enable them in Azure and start performing virtual hardware and guest OS operations on them using Azure Arc.
+
+## VMware vSphere requirements
+
+Meet the following requirements to use Azure Arc-enabled VMware vSphere.
+
+### Supported vCenter Server versions
+
+Azure Arc-enabled VMware vSphere works with vCenter Server version 8.
+
+> [!NOTE]
+> Azure Arc-enabled VMware vSphere currently supports vCenters with a maximum of 9,500 VMs. If your vCenter has more than 9,500 VMs, don't use Azure Arc-enabled VMware vSphere with it at this point.
+
+### Required vSphere account privileges
+
+Use a vSphere account that can:
+
+- Read all inventory.
+- Deploy and update VMs to all the resource pools (or clusters), networks, and VM templates that you want to use with Azure Arc.
+
+>[!Important]
+> As part of the Azure Arc-enabled VMware onboarding script, you're prompted to provide a vSphere account to deploy the Azure Arc resource bridge VM on the ESXi host. The process stores this account locally within the Azure Arc resource bridge VM and encrypts it as a Kubernetes secret at rest. The vSphere account allows Azure Arc-enabled VMware to interact with VMware vSphere. If your organization practices routine credential rotation, you must [update the credentials in Azure Arc-enabled VMware](/azure/azure-arc/vmware-vsphere/administer-arc-vmware?tabs=account-for-arc-resource-bridge#update-the-vsphere-account-credentials-using-a-new-password-or-a-new-vsphere-account-after-onboarding) to maintain the connection between Azure Arc-enabled VMware and VMware vSphere.
+
+### Resource bridge resource requirements
+
+For Arc-enabled VMware vSphere, resource bridge has the following minimum virtual hardware requirements:
+
+- 8 GB of memory
+- 4 vCPUs
+- An external virtual switch that can provide access to the internet directly or through a proxy. If internet access is through a proxy or firewall, ensure [these URLs](#resource-bridge-networking-requirements) are allow-listed.
+
+### Resource bridge networking requirements
+
+[!INCLUDE [network-requirement-principles](../includes/network-requirement-principles.md)]
+
+The following firewall URL exceptions are needed for the Azure Arc resource bridge VM:
+
+[!INCLUDE [network-requirements](../resource-bridge/includes/network-requirements.md)]
+
+In addition, VMware vSphere requires the following:
+
+[!INCLUDE [netork-requirements](includes/network-requirements.md)]
+
+For a complete list of network requirements for Azure Arc features and Azure Arc-enabled services, see [Azure Arc network requirements (Consolidated)](../network-requirements-consolidated.md).
+
+## Azure role and permission requirements
+
+The minimum Azure roles required for operations related to Arc-enabled VMware vSphere are as follows:
+
+| **Operation** | **Minimum role required** | **Scope** |
+| --- | --- | --- |
+| Onboarding your vCenter Server to Arc | Azure Arc VMware Private Clouds Onboarding | On the subscription or resource group into which you want to onboard |
+| Administering Arc-enabled VMware vSphere | Azure Arc VMware Administrator | On the subscription or resource group where vCenter server resource is created |
+| VM Provisioning | Azure Arc VMware Private Cloud User | On the subscription or resource group that contains the resource pool/cluster/host, datastore, and virtual network resources, or on the resources themselves |
+| VM Provisioning | Azure Arc VMware VM Contributor | On the subscription or resource group where you want to provision VMs |
+| VM Operations | Azure Arc VMware VM Contributor | On the subscription or resource group that contains the VM, or on the VM itself |
+
+If you have roles with higher permissions on the same scope, such as Owner or Contributor, you can also perform the operations listed earlier.
+
+## Guest management (Arc agent) requirements
+
+By using Arc-enabled VMware vSphere, you can install the Arc connected machine agent on your VMs at scale and use Azure management services on the VMs. This capability has additional requirements.
+
+To enable guest management (install the Arc connected machine agent), ensure the following:
+
+- The VM is powered on.
+- The VM has VMware tools installed and running.
+- The resource bridge has access to the host on which the VM is running.
+- The VM is running a [supported operating system](#supported-operating-systems).
+- The VM has internet connectivity directly or through proxy. If the connection is through a proxy, ensure [these URLs](#networking-requirements) are allow-listed.
+
+Additionally, make sure that the requirements described in the following section are met to enable guest management.
+
+### Supported operating systems
+
+Make sure you're using a version of the Windows or Linux [operating systems that are officially supported for the Azure Connected Machine agent](../servers/prerequisites.md#supported-operating-systems). The agent supports only x86-64 (64-bit) architectures. It doesn't support x86 (32-bit) or ARM-based architectures, including x86-64 emulation on arm64.
+
+### Software requirements
+
+Windows operating systems:
+
+- .NET Framework 4.6 or later. [Download the .NET Framework](/dotnet/framework/install/guide-for-developers).
+- Windows PowerShell 5.1. [Download Windows Management Framework 5.1.](https://www.microsoft.com/download/details.aspx?id=54616)
+
+Linux operating systems:
+
+- systemd
+- wget (to download the installation script)
+
+### Networking requirements
+
+The Azure Arc agents need the following firewall URL exceptions:
+
+| **URL** | **Description** |
+| --- | --- |
+| `aka.ms` | Used to resolve the download script during installation |
+| `packages.microsoft.com` | Used to download the Linux installation package |
+| `download.microsoft.com` | Used to download the Windows installation package |
+| `login.windows.net` | Microsoft Entra ID |
+| `login.microsoftonline.com` | Microsoft Entra ID |
+| `pas.windows.net` | Microsoft Entra ID |
+| `management.azure.com` | Azure Resource Manager - to create or delete the Arc server resource |
+| `*.his.arc.azure.com` | Metadata and hybrid identity services |
+| `*.guestconfiguration.azure.com` | Extension management and guest configuration services |
+| `guestnotificationservice.azure.com`, `*.guestnotificationservice.azure.com` | Notification service for extension and connectivity scenarios |
+| `azgn*.servicebus.windows.net` | Notification service for extension and connectivity scenarios |
+| `*.servicebus.windows.net` | For Windows Admin Center and SSH scenarios |
+| `*.blob.core.windows.net` | Download source for Azure Arc-enabled servers extensions |
+| `dc.services.visualstudio.com` | Agent telemetry |
+
+## Next steps
+
+- [Connect VMware vCenter to Azure Arc using the helper script](quick-start-connect-vcenter-to-arc-using-script.md)
+

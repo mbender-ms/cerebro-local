@@ -13,18 +13,18 @@ updated: 2026-04-07
 
 | Metric | Count |
 |--------|-------|
-| **Total service areas** | 184 (146 MS Learn + 5 Compute + 3 AKS + 29 Support + 1 other) |
+| **Total service areas** | 191 (146 MS Learn + 5 Compute + 3 AKS + 7 Management + 29 Support + 1 other) |
 | **All ingested** | ✅ Yes |
 | **Deep coverage (entity→concept/comparison links)** | 129/129 (100%) |
-| **Total raw articles** | 14,009 |
-| **Total wiki pages** | 368 |
-| — Entities | 132 |
+| **Total raw articles** | 14,695 |
+| **Total wiki pages** | 379 |
+| — Entities | 138 |
 | — Concepts | 39 |
-| — Comparisons | 21 |
+| — Comparisons | 22 |
 | — Patterns | 5 |
-| — Sources | 168 |
+| — Sources | 175 |
 | — System | 3 (index, log, tracker) |
-| **qmd vectors** | 81,198 chunks |
+| **qmd vectors** | ~82,000 chunks |
 
 ## Sync Sources (4 repos)
 
@@ -33,6 +33,7 @@ updated: 2026-04-07
 | `MicrosoftDocs/azure-docs` | `sync-raw.sh <service>` | `--learn` | 21 networking + 125 other |
 | `MicrosoftDocs/azure-compute-docs` | `sync-raw.sh <service>` | `--compute` | virtual-machines, vmss, aci, service-fabric, impact-reporting |
 | `MicrosoftDocs/azure-aks-docs` | `sync-raw.sh <service>` | `--aks` | aks, application-network, kubernetes-fleet |
+| `MicrosoftDocs/azure-management-docs` | `sync-raw.sh <service>` | `--mgmt` | azure-arc, acr, copilot, lighthouse, portal, linux, quotas |
 | `MicrosoftDocs/SupportArticles-docs` | `sync-raw.sh support-<service>` | `--support` | 29 support areas |
 
 ## MS Learn — Azure Networking (Deep Ingest)
@@ -103,6 +104,21 @@ Cross-cutting deep pages covering these services:
 | support-expressroute | 6 | ✅ troubleshooting-networking-support |
 | support-front-door | 4 | ✅ troubleshooting-networking-support |
 | 20 other support areas | 267 | source summaries |
+
+
+## Azure Management Docs (Deep Ingest)
+
+Source: `MicrosoftDocs/azure-management-docs` — synced via `sync-raw.sh <service>` / `--mgmt`.
+
+| Service Area | Articles | Deep Pages |
+|-------------|----------|------------|
+| azure-arc | 459 | entity + hybrid-management comparison |
+| container-registry | 133 | entity + container-compute, security-services |
+| copilot | 40 | entity + operations-management |
+| lighthouse | 32 | entity + hybrid-management |
+| azure-portal | 30 | entity (portal-quotas) |
+| azure-linux | 28 | entity + container-compute |
+| quotas | 15 | entity (portal-quotas) |
 
 ## Other Sources
 

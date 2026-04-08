@@ -122,3 +122,25 @@ pages. Every entity now links to at least one deep analysis page.
 
 Final state: 368 wiki pages, 14,009 raw articles, 184 service areas,
 81,198 qmd vectors. 4 sync repos configured.
+
+## [2026-04-07] ingest | Azure Management docs (737 articles, 7 service areas)
+
+Source: `azure-management-docs-pr/articles/`
+Syncs from: `MicrosoftDocs/azure-management-docs` (public)
+
+Service areas: azure-arc (459), container-registry (133), copilot (40),
+lighthouse (32), azure-portal (30), azure-linux (28), quotas (15).
+
+Deep wiki pages created (8):
+- entities/azure-arc — Arc resource types, connected machine agent, capabilities
+- entities/azure-container-registry — tiers, geo-replication, tasks, AKS integration
+- entities/azure-copilot — AI assistant capabilities and workflow
+- entities/azure-lighthouse — cross-tenant management
+- entities/azure-linux — AKS node OS, security hardening
+- entities/azure-portal-quotas — portal + quota management
+- comparisons/hybrid-management — Arc vs traditional Azure management
+
+7 source summary pages. Sync scripts updated for 5 repos.
+Index rebuilt with all 379 pages.
+
+Totals: 379 wiki pages, 14,695 raw articles, 191 service areas.

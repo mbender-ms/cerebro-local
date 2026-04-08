@@ -7,11 +7,11 @@ updated: 2026-04-07
 # Knowledge Base Index
 
 > Master catalog of all wiki pages. Use `qmd query` for search — do NOT read this file into context for queries.
-> Total: 365 pages across 5 categories.
+> Total: 379 pages.
 
 ## Entities
 
-_132 Azure services, tools, and people._
+_138 Azure services, tools, and people._
 
 - [[entities/active-directory-b2c]] — Azure Active Directory B2C provides business-to-customer identity as a service. Your customers can use their preferred s...
 - [[entities/andrej-karpathy]] — AI researcher and educator. Former Director of AI at Tesla, founding member of OpenAI. Known for neural network lectures...
@@ -26,6 +26,7 @@ _132 Azure services, tools, and people._
 - [[entities/azure-app-configuration]] — Azure App Configuration provides a service to centrally manage application settings and feature flags. Modern programs, ...
 - [[entities/azure-application-gateway]] — A web traffic (Layer 7) load balancer that makes routing decisions based on HTTP request attributes like URL paths and h...
 - [[entities/azure-application-network]] — Application-layer networking service for AKS. Provides observability, metrics, and logging for application traffic withi...
+- [[entities/azure-arc]] — Extends Azure management and services to any infrastructure — on-premises, multicloud, and edge. Project resources from ...
 - [[entities/azure-bastion]] — Fully managed PaaS service for secure RDP/SSH connectivity to VMs over TLS directly from the Azure portal or native clie...
 - [[entities/azure-boost]] — Azure service. See raw articles in `raw/articles/azure-boost/` for details.
 - [[entities/azure-cache-for-redis]] — Azure service. See raw articles in `raw/articles/azure-cache-for-redis/` for details.
@@ -33,6 +34,8 @@ _132 Azure services, tools, and people._
 - [[entities/azure-change-tracking-inventory]] — Azure Change Tracking and Inventory monitors changes and provides inventory logs for servers across Azure, on-premises, ...
 - [[entities/azure-compute-fleet]] — Azure service. See raw articles in `raw/articles/azure-compute-fleet/` for details.
 - [[entities/azure-container-instances]] — Fastest and simplest way to run containers in Azure. No VM management, no orchestrator required. Start Linux or Windows ...
+- [[entities/azure-container-registry]] — Managed Docker registry service for storing and managing container images and OCI artifacts. Based on open-source Docker...
+- [[entities/azure-copilot]] — AI-powered assistant for Azure. Uses LLMs + Azure control plane + your environment context to help design, operate, opti...
 - [[entities/azure-dns-private-resolver]] — Fully managed service for DNS resolution between Azure virtual networks and on-premises environments. Eliminates need to...
 - [[entities/azure-dns]] — Azure DNS is a hosting service for DNS domains using Microsoft Azure infrastructure. It consists of three distinct servi...
 - [[entities/azure-edge-hardware-center]] — Azure service. See raw articles in `raw/articles/azure-edge-hardware-center/` for details.
@@ -45,12 +48,15 @@ _132 Azure services, tools, and people._
 - [[entities/azure-ip-services]] — Collection of IP address services for Azure virtual networks. Covers public IPs, private IPs, prefixes, and routing pref...
 - [[entities/azure-kubernetes-fleet]] — At-scale management of multiple Kubernetes clusters. Provides automated safe multi-cluster updates, intelligent resource...
 - [[entities/azure-large-instances]] — Azure service. See raw articles in `raw/articles/azure-large-instances/` for details.
+- [[entities/azure-lighthouse]] — Cross-tenant management at scale. Service providers and enterprises manage resources across multiple Azure AD tenants fr...
+- [[entities/azure-linux]] — Microsoft's Linux distribution optimized for Azure and edge. Lightweight, secure, hardened for Azure workloads. Used as ...
 - [[entities/azure-load-balancer]] — Layer 4 (TCP/UDP) load balancer. Distributes inbound flows from frontend to backend pool instances based on configured r...
 - [[entities/azure-maps]] — This article provides the information needed to migrate applications created in Bing Maps for Enterprise to Azure Maps, ...
 - [[entities/azure-nat-gateway]] — A fully managed, highly resilient Network Address Translation (NAT) service. Provides outbound internet connectivity for...
 - [[entities/azure-netapp-files]] — This article helps you understand the use cases and key features of Azure NetApp Files application volume group for SAP ...
 - [[entities/azure-network-watcher]] — Suite of tools to monitor, diagnose, view metrics, and manage logs for Azure IaaS networking resources (VMs, VNets, appl...
 - [[entities/azure-networking-foundations]] — The `networking` folder contains cross-service foundational articles covering network monitoring, architecture guidance,...
+- [[entities/azure-portal-quotas]] — Web-based console for managing Azure resources. Provides dashboards, resource browsers, Cloud Shell, and guided experien...
 - [[entities/azure-private-dns]] — Managed DNS service for virtual networks using custom domain names without deploying custom DNS servers. Resolves names ...
 - [[entities/azure-private-link]] — Enables access to Azure PaaS services (Storage, SQL, etc.) and customer/partner-hosted services over a **private endpoin...
 - [[entities/azure-public-dns]] — Hosting service for public DNS domains using Azure's global anycast network of name servers. Manage DNS records with Azu...
@@ -148,7 +154,7 @@ _132 Azure services, tools, and people._
 
 ## Concepts
 
-_39 technical concepts, protocols, and troubleshooting guides._
+_39 Technical concepts, protocols, and troubleshooting guides._
 
 - [[concepts/aks-networking]] — How networking works in Azure Kubernetes Service — CNI models, egress control, network policies, and DNS. (source: conce...
 - [[concepts/availability-zones-nat]] — How Azure NAT Gateway handles availability zones differs significantly between the two SKUs. This is the primary reliabi...
@@ -192,43 +198,44 @@ _39 technical concepts, protocols, and troubleshooting guides._
 
 ## Comparisons
 
-_21 decision matrices and side-by-side analyses._
+_22 Decision matrices and side-by-side analyses._
 
-- [[comparisons/app-gateway-vs-front-door]] — Application Gateway vs Front Door
-- [[comparisons/caching-options]] — Azure Caching Options
-- [[comparisons/compute-options]] — Azure Compute Options
-- [[comparisons/container-compute-options]] — Azure Container Compute Options
+- [[comparisons/app-gateway-vs-front-door]] — Both are L7 load balancers with WAF support. Key difference: scope (regional vs global).
+- [[comparisons/caching-options]] — - **Session store** — share session state across web app instances
+- [[comparisons/compute-options]] — Choosing the right compute service for your workload.
+- [[comparisons/container-compute-options]] — Choosing the right container hosting service.
 - [[comparisons/data-analytics-services]] — Azure Data and Analytics Services
 - [[comparisons/developer-services]] — Azure DevOps and Developer Services
-- [[comparisons/firewall-sku-comparison]] — Azure Firewall SKU Comparison
-- [[comparisons/firewall-vs-nsg]] — Azure Firewall vs NSG
+- [[comparisons/firewall-sku-comparison]] — Three SKUs targeting different security and scale requirements.
+- [[comparisons/firewall-vs-nsg]] — Both filter network traffic but at different layers and scopes. They are complementary, not substitutes.
 - [[comparisons/hybrid-edge-options]] — Azure Hybrid and Edge Options
-- [[comparisons/integration-api-services]] — Azure Integration and API Services
+- [[comparisons/hybrid-management]] — Services for managing resources across Azure, on-premises, multicloud, and edge.
+- [[comparisons/integration-api-services]] — Typical pattern: API Management → Azure Functions or App Service backend.
 - [[comparisons/iot-services]] — Azure IoT Services
-- [[comparisons/load-balancing-options]] — Azure Load Balancing Options
+- [[comparisons/load-balancing-options]] — Azure offers four primary load balancing services. Choose based on traffic type (HTTP vs non-HTTP) and scope (global vs ...
 - [[comparisons/messaging-options]] — Azure Messaging and Eventing Options
 - [[comparisons/migration-services]] — Azure Migration Services
-- [[comparisons/nat-gateway-standard-vs-standardv2]] — NAT Gateway Standard vs StandardV2
-- [[comparisons/operator-edge-services]] — Azure Operator and Edge Services
-- [[comparisons/private-endpoints-vs-service-endpoints]] — Private Endpoints vs Service Endpoints
+- [[comparisons/nat-gateway-standard-vs-standardv2]] — Side-by-side comparison of Azure NAT Gateway SKUs. StandardV2 launched with zone-redundancy, higher throughput, IPv6, an...
+- [[comparisons/operator-edge-services]] — Services for telecommunications operators and edge deployments.
+- [[comparisons/private-endpoints-vs-service-endpoints]] — Two mechanisms for securing access to Azure PaaS services from a VNet. Microsoft recommends Private Link/Private Endpoin...
 - [[comparisons/security-services]] — Azure Security Services
 - [[comparisons/storage-options]] — Azure Storage Options
-- [[comparisons/virtual-wan-vs-hub-spoke]] — Virtual WAN vs Hub-Spoke with VPN/ER Gateways
-- [[comparisons/vpn-gateway-vs-expressroute]] — VPN Gateway vs ExpressRoute
+- [[comparisons/virtual-wan-vs-hub-spoke]] — Two approaches to hub-and-spoke networking in Azure: Microsoft-managed (Virtual WAN) vs self-managed (traditional hub VN...
+- [[comparisons/vpn-gateway-vs-expressroute]] — Two primary methods for connecting on-premises to Azure. Can be used together (coexistence).
 
 ## Patterns
 
-_5 deployment architectures and recurring solutions._
+_5 Deployment architectures and recurring solutions._
 
-- [[patterns/dns-hybrid-resolution]] — DNS Hybrid Resolution Patterns
-- [[patterns/karpathy-wiki-setup]] — Karpathy Wiki Setup Pattern
-- [[patterns/nat-gateway-hub-spoke]] — NAT Gateway Hub-and-Spoke Patterns
-- [[patterns/nat-gateway-with-load-balancer]] — NAT Gateway with Load Balancer Patterns
-- [[patterns/vpn-gateway-connections]] — VPN Gateway Connection Patterns
+- [[patterns/dns-hybrid-resolution]] — Patterns for resolving DNS across Azure VNets, Private DNS zones, and on-premises networks using [[entities/azure-dns-pr...
+- [[patterns/karpathy-wiki-setup]] — A practical setup pattern for implementing the [[concepts/llm-wiki-pattern]]. Based on Karpathy's gist and community ref...
+- [[patterns/nat-gateway-hub-spoke]] — Deployment patterns for using [[entities/azure-nat-gateway]] in hub-and-spoke network topologies, with and without Azure...
+- [[patterns/nat-gateway-with-load-balancer]] — How [[entities/azure-nat-gateway]] interacts with Azure Load Balancer for inbound + outbound scenarios. (source: nat-gat...
+- [[patterns/vpn-gateway-connections]] — Common deployment patterns for [[entities/azure-vpn-gateway]]. (source: design.md)
 
 ## Sources
 
-_168 source summary pages (one per service area or source document)._
+_175 Source summary pages._
 
 - [[sources/active-directory-b2c-docs]]
 - [[sources/aks-docs]]
@@ -242,6 +249,7 @@ _168 source summary pages (one per service area or source document)._
 - [[sources/automanage-docs]]
 - [[sources/automation-docs]]
 - [[sources/azure-app-configuration-docs]]
+- [[sources/azure-arc-docs]]
 - [[sources/azure-boost-docs]]
 - [[sources/azure-cache-for-redis-docs]]
 - [[sources/azure-change-tracking-inventory-docs]]
@@ -252,8 +260,10 @@ _168 source summary pages (one per service area or source document)._
 - [[sources/azure-government-docs]]
 - [[sources/azure-impact-reporting-docs]]
 - [[sources/azure-large-instances-docs]]
+- [[sources/azure-linux-docs]]
 - [[sources/azure-maps-docs]]
 - [[sources/azure-netapp-files-docs]]
+- [[sources/azure-portal-docs]]
 - [[sources/azure-relay-docs]]
 - [[sources/azure-resource-manager-docs]]
 - [[sources/azure-signalr-docs]]
@@ -273,6 +283,8 @@ _168 source summary pages (one per service area or source document)._
 - [[sources/connectors-docs]]
 - [[sources/container-apps-docs]]
 - [[sources/container-instances-docs]]
+- [[sources/container-registry-docs]]
+- [[sources/copilot-docs]]
 - [[sources/cost-management-billing-docs]]
 - [[sources/cyclecloud-docs]]
 - [[sources/data-factory-docs]]
@@ -320,6 +332,7 @@ _168 source summary pages (one per service area or source document)._
 - [[sources/karpathy-llm-wiki]]
 - [[sources/kubernetes-fleet-docs]]
 - [[sources/lab-services-docs]]
+- [[sources/lighthouse-docs]]
 - [[sources/load-balancer-docs]]
 - [[sources/logic-apps-docs]]
 - [[sources/managed-grafana-docs]]
@@ -337,6 +350,7 @@ _168 source summary pages (one per service area or source document)._
 - [[sources/planetary-computer-docs]]
 - [[sources/playwright-testing-docs]]
 - [[sources/private-link-docs]]
+- [[sources/quotas-docs]]
 - [[sources/redis-docs]]
 - [[sources/resiliency-docs]]
 - [[sources/resource-mover-docs]]

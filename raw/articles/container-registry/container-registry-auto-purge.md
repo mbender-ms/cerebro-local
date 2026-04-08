@@ -1,0 +1,209 @@
+---
+title: Purge Tags and Manifests in Azure Container Registry
+description: Use the `acr purge` command (preview) to delete multiple tags and manifests from an Azure container registry based on age and a tag filter.
+ms.topic: how-to
+ms.service: azure-container-registry
+ms.custom: devx-track-azurecli
+author: rayoef
+ms.author: rayoflores
+ms.date: 02/26/2026
+# Customer intent: As a developer, I want to efficiently purge old or unnecessary images from my container registry, so that I can maintain an organized and optimally performing storage environment.
+---
+
+# Automatically purge images from an Azure container registry (preview)
+
+When you use an Azure container registry as part of a development workflow, the registry can quickly fill up with images or other artifacts that aren't needed after a short period. You might want to delete all tags that are older than a certain duration or match a specified name filter.
+
+To delete multiple artifacts quickly, use the `acr purge` command. You can run `acr purge` as an on-demand or [scheduled](container-registry-tasks-scheduled.md) ACR Task.
+
+> [!IMPORTANT]
+> `acr purge` is currently in PREVIEW.
+> See the [Supplemental Terms of Use for Microsoft Azure Previews](https://azure.microsoft.com/support/legal/preview-supplemental-terms/) for legal terms that apply to Azure features that are in beta, preview, or otherwise not yet released into general availability.
+
+The `acr purge` command (preview) is currently distributed in a public container image (`mcr.microsoft.com/acr/acr-cli:0.17`), built from source code in the [acr-cli](https://github.com/Azure/acr-cli) repo in GitHub.
+
+Use the Azure Cloud Shell or a local installation of the Azure CLI to run the ACR task examples in this article. To install or upgrade, see [Install Azure CLI][azure-cli-install].
+
+> [!WARNING]
+> Use the `acr purge` command with caution - deleted image data is **unrecoverable**. If you have systems that pull images by manifest digest (as opposed to image name), don't purge untagged images. Deleting untagged images prevents those systems from pulling images from your registry. Instead of pulling by manifest, consider [adopting a *unique tagging* scheme](container-registry-image-tag-version.md#unique-tags).
+
+To delete single image tags or manifests by using Azure CLI commands, see [Delete container images in Azure Container Registry](container-registry-delete.md).
+
+## Use the purge command
+
+The `acr purge` command deletes images by tag in a repository. It deletes all images that match a name filter and are older than a specified duration. By default, the command deletes only tag references, not the underlying [manifests](container-registry-concepts.md#manifest) and layer data. The command has an option to also delete manifests.
+
+> [!NOTE]
+> `acr purge` doesn't delete an image tag or repository if the `write-enabled` attribute is set to `false`. For more information, see [Lock a container image in an Azure container registry](container-registry-image-lock.md).
+
+`acr purge` is designed to run as a container command in an [ACR Task](container-registry-tasks-overview.md). It automatically authenticates with the registry where the task runs and performs actions there. The task examples in this article use the `acr purge` command [alias](container-registry-tasks-reference-yaml.md#aliases) instead of a fully qualified container image command.
+
+> [!IMPORTANT]
+> The standard command to execute the `acr purge` command is `az acr run --registry <YOUR_REGISTRY> --cmd 'acr purge --optional parameter' /dev/null`.
+>
+> We recommend running the complete `acr purge` command. For example, run `acr purge --help` as `az acr run --registry <YOUR_REGISTRY> --cmd 'acr purge --help' /dev/null`.
+
+At a minimum, specify the following options when you run `acr purge`:
+
+* `--filter` - A repository name *regular expression* and a tag name *regular expression* to filter images in the registry. For example, `--filter "hello-world:.*"` matches all tags in the `hello-world` repository, `--filter "hello-world:^1.*"` matches tags beginning with `1` in the `hello-world` repository, and `--filter ".*/cache:.*"` matches all tags in the repositories ending in `/cache`. You can also pass multiple `--filter` parameters.
+* `--ago` - A Go-style [duration string](https://go.dev/pkg/time/) that indicates a duration beyond which images are deleted. The duration consists of a sequence of one or more decimal numbers, each with a unit suffix. Valid time units include "d" for days, "h" for hours, and "m" for minutes. For example, `--ago 2d3h6m` selects all filtered images last modified more than two days, 3 hours, and 6 minutes ago, and `--ago 1.5h` selects images last modified more than 1.5 hours ago.
+
+`acr purge` supports several optional parameters:
+
+* `--untagged` - Deletes all manifests that don't have associated tags (*untagged manifests*). This parameter deletes untagged manifests in addition to tags that the command already deletes. Remove all tags associated with a manifest to purge it; only then can you purge a tag-free manifest by using `--untagged`.
+* `--dry-run` - Specifies that no data is deleted, but the command produces the same output as if the command is run without this flag. This parameter is useful for testing a purge command to make sure it doesn't inadvertently delete data you intend to preserve.
+* `--keep` - Specifies the latest number of to-be-deleted tags per repository that are retained. The latest tags are determined by the last modified time of the tag for each repository matched by the provided `--filter` options.
+* `--concurrency` - Specifies a number of purge tasks to process concurrently.
+
+> [!NOTE]
+>  The --untagged parameter honors the --ago duration filter beginning with mcr.microsoft.com/acr/acr-cli:0.17.
+
+For information about additional parameters, run `acr purge --help`.
+
+`acr purge` supports other features of ACR Tasks commands, including [run variables](container-registry-tasks-reference-yaml.md#run-variables) and [task run logs](container-registry-tasks-logs.md) that are streamed and also saved for later retrieval.
+
+### Run the purge command in an on-demand task
+
+The following example uses the [az acr run][az-acr-run] command to run the `acr purge` command on-demand. This example deletes all image tags and any associated manifests in the hello-world repository in myregistry that were modified more than 1 day ago. It also removes untagged manifests, which now honor the same --ago duration filter as tagged images. The container command is passed using an environment variable, and the task runs without a source context.
+
+```azurecli
+# Environment variable for container command line
+PURGE_CMD="acr purge --filter 'hello-world:.*' \
+  --untagged --ago 1d"
+
+az acr run \
+  --cmd "$PURGE_CMD" \
+  --registry myregistry \
+  /dev/null
+```
+
+### Run the purge command in a scheduled task
+
+The following example uses the [az acr task create][az-acr-task-create] command to create a daily [scheduled ACR task](container-registry-tasks-scheduled.md). The task purges tags modified more than seven days ago in the `hello-world` repository. The container command is passed by using an environment variable. The task runs without a source context.
+
+```azurecli
+# Environment variable for container command line
+PURGE_CMD="acr purge --filter 'hello-world:.*' \
+  --ago 7d"
+
+az acr task create --name purgeTask \
+  --cmd "$PURGE_CMD" \
+  --schedule "0 0 * * *" \
+  --registry myregistry \
+  --context /dev/null
+```
+
+Run the [az acr task show][az-acr-task-show] command to see that the timer trigger is configured.
+
+### Purge large numbers of tags and manifests
+
+Purging a large number of tags and manifests can take several minutes or longer. To purge thousands of tags and manifests, the command might need to run longer than the default timeout time of 600 seconds for an on-demand task, or 3,600 seconds for a scheduled task. If the command times out, the process deletes only a subset of tags and manifests. To ensure that a large-scale purge is complete, pass the `--timeout` parameter to increase the value.
+
+For example, the following on-demand task sets a timeout time of 3,600 seconds (one hour):
+
+```azurecli
+# Environment variable for container command line
+PURGE_CMD="acr purge --filter 'hello-world:.*' \
+  --ago 1d --untagged"
+
+az acr run \
+  --cmd "$PURGE_CMD" \
+  --registry myregistry \
+  --timeout 3600 \
+  /dev/null
+```
+
+## Example: Scheduled purge of multiple repositories in a registry
+
+This example walks through using `acr purge` to periodically clean up multiple repositories in a registry. For example, you might have a development pipeline that pushes images to the `samples/devimage1` and `samples/devimage2` repositories. You periodically import development images into a production repository for your deployments, so you no longer need the development images. On a weekly basis, you purge the `samples/devimage1` and `samples/devimage2` repositories, in preparation for the coming week's work.
+
+### Preview the purge
+
+Before deleting data, run an on-demand purge task by using the `--dry-run` parameter. This option shows the tags and manifests that the command purges, without removing any data.
+
+In the following example, the filter in each repository selects all tags. The `--ago 0d` parameter matches images of all ages in the repositories that match the filters. Modify the selection criteria as needed for your scenario. The `--untagged` parameter indicates to delete manifests in addition to tags. You pass the container command to the [az acr run][az-acr-run] command by using an environment variable.
+
+```azurecli
+# Environment variable for container command line
+PURGE_CMD="acr purge \
+  --filter 'samples/devimage1:.*' --filter 'samples/devimage2:.*' \
+  --ago 0d --untagged --dry-run"
+
+az acr run \
+  --cmd "$PURGE_CMD" \
+  --registry myregistry \
+  /dev/null
+```
+
+Review the command output to see the tags and manifests that match the selection parameters. Because the command uses `--dry-run`, no data is deleted.
+
+Sample output:
+
+```console
+[...]
+Deleting tags for repository: samples/devimage1
+myregistry.azurecr.io/samples/devimage1:232889b
+myregistry.azurecr.io/samples/devimage1:a21776a
+Deleting manifests for repository: samples/devimage1
+myregistry.azurecr.io/samples/devimage1@sha256:81b6f9c92844bbbb5d0a101b22f7c2a7949e40f8ea90c8b3bc396879d95e788b
+myregistry.azurecr.io/samples/devimage1@sha256:3ded859790e68bd02791a972ab0bae727231dc8746f233a7949e40f8ea90c8b3
+Deleting tags for repository: samples/devimage2
+myregistry.azurecr.io/samples/devimage2:5e788ba
+myregistry.azurecr.io/samples/devimage2:f336b7c
+Deleting manifests for repository: samples/devimage2
+myregistry.azurecr.io/samples/devimage2@sha256:8d2527cde610e1715ad095cb12bc7ed169b60c495e5428eefdf336b7cb7c0371
+myregistry.azurecr.io/samples/devimage2@sha256:ca86b078f89607bc03ded859790e68bd02791a972ab0bae727231dc8746f233a
+
+Number of deleted tags: 4
+Number of deleted manifests: 4
+[...]
+```
+
+### Schedule the purge
+
+After you verify the dry run behaves as expected, create a scheduled task to automate the purge. The following example schedules a weekly task on Sunday at 1:00 UTC to run the previous purge command:
+
+```azurecli
+# Environment variable for container command line
+PURGE_CMD="acr purge \
+  --filter 'samples/devimage1:.*' --filter 'samples/devimage2:.*' \
+  --ago 0d --untagged"
+
+az acr task create --name weeklyPurgeTask \
+  --cmd "$PURGE_CMD" \
+  --schedule "0 1 * * Sun" \
+  --registry myregistry \
+  --context /dev/null
+```
+
+Run the [az acr task show][az-acr-task-show] command to see that the timer trigger is configured.
+
+### Example Purge Only Untagged Manifests
+
+Sometimes you may want to remove only untagged manifests without touching any tagged images. You can achieve this by using a repository filter that matches no tag names, such as ^$.
+This causes acr purge to skip all tags and only evaluate untagged manifests.
+
+```azurecli
+# Environment variable for container command line
+PURGE_CMD="acr purge \
+  --filter 'samples/devimage1:^$' --filter 'samples/devimage2:^$' \
+  --ago 0d --untagged"
+
+az acr task create --name weeklyPurgeTask \
+  --cmd "$PURGE_CMD" \
+  --schedule "0 1 * * Sun" \
+  --registry myregistry \
+  --context /dev/null
+```
+
+## Next steps
+
+Learn about other options to [delete image data](container-registry-delete.md) in Azure Container Registry.
+
+For more information about image storage, see [Container image storage in Azure Container Registry](container-registry-storage.md).
+
+<!-- LINKS - Internal -->
+[azure-cli-install]: /cli/azure/install-azure-cli
+[az-acr-run]: /cli/azure/acr#az-acr-run
+[az-acr-task-create]: /cli/azure/acr/task#az-acr-task-create
+[az-acr-task-show]: /cli/azure/acr/task#az-acr-task-show

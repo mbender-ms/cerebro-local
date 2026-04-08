@@ -10,6 +10,7 @@
 #   - MicrosoftDocs/azure-docs (MS Learn articles)
 #   - MicrosoftDocs/azure-compute-docs (Compute articles: VMs, VMSS, ACI, Service Fabric)
 #   - MicrosoftDocs/azure-aks-docs (AKS, Fleet, Application Network)
+#   - MicrosoftDocs/azure-management-docs (Arc, ACR, Copilot, Lighthouse, Portal, Linux, Quotas)
 #   - MicrosoftDocs/SupportArticles-docs (Support articles)
 #
 # Usage:
@@ -59,6 +60,13 @@ elif [[ "$SERVICE" == virtual-machines || "$SERVICE" == virtual-machine-scale-se
 elif [[ "$SERVICE" == aks || "$SERVICE" == application-network || "$SERVICE" == kubernetes-fleet ]]; then
   # AKS docs: MicrosoftDocs/azure-aks-docs
   REPO="MicrosoftDocs/azure-aks-docs"
+  BRANCH="main"
+  REMOTE_PATH="articles/$SERVICE"
+  LOCAL_DIR="$RAW_DIR/$SERVICE"
+  RECURSIVE=true
+elif [[ "$SERVICE" == azure-arc || "$SERVICE" == azure-linux || "$SERVICE" == azure-portal || "$SERVICE" == container-registry || "$SERVICE" == copilot || "$SERVICE" == lighthouse || "$SERVICE" == quotas ]]; then
+  # Management docs: MicrosoftDocs/azure-management-docs
+  REPO="MicrosoftDocs/azure-management-docs"
   BRANCH="main"
   REMOTE_PATH="articles/$SERVICE"
   LOCAL_DIR="$RAW_DIR/$SERVICE"

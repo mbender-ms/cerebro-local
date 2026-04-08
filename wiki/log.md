@@ -199,3 +199,13 @@ into WSL, Obsidian with WSL vault path, GPU acceleration (CUDA/WSL), Git Bash
 for sync scripts, native PowerShell alternative.
 
 docs/workflow.md: Added Windows recovery section with PowerShell commands.
+
+## [2026-04-07] feat | Web search UI — search.html + search-server.js
+
+Created a browser-based search interface for the knowledge base.
+- `search.html` — single-file dark-themed UI with search box, collection/mode selectors, expandable results with file viewer
+- `scripts/search-server.js` — zero-dependency Node.js HTTP server bridging browser to qmd CLI
+
+Usage: `node scripts/search-server.js` → open http://localhost:3333
+
+Features: hybrid + keyword search, collection filtering (wiki/raw/all), color-coded result types (entity/concept/comparison/pattern/raw), score badges, inline file viewer, responsive design.

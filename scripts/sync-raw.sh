@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 #
-# sync-raw.sh — Sync raw MS Learn articles from GitHub and report changes
+# sync-raw.sh — Sync raw articles from GitHub repos and report changes
 #
-# Compares local files against the GitHub repo using git blob SHAs.
+# Compares local files against upstream GitHub repos using git blob SHAs.
 # Downloads new/modified files, detects deletions, and produces a
 # change report for the LLM to re-ingest affected articles.
 #
+# Supports two source repos:
+#   - MicrosoftDocs/azure-docs (MS Learn articles)
+#   - MicrosoftDocs/SupportArticles-docs (Support articles)
+#
 # Usage:
 #   ./scripts/sync-raw.sh <service-area>              # e.g., nat-gateway
+#   ./scripts/sync-raw.sh support-<service>            # e.g., support-virtual-machines
 #   ./scripts/sync-raw.sh <service-area> --dry-run     # preview only
 #   ./scripts/sync-raw.sh <service-area> --all         # sync all, not just .md
 #
@@ -15,8 +20,6 @@
 #
 set -euo pipefail
 
-REPO="MicrosoftDocs/azure-docs"
-BRANCH="main"
 BASE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 RAW_DIR="$BASE_DIR/raw/articles"
 REPORT_FILE="$BASE_DIR/pending-changes.md"
@@ -33,47 +36,109 @@ for arg in "${@:2}"; do
   esac
 done
 
-# Handle special path mappings
-case "$SERVICE" in
-  ip-services)
-    REMOTE_PATH="articles/virtual-network/ip-services"
-    ;;
-  *)
-    REMOTE_PATH="articles/$SERVICE"
-    ;;
-esac
-LOCAL_DIR="$RAW_DIR/$SERVICE"
+# --- Determine repo and path based on service name ---
+if [[ "$SERVICE" == support-* ]]; then
+  # Support articles: MicrosoftDocs/SupportArticles-docs (public repo)
+  REPO="MicrosoftDocs/SupportArticles-docs"
+  BRANCH="main"
+  # Strip "support-" prefix to get the upstream directory name
+  UPSTREAM_SVC="${SERVICE#support-}"
+  REMOTE_PATH="support/azure/$UPSTREAM_SVC"
+  LOCAL_DIR="$RAW_DIR/$SERVICE"
+  # Support articles have nested subdirs — we need recursive fetch
+  RECURSIVE=true
+else
+  # MS Learn articles: MicrosoftDocs/azure-docs
+  REPO="MicrosoftDocs/azure-docs"
+  BRANCH="main"
+  RECURSIVE=false
+  
+  # Handle special path mappings
+  case "$SERVICE" in
+    ip-services)
+      REMOTE_PATH="articles/virtual-network/ip-services"
+      ;;
+    *)
+      REMOTE_PATH="articles/$SERVICE"
+      ;;
+  esac
+  LOCAL_DIR="$RAW_DIR/$SERVICE"
+fi
 
 echo "Syncing: $REPO/$REMOTE_PATH → $LOCAL_DIR"
 echo "Dry run: $DRY_RUN"
 echo ""
 
-# --- Get remote file list with SHAs ---
+# --- Fetch remote file list ---
 echo "Fetching remote file list..."
-REMOTE_JSON=$(curl -s "https://api.github.com/repos/$REPO/contents/$REMOTE_PATH?ref=$BRANCH")
 
-# Check for API errors
-if echo "$REMOTE_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); sys.exit(0 if isinstance(d,list) else 1)" 2>/dev/null; then
-  : # OK, it's an array
+if [ "$RECURSIVE" = true ]; then
+  # For repos with nested subdirs (support articles), use the git trees API
+  # First get the tree SHA for the directory
+  REMOTE_FILES=$(python3 -c "
+import urllib.request, json, sys
+
+repo = '$REPO'
+branch = '$BRANCH'
+remote_path = '$REMOTE_PATH'
+all_files = '$ALL_FILES' == 'true'
+
+def fetch_json(url):
+    req = urllib.request.Request(url)
+    with urllib.request.urlopen(req) as resp:
+        return json.loads(resp.read())
+
+def list_files_recursive(repo, branch, path):
+    '''Recursively list all files under a path using contents API.'''
+    results = []
+    try:
+        url = f'https://api.github.com/repos/{repo}/contents/{path}?ref={branch}'
+        items = fetch_json(url)
+        if not isinstance(items, list):
+            print(f'ERROR: {items.get(\"message\",\"\")}', file=sys.stderr)
+            return results
+        for item in items:
+            if item['type'] == 'file':
+                name = item['name']
+                if all_files or name.endswith('.md'):
+                    results.append((item['sha'], item['size'], name, item['download_url']))
+            elif item['type'] == 'dir':
+                # Recurse into subdirectories
+                sub_results = list_files_recursive(repo, branch, item['path'])
+                results.extend(sub_results)
+    except Exception as e:
+        print(f'ERROR: {e}', file=sys.stderr)
+    return results
+
+files = list_files_recursive(repo, branch, remote_path)
+for sha, size, name, url in files:
+    print(f'{sha}\t{size}\t{name}\t{url}')
+" 2>&1)
 else
-  echo "ERROR: GitHub API returned unexpected response:"
-  echo "$REMOTE_JSON" | head -5
-  exit 1
-fi
+  # Standard single-level directory (MS Learn articles)
+  REMOTE_JSON=$(curl -s "https://api.github.com/repos/$REPO/contents/$REMOTE_PATH?ref=$BRANCH")
 
-# Parse remote files
-REMOTE_FILES=$(echo "$REMOTE_JSON" | python3 -c "
+  # Check for API errors
+  if echo "$REMOTE_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); sys.exit(0 if isinstance(d,list) else 1)" 2>/dev/null; then
+    : # OK
+  else
+    echo "ERROR: GitHub API returned unexpected response:"
+    echo "$REMOTE_JSON" | head -5
+    exit 1
+  fi
+
+  REMOTE_FILES=$(echo "$REMOTE_JSON" | python3 -c "
 import sys, json
 files = json.load(sys.stdin)
 for f in files:
     if f['type'] != 'file':
         continue
     name = f['name']
-    # Filter to .md only unless --all
     if '$ALL_FILES' != 'true' and not name.endswith('.md'):
         continue
     print(f'{f[\"sha\"]}\t{f[\"size\"]}\t{name}\t{f[\"download_url\"]}')
 ")
+fi
 
 REMOTE_COUNT=$(echo "$REMOTE_FILES" | grep -c . || true)
 echo "Remote: $REMOTE_COUNT files"
@@ -89,13 +154,14 @@ DELETED=()
 
 # Check each remote file against local
 while IFS=$'\t' read -r remote_sha remote_size name download_url; do
+  [ -z "$name" ] && continue
   local_file="$LOCAL_DIR/$name"
   
   if [ ! -f "$local_file" ]; then
     ADDED+=("$name")
     if [ "$DRY_RUN" = false ]; then
       echo "  + $name (new)"
-      curl -s "$download_url" -o "$local_file"
+      curl -sL "$download_url" -o "$local_file"
     else
       echo "  + $name (new) [dry-run]"
     fi
@@ -105,7 +171,7 @@ while IFS=$'\t' read -r remote_sha remote_size name download_url; do
       MODIFIED+=("$name")
       if [ "$DRY_RUN" = false ]; then
         echo "  ~ $name (modified)"
-        curl -s "$download_url" -o "$local_file"
+        curl -sL "$download_url" -o "$local_file"
       else
         echo "  ~ $name (modified) [dry-run]"
       fi
@@ -131,6 +197,7 @@ fi
 # --- Summary ---
 echo ""
 echo "=== Sync Summary: $SERVICE ==="
+echo "  Source:    $REPO"
 echo "  Added:     ${#ADDED[@]}"
 echo "  Modified:  ${#MODIFIED[@]}"
 echo "  Unchanged: ${#UNCHANGED[@]}"
@@ -141,41 +208,28 @@ TOTAL_CHANGES=$(( ${#ADDED[@]} + ${#MODIFIED[@]} + ${#DELETED[@]} ))
 if [ "$TOTAL_CHANGES" -eq 0 ]; then
   echo ""
   echo "✓ Everything up to date. No changes needed."
-  # Remove stale report if exists
-  [ -f "$REPORT_FILE" ] && rm "$REPORT_FILE"
   exit 0
 fi
 
-# --- Generate change report ---
+# --- Generate change report (append if exists) ---
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-REPORT="---
-title: Pending Changes Report
-service: $SERVICE
-generated: $TIMESTAMP
-added: ${#ADDED[@]}
-modified: ${#MODIFIED[@]}
-deleted: ${#DELETED[@]}
----
+REPORT="
+## $SERVICE ($TIMESTAMP)
 
-# Pending Changes: $SERVICE
+> Source: \`$REPO/$REMOTE_PATH\`
 
-> Generated: $TIMESTAMP
-> Sync from: \`$REPO/$REMOTE_PATH\`
-
-## Summary
-
-| Status | Count | Action needed |
-|--------|-------|---------------|
-| Added | ${#ADDED[@]} | Ingest new articles into wiki |
-| Modified | ${#MODIFIED[@]} | Re-ingest and update affected wiki pages |
-| Deleted | ${#DELETED[@]} | Review wiki pages that cite deleted sources |
-| Unchanged | ${#UNCHANGED[@]} | No action |
+| Status | Count |
+|--------|-------|
+| Added | ${#ADDED[@]} |
+| Modified | ${#MODIFIED[@]} |
+| Deleted | ${#DELETED[@]} |
+| Unchanged | ${#UNCHANGED[@]} |
 "
 
 if [ ${#ADDED[@]} -gt 0 ]; then
   REPORT+="
-## Added (new articles to ingest)
+### Added
 "
   for f in "${ADDED[@]}"; do
     REPORT+="- \`raw/articles/$SERVICE/$f\`
@@ -185,7 +239,7 @@ fi
 
 if [ ${#MODIFIED[@]} -gt 0 ]; then
   REPORT+="
-## Modified (re-ingest and update wiki)
+### Modified
 "
   for f in "${MODIFIED[@]}"; do
     REPORT+="- \`raw/articles/$SERVICE/$f\`
@@ -195,10 +249,7 @@ fi
 
 if [ ${#DELETED[@]} -gt 0 ]; then
   REPORT+="
-## Deleted (review wiki citations)
-
-These files were removed from the upstream repo. Check wiki pages that cite them.
-
+### Deleted
 "
   for f in "${DELETED[@]}"; do
     REPORT+="- \`raw/articles/$SERVICE/$f\`
@@ -206,25 +257,27 @@ These files were removed from the upstream repo. Check wiki pages that cite them
   done
 fi
 
-REPORT+="
-## Ingest Instructions
-
-\`\`\`
-# For the LLM: re-ingest changed articles
-# 1. Read this report
-# 2. For each added article: run full ingest workflow
-# 3. For each modified article: diff against wiki, update affected pages
-# 4. For each deleted article: find wiki pages citing it, update or remove claims
-# 5. Update wiki/index.md and wiki/log.md
-# 6. Run: cd ~/github/cerebro-local && qmd update && qmd embed
-\`\`\`
-"
-
+# Append to report file (multiple syncs accumulate)
 if [ "$DRY_RUN" = false ]; then
-  echo "$REPORT" > "$REPORT_FILE"
+  if [ ! -f "$REPORT_FILE" ]; then
+    cat > "$REPORT_FILE" << 'HEADER'
+---
+title: Pending Changes Report
+---
+
+# Pending Changes
+
+> Tell the LLM: "Process pending-changes.md"
+>
+> For each added article: run full ingest workflow.
+> For each modified article: diff against wiki, update affected pages.
+> For each deleted article: find wiki pages citing it, update or remove claims.
+> Then: `qmd update && qmd embed`
+HEADER
+  fi
+  echo "$REPORT" >> "$REPORT_FILE"
   echo ""
-  echo "Change report written to: $REPORT_FILE"
-  echo "Tell your LLM: \"Process pending-changes.md\""
+  echo "Changes appended to: $REPORT_FILE"
 else
   echo ""
   echo "--- Change Report (dry-run preview) ---"

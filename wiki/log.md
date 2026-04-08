@@ -280,3 +280,13 @@ qmd re-embedded: 1,761 new docs, 2,798 chunks.
 
 Sync strategy: reusable-content is a private repo — sync via local git pull
 from ~/github/reusable-content, not GitHub API.
+
+## [2026-04-08] maintain | Updated ingest-tracker.md to current state
+
+Ingest tracker refreshed with accurate counts:
+- 450 wiki pages (183 entities, 53 concepts, 27 comparisons, 5 patterns, 179 sources)
+- 15,322 raw articles, 3,840 include files, ~96K qmd vectors
+- 8 public sync repos + 1 local (reusable-content)
+- Include files section with source breakdown and coverage stats
+- Support article upstream removal notes (8 areas emptied April 2026)
+- Deep ingest status for all categories

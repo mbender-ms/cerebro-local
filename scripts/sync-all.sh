@@ -1,16 +1,24 @@
 #!/usr/bin/env bash
 #
-# sync-all.sh — Sync all service areas from both GitHub repos
+# sync-all.sh — Sync all service areas from public GitHub repos
 #
-# Checks:
-#   - MicrosoftDocs/azure-docs (MS Learn articles) — 21 networking service areas
-#   - MicrosoftDocs/SupportArticles-docs (Support articles) — 29 service areas
+# Checks 5 public repos:
+#   - MicrosoftDocs/azure-docs (MS Learn) — 21 networking service areas
+#   - MicrosoftDocs/azure-compute-docs (Compute) — 5 service areas
+#   - MicrosoftDocs/azure-aks-docs (AKS) — 3 service areas
+#   - MicrosoftDocs/azure-management-docs (Management) — 7 service areas
+#   - MicrosoftDocs/SupportArticles-docs (Support) — 29 service areas
+#
+# For private repos (CAF, WAF), use: ./scripts/sync-local.sh
 #
 # Usage:
-#   ./scripts/sync-all.sh              # sync everything
+#   ./scripts/sync-all.sh              # sync all public repos
 #   ./scripts/sync-all.sh --dry-run    # preview only
-#   ./scripts/sync-all.sh --learn      # MS Learn articles only
-#   ./scripts/sync-all.sh --support    # Support articles only
+#   ./scripts/sync-all.sh --learn      # MS Learn only
+#   ./scripts/sync-all.sh --compute    # Compute only
+#   ./scripts/sync-all.sh --aks        # AKS only
+#   ./scripts/sync-all.sh --mgmt       # Management only
+#   ./scripts/sync-all.sh --support    # Support only
 #
 set -euo pipefail
 

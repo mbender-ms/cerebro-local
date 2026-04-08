@@ -13,16 +13,16 @@ updated: 2026-04-07
 
 | Metric | Count |
 |--------|-------|
-| **Total service areas** | 193 |
+| **Total service areas** | 194 |
 | **All ingested** | ✅ Yes |
 | **Deep coverage (entity→concept/comparison links)** | 100% |
-| **Total raw articles** | 15,229 |
-| **Total wiki pages** | 394 |
-| — Entities | 140 |
-| — Concepts | 47 |
+| **Total raw articles** | 15,755 |
+| **Total wiki pages** | 397 |
+| — Entities | 141 |
+| — Concepts | 48 |
 | — Comparisons | 23 |
 | — Patterns | 5 |
-| — Sources | 177 |
+| — Sources | 178 |
 | — System | 3 (index, log, tracker) |
 | **qmd vectors** | 88,488 chunks |
 
@@ -36,9 +36,16 @@ updated: 2026-04-07
 | `MicrosoftDocs/azure-management-docs` | `sync-raw.sh <service>` | `--mgmt` | azure-arc, acr, copilot, lighthouse, portal, linux, quotas |
 | `MicrosoftDocs/well-architected` | `sync-raw.sh well-architected` | `--frameworks` | well-architected |
 | `MicrosoftDocs/cloud-adoption-framework` | `sync-raw.sh cloud-adoption-framework` | `--frameworks` | cloud-adoption-framework |
+| `MicrosoftDocs/architecture-center` | `sync-raw.sh architecture-center` | `--frameworks` | architecture-center |
 | `MicrosoftDocs/SupportArticles-docs` | `sync-raw.sh support-<service>` | `--support` | 29 support areas |
 
 All repos are **public**. No local git pull required. Sync uses GitHub API + raw downloads.
+
+
+## Azure Architecture Center (Deep Ingest)
+
+526 articles. Design patterns, reference architectures, example scenarios, best practices, AI/ML, data guides.
+Deep: architecture-patterns concept (reliability, scalability, integration, migration, AI patterns).
 
 ## MS Learn — Azure Networking (21 service areas, Deep Ingest)
 
@@ -68,6 +75,12 @@ Deep: caf-landing-zones, caf-governance, caf-vs-waf comparison.
 
 224 articles. 5 pillars, 30+ service guides, specialized workloads.
 Deep: waf-reliability, waf-security, waf-cost-optimization, waf-operational-excellence, waf-performance-efficiency.
+
+
+## Azure Architecture Center (Deep Ingest)
+
+526 articles. Design patterns, reference architectures, example scenarios, best practices, AI/ML, data guides.
+Deep: architecture-patterns concept (reliability, scalability, integration, migration, AI patterns).
 
 ## MS Learn — Other Azure Services (125 service areas)
 

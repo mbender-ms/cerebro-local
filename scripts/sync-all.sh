@@ -2,13 +2,14 @@
 #
 # sync-all.sh — Sync all service areas from public GitHub repos
 #
-# Checks 7 public repos:
+# Checks 8 public repos:
 #   - MicrosoftDocs/azure-docs (MS Learn) — 21 networking service areas
 #   - MicrosoftDocs/azure-compute-docs (Compute) — 5 service areas
 #   - MicrosoftDocs/azure-aks-docs (AKS) — 3 service areas
 #   - MicrosoftDocs/azure-management-docs (Management) — 7 service areas
 #   - MicrosoftDocs/well-architected (WAF) — 1 service area
 #   - MicrosoftDocs/cloud-adoption-framework (CAF) — 1 service area
+#   - MicrosoftDocs/architecture-center (Architecture Center) — 1 service area
 #   - MicrosoftDocs/SupportArticles-docs (Support) — 29 service areas
 #
 # For private repos (CAF, WAF), use: ./scripts/sync-local.sh
@@ -80,10 +81,11 @@ MGMT_SERVICES=(
   quotas
 )
 
-# --- Frameworks (MicrosoftDocs/well-architected + cloud-adoption-framework) ---
+# --- Frameworks (MicrosoftDocs/well-architected + cloud-adoption-framework + architecture-center) ---
 FRAMEWORK_SERVICES=(
   well-architected
   cloud-adoption-framework
+  architecture-center
 )
 
 # --- Support articles (MicrosoftDocs/SupportArticles-docs) ---

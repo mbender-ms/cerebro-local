@@ -94,3 +94,20 @@ sync-local.sh (new script for private repos). Verified all counts match actual s
 
 Final: 394 wiki pages, 15,229 raw articles, 193 service areas, 88,488 qmd vectors.
 7 public sync repos. All sync via GitHub API — no local git pull needed.
+
+## [2026-04-07] ingest | Azure Architecture Center (526 articles)
+
+Source: `architecture-center-pr/docs/`
+Syncs from: `MicrosoftDocs/architecture-center` (public)
+
+115 guides, 77 example scenarios, 45 design patterns, 36 reference architectures,
+38 AI/ML, 29 web apps, 23 data guides, 21 AWS mappings, and more.
+
+Deep wiki pages (3):
+- entities/azure-architecture-center — content categories, key patterns, framework relationships
+- concepts/architecture-patterns — reliability, scalability, integration, migration, AI patterns
+- sources/architecture-center-docs
+
+Sync scripts updated for 8 public repos. Index rebuilt: 394 pages.
+
+Totals: 397 wiki pages, 15,755 raw articles, 194 service areas.

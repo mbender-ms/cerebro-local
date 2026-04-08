@@ -6,11 +6,11 @@ updated: 2026-04-07
 
 # Knowledge Base Index
 
-> Master catalog of all wiki pages. Use `qmd query` for search. Total: 391 pages.
+> Use `qmd query` for search. Total: 394 pages.
 
 ## Entities
 
-_140 Azure services, tools, frameworks._
+_141 Azure services, tools, frameworks._
 
 - [[entities/active-directory-b2c]] — Azure Active Directory B2C provides business-to-customer identity as a service. Your customers can use their preferred s...
 - [[entities/andrej-karpathy]] — AI researcher and educator. Former Director of AI at Tesla, founding member of OpenAI. Known for neural network lectures...
@@ -26,6 +26,7 @@ _140 Azure services, tools, frameworks._
 - [[entities/azure-application-gateway]] — A web traffic (Layer 7) load balancer that makes routing decisions based on HTTP request attributes like URL paths and h...
 - [[entities/azure-application-network]] — Application-layer networking service for AKS. Provides observability, metrics, and logging for application traffic withi...
 - [[entities/azure-arc]] — Extends Azure management and services to any infrastructure — on-premises, multicloud, and edge. Project resources from ...
+- [[entities/azure-architecture-center]] — Microsoft's library of architecture guidance, design patterns, reference architectures, and best practices for building ...
 - [[entities/azure-bastion]] — Fully managed PaaS service for secure RDP/SSH connectivity to VMs over TLS directly from the Azure portal or native clie...
 - [[entities/azure-boost]] — Azure service. See raw articles in `raw/articles/azure-boost/` for details.
 - [[entities/azure-cache-for-redis]] — Azure service. See raw articles in `raw/articles/azure-cache-for-redis/` for details.
@@ -155,9 +156,10 @@ _140 Azure services, tools, frameworks._
 
 ## Concepts
 
-_46 Technical concepts, WAF pillars, CAF phases, troubleshooting._
+_47 Technical concepts, WAF pillars, CAF phases, patterns, troubleshooting._
 
 - [[concepts/aks-networking]] — How networking works in Azure Kubernetes Service — CNI models, egress control, network policies, and DNS. (source: conce...
+- [[concepts/architecture-patterns]] — Key design patterns from the Azure Architecture Center for building reliable, scalable, and secure cloud applications.
 - [[concepts/availability-zones-nat]] — How Azure NAT Gateway handles availability zones differs significantly between the two SKUs. This is the primary reliabi...
 - [[concepts/azure-data-services]] — - [[comparisons/data-analytics-services]] — general analytics comparison
 - [[concepts/azure-operations-management]] — Key services for managing, automating, and monitoring Azure resources at scale.
@@ -244,7 +246,7 @@ _5 Deployment architectures._
 
 ## Sources
 
-_177 Source summary pages._
+_178 Source summary pages._
 
 - [[sources/active-directory-b2c-docs]]
 - [[sources/aks-docs]]
@@ -254,6 +256,7 @@ _177 Source summary pages._
 - [[sources/app-testing-docs]]
 - [[sources/application-gateway-docs]]
 - [[sources/application-network-docs]]
+- [[sources/architecture-center-docs]]
 - [[sources/artifact-signing-docs]]
 - [[sources/automanage-docs]]
 - [[sources/automation-docs]]

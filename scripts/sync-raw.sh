@@ -87,6 +87,13 @@ elif [[ "$SERVICE" == cloud-adoption-framework ]]; then
   REMOTE_PATH="docs"
   LOCAL_DIR="$RAW_DIR/$SERVICE"
   RECURSIVE=true
+elif [[ "$SERVICE" == architecture-center ]]; then
+  # Architecture Center: MicrosoftDocs/architecture-center
+  REPO="MicrosoftDocs/architecture-center"
+  BRANCH="main"
+  REMOTE_PATH="docs"
+  LOCAL_DIR="$RAW_DIR/$SERVICE"
+  RECURSIVE=true
 else
   # MS Learn articles: MicrosoftDocs/azure-docs
   REPO="MicrosoftDocs/azure-docs"

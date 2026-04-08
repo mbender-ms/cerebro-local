@@ -12,135 +12,124 @@ updated: 2026-04-07
 
 ## [2026-04-07] init | Knowledge base initialized
 
-Created directory structure, schema, index, and log. Ready for first ingest.
+Created directory structure, schema (AGENTS.md), index, log.
+Set up qmd collections (wiki + raw), Obsidian vault config.
+Installed qmd globally via npm.
 
 ## [2026-04-07] ingest | LLM Wiki by Andrej Karpathy
 
 Source: `raw/articles/karpasky.md` (GitHub Gist, April 2026)
 
-Pages created (11):
-- `wiki/sources/karpathy-llm-wiki.md` — source summary
-- `wiki/entities/andrej-karpathy.md` — person
-- `wiki/entities/obsidian.md` — tool
-- `wiki/entities/qmd.md` — tool
-- `wiki/concepts/llm-wiki-pattern.md` — core methodology
-- `wiki/concepts/three-layer-architecture.md` — architecture
-- `wiki/concepts/ingest.md` — operation
-- `wiki/concepts/query.md` — operation
-- `wiki/concepts/lint.md` — operation
-- `wiki/concepts/write-back.md` — compounding mechanism
-- `wiki/concepts/memex.md` — historical concept
-- `wiki/patterns/karpathy-wiki-setup.md` — setup pattern
+12 wiki pages created: andrej-karpathy, obsidian, qmd (entities);
+llm-wiki-pattern, three-layer-architecture, ingest, query, lint,
+write-back, memex (concepts); karpathy-wiki-setup (pattern);
+karpathy-llm-wiki (source).
 
-Pages updated (1):
-- `wiki/index.md` — added all 12 new pages
+## [2026-04-07] feat | MS Learn article chunking strategy
 
-## [2026-04-07] ingest | Azure NAT Gateway Documentation (27 articles)
+Created `scripts/chunk-article.js` — splits MS Learn articles at H2
+boundaries, separates tab groups (Portal/PS/CLI), handles zone pivots,
+propagates YAML frontmatter. Updated AGENTS.md with chunking rules.
 
-Source: `raw/articles/nat-gateway/*.md` (27 MS Learn articles, ~60K words)
+## [2026-04-07] ingest | Azure NAT Gateway documentation (27 articles)
 
-Downloaded from: https://github.com/MicrosoftDocs/azure-docs/tree/main/articles/nat-gateway
+Source: `MicrosoftDocs/azure-docs/articles/nat-gateway/`
+27 articles (~60K words). Deep ingest.
 
-Article types: 2 overviews, 5 concepts, 7 how-to, 3 quickstarts, 5 tutorials, 3 troubleshooting.
-Chunked via `scripts/chunk-article.js` → 308 chunks analyzed.
+9 pages: azure-nat-gateway (entity); snat, default-outbound-access,
+availability-zones-nat, troubleshooting-nat-gateway (concepts);
+nat-gateway-standard-vs-standardv2 (comparison); nat-gateway-hub-spoke,
+nat-gateway-with-load-balancer (patterns); nat-gateway-docs (source).
 
-Pages created (8):
-- `wiki/entities/azure-nat-gateway.md` — main service entity (SKUs, limits, config, monitoring)
-- `wiki/concepts/snat.md` — SNAT mechanics, dynamic port allocation, port reuse
-- `wiki/concepts/default-outbound-access.md` — legacy outbound, deprecation, migration
-- `wiki/concepts/availability-zones-nat.md` — Standard (zonal) vs StandardV2 (zone-redundant)
-- `wiki/concepts/troubleshooting-nat-gateway.md` — compiled troubleshooting guide
-- `wiki/comparisons/nat-gateway-standard-vs-standardv2.md` — full SKU comparison
-- `wiki/patterns/nat-gateway-hub-spoke.md` — hub-spoke with Firewall, NVA, or per-spoke
-- `wiki/patterns/nat-gateway-with-load-balancer.md` — internal LB, public LB, priority rules
-- `wiki/sources/nat-gateway-docs.md` — source summary covering all 27 articles
+## [2026-04-07] ingest | Azure DNS documentation (73 articles)
 
-Pages updated (1):
-- `wiki/index.md` — added all 9 new pages
+Source: `MicrosoftDocs/azure-docs/articles/dns/`
+73 articles. Deep ingest.
 
-## [2026-04-07] ingest | Azure DNS Documentation (73 articles)
+11 pages: azure-dns, azure-public-dns, azure-private-dns,
+azure-dns-private-resolver (entities); dns-zones-and-records,
+dns-alias-records, dnssec, dns-security-policy, reverse-dns (concepts);
+dns-hybrid-resolution (pattern); dns-docs (source).
 
-Source: `raw/articles/dns/*.md` (73 MS Learn articles)
+## [2026-04-07] ingest | Azure Virtual Network documentation (76 articles)
 
-Downloaded from: https://github.com/MicrosoftDocs/azure-docs/tree/main/articles/dns
+Source: `MicrosoftDocs/azure-docs/articles/virtual-network/`
+76 articles. Deep ingest.
 
-Article types: 4 overviews, 12 concepts, 22 how-to, 7 tutorials, 1 troubleshooting, 1 reference.
+7 pages: azure-virtual-network (entity); network-security-groups,
+user-defined-routes, vnet-peering, service-endpoints (concepts);
+private-endpoints-vs-service-endpoints (comparison);
+virtual-network-docs (source).
 
-Pages created (11):
-- `wiki/entities/azure-dns.md` — top-level service (3 sub-services)
-- `wiki/entities/azure-public-dns.md` — public DNS hosting
-- `wiki/entities/azure-private-dns.md` — private zones, autoregistration, VNet links
-- `wiki/entities/azure-dns-private-resolver.md` — hybrid resolution, endpoints, rulesets
-- `wiki/concepts/dns-zones-and-records.md` — record types, TTL, wildcards, etags
-- `wiki/concepts/dns-alias-records.md` — dynamic resource references, zone apex
-- `wiki/concepts/dnssec.md` — zone signing, chain of trust
-- `wiki/concepts/dns-security-policy.md` — query filtering, threat intelligence
-- `wiki/concepts/reverse-dns.md` — PTR records, ARPA zones
-- `wiki/patterns/dns-hybrid-resolution.md` — on-prem↔Azure resolution patterns
-- `wiki/sources/dns-docs.md` — source summary for all 73 articles
+## [2026-04-07] raw | Download all Azure networking docs (1,331 articles)
 
-Pages updated (1):
-- `wiki/index.md` — added all 11 new pages
+Downloaded all 21 networking service areas from MicrosoftDocs/azure-docs
+via GitHub API. 1,331 articles, 16MB.
 
-## [2026-04-07] ingest | Azure Virtual Network Documentation (76 articles)
+## [2026-04-07] ingest | Remaining 18 networking service areas (1,155 articles)
 
-Source: `raw/articles/virtual-network/*.md` (76 MS Learn articles)
+Batch ingest: application-gateway, bastion, cdn, expressroute, firewall,
+firewall-manager, frontdoor, ip-services, load-balancer, network-watcher,
+networking, private-link, route-server, traffic-manager, virtual-network-manager,
+virtual-wan, vpn-gateway, web-application-firewall.
 
-Downloaded from: https://github.com/MicrosoftDocs/azure-docs/tree/main/articles/virtual-network
+36 pages created (18 entities + 18 source summaries).
 
-Article types: 3 overviews, 16 concepts, 25 how-to, 4 tutorials, 4 troubleshooting.
+## [2026-04-07] deep | Expand all networking with concept/comparison/pattern pages
 
-Pages created (7):
-- `wiki/entities/azure-virtual-network.md` — foundational VNet entity
-- `wiki/concepts/network-security-groups.md` — NSGs, rules, ASGs, service tags
-- `wiki/concepts/user-defined-routes.md` — UDRs, next hop types, route selection
-- `wiki/concepts/vnet-peering.md` — peering types, gateway transit, service chaining
-- `wiki/concepts/service-endpoints.md` — VNet-to-PaaS direct backbone path
-- `wiki/comparisons/private-endpoints-vs-service-endpoints.md` — full comparison
-- `wiki/sources/virtual-network-docs.md` — source summary for all 76 articles
+13 additional pages: expressroute-peering, load-balancer-components,
+private-link-dns, virtual-wan-routing, flow-logs, security-admin-rules
+(concepts); vpn-vs-expressroute, load-balancing-options, firewall-sku,
+firewall-vs-nsg, app-gw-vs-front-door, vwan-vs-hub-spoke (comparisons);
+vpn-gateway-connections (pattern).
 
-Pages updated (1):
-- `wiki/index.md`
+## [2026-04-07] raw | Add 125 Azure service areas from local azure-docs-pr (7,340 articles)
 
-## [2026-04-07] ingest | Remaining 18 Azure Networking service areas (1,155 articles)
+Copied from ~/github/azure-docs-pr/articles/ to raw/articles/.
+125 non-networking service areas. Total: 8,671 articles, 114MB.
+qmd: 44,703 embedded chunks.
 
-Batch ingest of all remaining service areas from `raw/articles/`.
+## [2026-04-07] deep | Complete all 146 MS Learn service areas
 
-Service areas: application-gateway (126), bastion (41), cdn (49), expressroute (92),
-firewall (85), firewall-manager (27), frontdoor (78), ip-services (52),
-load-balancer (94), network-watcher (64), networking (17), private-link (48),
-route-server (21), traffic-manager (44), virtual-network-manager (52),
-virtual-wan (133), vpn-gateway (122), web-application-firewall (9).
+Created entity + source summary pages for all 125 non-networking services.
+Created 10 cross-cutting comparison pages: compute-options, messaging-options,
+storage-options, iot-services, security-services, migration-services,
+hybrid-edge-options, integration-api-services, data-analytics-services,
+developer-services.
 
-Pages created (36):
-- 18 entity pages in `wiki/entities/`
-- 18 source summary pages in `wiki/sources/`
+Added 2,180 articles from nested service directories (storage, ARM,
+defender-for-iot, governance, spring-apps, etc.).
 
-All 21 service areas now ingested. Total wiki: 59 pages.
-All cross-linked with existing nat-gateway, dns, and virtual-network pages.
+Total: 308 wiki pages, 10,752 raw articles.
 
-## [2026-04-07] ingest | Deep ingest for all 18 remaining service areas
+## [2026-04-07] ingest | Microsoft Support articles (902 articles, 29 service areas)
 
-Expanded from entity-only pages to full concept/comparison/pattern coverage.
+Source: `SupportArticles-docs-pr/support/azure/` (copied from local clone)
+902 troubleshooting articles (Symptom/Cause/Solution format).
 
-New concept pages (7):
-- concepts/expressroute-peering — circuits, peering types, SKUs, Direct, Global Reach
-- concepts/load-balancer-components — frontend, backend, probes, rules, HA ports, SKU table
-- concepts/private-link-dns — DNS configuration, zone names, hybrid pattern
-- concepts/virtual-wan-routing — hub route tables, routing intent, route-maps
-- concepts/flow-logs — VNet vs NSG flow logs, traffic analytics
-- concepts/security-admin-rules — VNet Manager centralized rules, processing order
-- concepts/app-gateway-features — (covered in entity)
+5 deep troubleshooting wiki pages: troubleshooting-virtual-machines (292 articles),
+troubleshooting-aks (189), troubleshooting-azure-monitor (73),
+troubleshooting-storage (29), troubleshooting-networking-support (53 across
+5 networking areas).
 
-New comparison pages (6):
-- comparisons/vpn-gateway-vs-expressroute — full dimension comparison
-- comparisons/load-balancing-options — L4/L7 × global/regional decision matrix
-- comparisons/firewall-sku-comparison — Basic/Standard/Premium feature table
-- comparisons/firewall-vs-nsg — complementary roles, when to use each
-- comparisons/app-gateway-vs-front-door — regional vs global L7
-- comparisons/virtual-wan-vs-hub-spoke — managed vs self-managed
+29 source summary pages for all support service areas.
 
-New pattern pages (1):
-- patterns/vpn-gateway-connections — S2S, P2S, VNet-to-VNet, coexistence, active-active
+## [2026-04-07] feat | Sync scripts updated for both repos
 
-All 21 service areas now have deep coverage.
+sync-raw.sh updated to support both MicrosoftDocs/azure-docs (MS Learn)
+and MicrosoftDocs/SupportArticles-docs (Support articles).
+`support-` prefix routes to the SupportArticles repo with recursive fetch.
+sync-all.sh updated with --learn and --support flags.
+
+## [2026-04-07] docs | Comprehensive documentation
+
+README.md rewritten. Created docs/: new-machine-setup.md,
+workflow.md, chunking-strategy.md, syncing.md, wiki-conventions.md.
+
+## [2026-04-07] maintain | Updated ingest tracker and operations log
+
+Brought ingest-tracker.md and log.md up to date with all operations
+performed during initial build-out.
+
+Final state: 342 wiki pages, 11,652 raw articles, 176 service areas,
+68,464 qmd vectors.

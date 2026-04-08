@@ -322,7 +322,14 @@ Output a lint report and offer to fix issues.
 **wiki/log.md** — Chronological operations log:
 - Append-only. Never edit existing entries.
 - Each entry: `## [YYYY-MM-DD] operation | Title`
-- Operations: `ingest`, `query`, `lint`, `update`, `create`, `delete`
+- Operations: `ingest`, `query`, `lint`, `update`, `create`, `delete`, `deep`, `raw`, `feat`, `maintain`
+- **ALWAYS append to log.md after any wiki operation.** This is not optional.
+
+**wiki/ingest-tracker.md** — Ingest status dashboard:
+- Update after every ingest or batch operation.
+- Tracks: service area, article count, entity page status, deep pages, date.
+- Update the Summary section totals after changes.
+- **ALWAYS update ingest-tracker.md after adding new service areas or wiki pages.**
 
 ## Search with qmd
 

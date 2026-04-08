@@ -36,8 +36,8 @@ qmd query "configure private endpoint DNS" -c raw
 
 | Tool | Install | Purpose |
 |------|---------|---------|
-| **Git** | Pre-installed on macOS/Linux | Clone and version the repo |
-| **Node.js** (18+) | `brew install node` | Required for qmd |
+| **Git** | Pre-installed on macOS/Linux; `winget install Git.Git` on Windows | Clone and version the repo |
+| **Node.js** (18+) | `brew install node` / `winget install OpenJS.NodeJS.LTS` | Required for qmd |
 | **qmd** | `npm install -g @tobilu/qmd` | Local hybrid search (BM25 + vector + LLM reranking) |
 | **Obsidian** | [obsidian.md](https://obsidian.md) | Browse wiki with graph view, backlinks, search |
 | **LLM Agent** | Pi, Claude Code, OpenCode, Copilot | Read AGENTS.md for instructions; writes wiki pages |
@@ -45,8 +45,12 @@ qmd query "configure private endpoint DNS" -c raw
 Optional:
 | Tool | Install | Purpose |
 |------|---------|---------|
-| **ripgrep** | `brew install ripgrep` | Fast grep across raw articles (`rg "term" raw/`) |
-| **GitHub CLI** | `brew install gh` | Push/pull repo; used by sync scripts |
+| **ripgrep** | `brew install ripgrep` / `winget install BurntSushi.ripgrep.MSVC` | Fast grep across raw articles (`rg "term" raw/`) |
+| **GitHub CLI** | `brew install gh` / `winget install GitHub.cli` | Push/pull repo; used by sync scripts |
+
+> **Windows**: WSL recommended for full compatibility (sync scripts are bash).
+> See [docs/new-machine-setup.md](docs/new-machine-setup.md) for detailed Windows
+> instructions (WSL and native PowerShell options).
 
 ---
 
@@ -66,11 +70,11 @@ cerebro-local/
 │   ├── index.md                  #   Content catalog (maintained but use qmd for queries)
 │   ├── log.md                    #   Chronological operations log
 │   ├── ingest-tracker.md         #   Ingest status per service area
-│   ├── entities/                 #   141 service pages (one per Azure service)
-│   ├── concepts/                 #   47 concept pages (NSGs, SNAT, UDRs, DNS, WAF, CAF, etc.)
-│   ├── comparisons/              #   23 comparison pages (decision matrices)
+│   ├── entities/                 #   183 service pages (one per Azure service)
+│   ├── concepts/                 #   53 concept pages (NSGs, SNAT, UDRs, DNS, WAF, CAF, BGP, IaC, BCDR, etc.)
+│   ├── comparisons/              #   27 comparison pages (decision matrices)
 │   ├── patterns/                 #   5 deployment pattern pages
-│   └── sources/                  #   179 source summary + validation pages
+│   └── sources/                  #   179 source summary and validation pages
 │
 ├── scripts/                      # Helper scripts
 │   ├── chunk-article.js          #   MS Learn article chunker (H2 splits, tab separation)
@@ -101,10 +105,10 @@ cerebro-local/
 
 | Metric | Count |
 |--------|-------|
-| Wiki pages | 398 |
+| Wiki pages | 450 |
 | Raw articles | 15,711 |
 | Service areas | 194 |
-| qmd vectors | 93,229 |
+| qmd vectors | 93,344 |
 | Disk size | ~260 MB |
 | Sync repos | 8 (all public MicrosoftDocs/*) |
 
@@ -112,9 +116,9 @@ cerebro-local/
 
 | Type | Count | Description |
 |------|-------|-------------|
-| **Entities** (`wiki/entities/`) | 141 | One per Azure service — features, SKUs, limits, links |
-| **Concepts** (`wiki/concepts/`) | 47 | Cross-service technical concepts (NSGs, SNAT, UDRs, DNS, WAF pillars, CAF phases, architecture patterns, troubleshooting) |
-| **Comparisons** (`wiki/comparisons/`) | 23 | Decision matrices with side-by-side tables |
+| **Entities** (`wiki/entities/`) | 183 | One per Azure service — features, SKUs, limits, links |
+| **Concepts** (`wiki/concepts/`) | 53 | Cross-service technical concepts (NSGs, SNAT, UDRs, DNS, WAF pillars, CAF, architecture patterns, BGP, IaC, BCDR, troubleshooting) |
+| **Comparisons** (`wiki/comparisons/`) | 27 | Decision matrices with side-by-side tables |
 | **Patterns** (`wiki/patterns/`) | 5 | Deployment architectures (hub-spoke, hybrid DNS, etc.) |
 | **Sources** (`wiki/sources/`) | 179 | Per-service-area source summaries + validation reports |
 | **System** | 3 | index.md, log.md, ingest-tracker.md |
@@ -382,7 +386,7 @@ Index size: ~754 MB at `~/.cache/qmd/index.sqlite`.
 
 | Name | Path | Contents |
 |------|------|----------|
-| `wiki` | `./wiki` | 398 compiled wiki pages |
+| `wiki` | `./wiki` | 450 compiled wiki pages |
 | `raw` | `./raw` | 15,711 raw articles from 8 repos |
 
 ### Commands
@@ -524,4 +528,4 @@ This is intentional — the repo is self-contained and portable.
 ### Obsidian is slow with 15K+ files
 Exclude `raw/` from Obsidian's indexing:
 Settings → Files and links → Excluded files → add `raw/`
-This keeps Obsidian's graph and search focused on the ~400 wiki pages.
+This keeps Obsidian's graph and search focused on the ~450 wiki pages.

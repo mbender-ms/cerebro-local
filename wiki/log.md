@@ -186,3 +186,16 @@ New comparison pages (4): hpc-compute-options, registry-artifact-services,
 
 Final counts: 183 entities, 53 concepts, 27 comparisons, 5 patterns, 179 sources = 447 wiki pages
 All 194 raw article service areas now have entity page coverage.
+
+## [2026-04-07] maintain | Updated docs — current stats (450 pages) + Windows instructions
+
+README.md: Updated to 450 wiki pages, 183 entities, 53 concepts, 27 comparisons,
+93,344 vectors. Added winget install commands for Windows. Added Windows note
+pointing to detailed setup docs.
+
+docs/new-machine-setup.md: Added full Windows instructions — WSL (recommended)
+and native PowerShell options. Covers: WSL install, Node.js/qmd setup, cloning
+into WSL, Obsidian with WSL vault path, GPU acceleration (CUDA/WSL), Git Bash
+for sync scripts, native PowerShell alternative.
+
+docs/workflow.md: Added Windows recovery section with PowerShell commands.

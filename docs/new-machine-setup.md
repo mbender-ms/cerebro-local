@@ -42,10 +42,91 @@ npm install -g @tobilu/qmd
 sudo apt-get install -y ripgrep
 ```
 
-### Windows (WSL recommended)
+### Windows
 
-Run the Linux instructions inside WSL. Obsidian runs natively on Windows and
-can open the WSL path as a vault.
+Two options: **WSL (recommended)** or **native Windows**.
+
+#### Option A: WSL (Recommended)
+
+WSL gives you a full Linux environment. qmd, sync scripts, and all tools work
+natively. Obsidian runs on Windows and opens the WSL path as a vault.
+
+```powershell
+# 1. Install WSL if not already installed (PowerShell as Admin)
+wsl --install -d Ubuntu
+
+# 2. Inside WSL (Ubuntu), install Node.js and qmd
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs git ripgrep
+npm install -g @tobilu/qmd
+
+# 3. Clone the repo inside WSL
+mkdir -p ~/github
+git clone git@github.com:asudbring/cerebro-local.git ~/github/cerebro-local
+cd ~/github/cerebro-local
+
+# 4. Initialize qmd (same as Linux/macOS)
+qmd collection add wiki ./wiki
+qmd collection add raw ./raw
+qmd context add qmd://wiki/ "LLM-generated wiki: entities, concepts, comparisons, patterns, sources"
+qmd context add qmd://raw/ "Immutable source documents from Microsoft Learn and other sources"
+qmd update
+qmd embed
+```
+
+**Obsidian on Windows with WSL vault:**
+1. Install Obsidian on Windows (not WSL)
+2. Open folder as vault → navigate to `\\wsl$\Ubuntu\home\<user>\github\cerebro-local`
+3. Or map a network drive: `net use Z: \\wsl$\Ubuntu\home\<user>\github`
+
+**GPU acceleration in WSL:**
+- NVIDIA: Install [CUDA WSL drivers](https://developer.nvidia.com/cuda/wsl) — qmd uses CUDA automatically
+- AMD: Not currently supported in WSL; qmd falls back to CPU
+- Check: `qmd status` → look for "GPU: cuda"
+
+#### Option B: Native Windows (PowerShell)
+
+qmd runs natively on Windows. Sync scripts require Git Bash or adaptation.
+
+```powershell
+# 1. Install Node.js (winget)
+winget install OpenJS.NodeJS.LTS
+
+# 2. Install qmd
+npm install -g @tobilu/qmd
+
+# 3. Install optional tools
+winget install BurntSushi.ripgrep.MSVC
+winget install Git.Git
+
+# 4. Clone the repo
+cd $HOME\github
+git clone git@github.com:asudbring/cerebro-local.git
+cd cerebro-local
+
+# 5. Initialize qmd
+qmd collection add wiki .\wiki
+qmd collection add raw .\raw
+qmd context add qmd://wiki/ "LLM-generated wiki: entities, concepts, comparisons, patterns, sources"
+qmd context add qmd://raw/ "Immutable source documents from Microsoft Learn and other sources"
+qmd update
+qmd embed
+```
+
+**Sync scripts on native Windows:**
+- Sync scripts (`sync-raw.sh`, `sync-all.sh`) are bash scripts
+- Run them via **Git Bash** (installed with Git for Windows):
+  ```bash
+  # In Git Bash
+  cd ~/github/cerebro-local
+  ./scripts/sync-all.sh --dry-run
+  ```
+- Or install WSL just for sync, keep everything else native
+
+**GPU acceleration on Windows:**
+- NVIDIA: CUDA auto-detected by qmd
+- Check: `qmd status` → look for "GPU: cuda"
+- CPU fallback works but embedding is slower (~60 min for 16K docs vs ~30 min on GPU)
 
 ## 3. Initialize qmd
 
@@ -142,7 +223,7 @@ qmd query "what load balancer should I use for global HTTP traffic"
 
 # Check status
 qmd status
-# Should show: ~16,108 files indexed, ~93,229 vectors
+# Should show: ~16,108 files indexed, ~93,344 vectors
 ```
 
 ## 7. Optional: Set Up Sync
@@ -180,7 +261,7 @@ qmd update
 
 ### Obsidian is very slow
 Add `raw/` to excluded files in Obsidian settings. This prevents Obsidian
-from indexing 15,711 raw articles — it only needs the ~400 wiki pages.
+from indexing 15,711 raw articles — it only needs the ~450 wiki pages.
 
 ### Git push is slow
 The repo is ~260 MB. First push/clone takes a minute. Subsequent pushes only

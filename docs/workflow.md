@@ -85,6 +85,8 @@ git add -A && git commit -m "description" && git push
 
 ## Recovering on a New Machine
 
+### macOS / Linux / WSL
+
 ```bash
 git clone git@github.com:asudbring/cerebro-local.git ~/github/cerebro-local
 npm install -g @tobilu/qmd
@@ -97,4 +99,22 @@ qmd update && qmd embed
 # Open in Obsidian, done.
 ```
 
-See [docs/new-machine-setup.md](new-machine-setup.md) for detailed instructions.
+### Windows (Native PowerShell)
+
+```powershell
+winget install OpenJS.NodeJS.LTS
+npm install -g @tobilu/qmd
+cd $HOME\github
+git clone git@github.com:asudbring/cerebro-local.git
+cd cerebro-local
+qmd collection add wiki .\wiki
+qmd collection add raw .\raw
+qmd context add qmd://wiki/ "LLM-generated wiki: entities, concepts, comparisons, patterns, sources"
+qmd context add qmd://raw/ "Immutable source documents from Microsoft Learn and other sources"
+qmd update
+qmd embed
+# Run sync scripts via Git Bash: bash ./scripts/sync-all.sh --dry-run
+```
+
+See [docs/new-machine-setup.md](new-machine-setup.md) for detailed instructions
+(WSL vs native, GPU setup, Obsidian with WSL vault).

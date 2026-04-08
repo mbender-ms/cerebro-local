@@ -348,6 +348,59 @@ qmd embed
 When the wiki is small (<100 pages), reading `wiki/index.md` is sufficient.
 Use qmd when the index becomes unwieldy or when searching raw sources.
 
+## Syncing Raw Sources from GitHub
+
+MS Learn articles are updated frequently. The sync script compares local files
+against the upstream GitHub repo using git blob SHAs (exact byte-level match)
+and produces a change report.
+
+### Usage
+
+```bash
+# Check a service area for changes and download updates
+./scripts/sync-raw.sh nat-gateway
+
+# Preview changes without downloading
+./scripts/sync-raw.sh nat-gateway --dry-run
+
+# Sync a new service area (downloads everything as "added")
+./scripts/sync-raw.sh virtual-network
+
+# Sync multiple areas
+for svc in nat-gateway virtual-network load-balancer dns private-link traffic-manager; do
+  ./scripts/sync-raw.sh $svc
+done
+```
+
+### What the script does
+
+1. Fetches the file list + SHAs from `MicrosoftDocs/azure-docs` via GitHub API
+2. Compares each remote SHA against `git hash-object` of the local file
+3. Downloads new and modified files into `raw/articles/<service>/`
+4. Detects files deleted from the remote repo
+5. Writes `pending-changes.md` with a structured change report
+
+### After syncing
+
+Tell the LLM: **"Process pending-changes.md"**
+
+The LLM should:
+1. Read `pending-changes.md`
+2. For **added** articles: run full ingest (chunk → create wiki pages)
+3. For **modified** articles: diff against existing wiki, update affected pages
+4. For **deleted** articles: find wiki pages citing them, update or remove claims
+5. Update `wiki/index.md` and `wiki/log.md`
+6. Run `qmd update && qmd embed`
+7. Delete `pending-changes.md` when done
+
+### Automation (optional)
+
+Add to crontab for periodic sync:
+```bash
+# Check for changes every 4 hours
+0 */4 * * * cd ~/github/cerebro-local && ./scripts/sync-raw.sh nat-gateway >> sync-log.txt 2>&1
+```
+
 ## Git Workflow
 
 - Commit after every session or significant operation.

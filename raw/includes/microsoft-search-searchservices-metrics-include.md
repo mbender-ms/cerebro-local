@@ -1,0 +1,17 @@
+---
+ms.topic: include
+ms.date: 04/16/2025
+ms.custom: Microsoft.Search/searchServices, naam
+
+# NOTE:  This content is automatically generated using API calls to Azure. Any edits made on these files will be overwritten in the next run of the script. 
+ 
+---
+
+
+|Metric|Name in REST API|Unit|Aggregation|Dimensions|Time Grains|DS Export|
+|---|---|---|---|---|---|---|
+|**Document processed count**<br><br>Number of documents processed |`DocumentsProcessedCount` |Count |Total (Sum), Count |`DataSourceName`, `Failed`, `IndexerName`, `IndexName`, `SkillsetName`|PT1M |Yes|
+|**Search Latency**<br><br>Average search latency for the search service |`SearchLatency` |Seconds |Average |\<none\>|PT1M |Yes|
+|**Search queries per second**<br><br>Search queries per second for the search service |`SearchQueriesPerSecond` |CountPerSecond |Average |\<none\>|PT1M |Yes|
+|**Skill execution invocation count**<br><br>Number of skill executions |`SkillExecutionCount` |Count |Total (Sum), Count |`DataSourceName`, `Failed`, `IndexerName`, `SkillName`, `SkillsetName`, `SkillType`|PT1M |Yes|
+|**Throttled search queries percentage**<br><br>Percentage of search queries that were throttled for the search service |`ThrottledSearchQueriesPercentage` |Percent |Average |\<none\>|PT1M |Yes|

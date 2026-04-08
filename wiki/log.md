@@ -262,3 +262,21 @@ Indexed via raw collection — searchable with qmd query/search.
 These includes contain: service limits, prerequisites, shared code snippets,
 deprecation notices, feature flags, and reusable content blocks that were
 previously invisible to search.
+
+## [2026-04-08] feat | Added reusable-content includes from local fork
+
+Copied 1,764 include files from ~/github/reusable-content (local fork).
+Primary source: ce-skilling/azure/includes/ (1,738 files) — shared content
+referenced across all MS Learn repos.
+
+Also copied: azure-cli, azure-powershell, cloud-shell, github-actions,
+privacy-includes, devops-pipelines snippets.
+
+Total includes now: 3,840 files (19 MB)
+Coverage: 74.1% of 2,831 unique referenced includes (was 48% before)
+Remaining 733 missing: deeply nested per-service includes in azure-docs
+
+qmd re-embedded: 1,761 new docs, 2,798 chunks.
+
+Sync strategy: reusable-content is a private repo — sync via local git pull
+from ~/github/reusable-content, not GitHub API.

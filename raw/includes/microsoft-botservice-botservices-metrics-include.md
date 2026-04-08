@@ -1,0 +1,21 @@
+---
+ms.topic: include
+ms.date: 04/16/2025
+ms.custom: microsoft.botservice/botservices, naam
+
+# NOTE:  This content is automatically generated using API calls to Azure. Any edits made on these files will be overwritten in the next run of the script. 
+ 
+---
+
+
+
+
+### Category: Latency
+|Metric|Name in REST API|Unit|Aggregation|Dimensions|Time Grains|DS Export|
+|---|---|---|---|---|---|---|
+|**Request Latency**<br><br>Time taken by the server to process the request |`RequestLatency` |Milliseconds |Total (Sum) |`Operation`, `Authentication`, `Protocol`, `DataCenter`|PT1M |Yes|
+
+### Category: Traffic
+|Metric|Name in REST API|Unit|Aggregation|Dimensions|Time Grains|DS Export|
+|---|---|---|---|---|---|---|
+|**Requests Traffic**<br><br>Number of Requests Made |`RequestsTraffic` |Percent |Count |`Operation`, `Authentication`, `Protocol`, `StatusCode`, `StatusCodeClass`, `DataCenter`|PT1M |Yes|

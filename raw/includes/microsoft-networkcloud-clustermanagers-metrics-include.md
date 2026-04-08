@@ -1,0 +1,21 @@
+---
+ms.topic: include
+ms.date: 03/02/2026
+ms.custom: Microsoft.NetworkCloud/clusterManagers, naam
+
+# NOTE:  This content is automatically generated using API calls to Azure. Any edits made on these files will be overwritten in the next run of the script. 
+ 
+---
+
+
+
+
+### Category: Nexus Cluster
+|Metric|Name in REST API|Unit|Aggregation|Dimensions|Time Grains|DS Export|
+|---|---|---|---|---|---|---|
+|**Cluster Connection Status**<br><br>Tracks changes in the connection status of the Cluster(s) managed by the Cluster Manager. The reason filter describes the connection status. In the absence of data, this metric will default to 0. |`NexusClusterConnectionStatus` |Count |Average |`clusterName`, `reason`|PT1M |No|
+|**Cluster Deploy Requests (Deprecated)**<br><br>Number of cluster deploy requests. |`NexusClusterDeployClusterRequests` |Count |Average |`clusterVersion`|PT1M |No|
+|**Cluster Deploy Requests**<br><br>Nexus cluster deployment requests. This metric is emitted only when there is a cluster deployment request, so an Aggregation type of 'Count' should be used. Note, filter on the property 'Result' to see if the deployment was successful or not. If using an aggregation type of 'Avg', please note 1 denotes unsuccessful 0 denotes successful. In the absence of data, this metric will default to 0. |`NexusClusterDeploymentClusterRequests` |Count |Average |`clusterName`, `clusterVersion`, `result`|PT1M |No|
+|**Cluster Machine Upgrade**<br><br>Nexus machine upgrade request, successful will have a value of 0 while unsuccessful while have a value of 1. |`NexusClusterMachineUpgrade` |Count |Average |`clusterName`, `clusterVersion`, `result`, `upgradedFromVersion`, `upgradedToVersion`, `upgradeStrategy`|PT1M |No|
+|**Cluster Management Bundle Upgrade**<br><br>Nexus Cluster management bundle upgrade, successful will have a value of 0 while unsuccessful while have a value of 1. |`NexusClusterManagementBundleUpgrade` |Count |Average |`clusterName`, `clusterVersion`, `result`, `upgradedFromVersion`, `upgradedToVersion`|PT1M |No|
+|**Cluster Runtime Bundle Upgrade**<br><br>Nexus Cluster runtime bundle upgrade, successful will have a value of 0 while unsuccessful while have a value of 1. |`NexusClusterRuntimeBundleUpgrade` |Count |Average |`clusterName`, `clusterVersion`, `result`, `upgradedFromVersion`, `upgradedToVersion`|PT1M |No|

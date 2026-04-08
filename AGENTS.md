@@ -276,14 +276,25 @@ Workflow:
 
 Triggered when: the human asks a question about the knowledge base.
 
+> **IMPORTANT**: Do NOT read `wiki/index.md` to find pages. The index is too large
+> to read into context. Always use `qmd` for retrieval.
+
 Workflow:
-1. Read `wiki/index.md` first to identify relevant pages.
-2. Read the relevant wiki pages.
-3. If wiki content is insufficient, search `raw/` using `qmd` or `rg`.
-4. Synthesize an answer with citations to wiki pages and sources.
-5. **Important**: If the answer is a valuable synthesis (comparison, analysis,
+1. **Search wiki first**: `cd ~/github/cerebro-local && qmd query "<question>" -c wiki`
+2. Read the top-scoring wiki pages returned by qmd.
+3. **If wiki results are thin, search raw**: `qmd query "<question>" -c raw`
+4. For exact keyword/name lookups, use: `qmd search "<exact terms>"` (BM25 only, fast)
+5. Synthesize an answer with citations to wiki pages and sources.
+6. **Important**: If the answer is a valuable synthesis (comparison, analysis,
    new connection), offer to file it back into the wiki as a new page.
    Good answers should compound, not disappear into chat history.
+
+qmd search tips:
+- `-c wiki` = compiled wiki pages only (concise, cross-linked)
+- `-c raw` = full original MS Learn articles (every detail, every code block)
+- No `-c` flag = search across both collections
+- `qmd search` = BM25 keyword only (fast, no LLM cost)
+- `qmd query` = hybrid BM25 + vector + LLM reranking (best quality)
 
 ### 3. Lint
 

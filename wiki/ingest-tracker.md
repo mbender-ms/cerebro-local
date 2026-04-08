@@ -13,16 +13,16 @@ updated: 2026-04-07
 
 | Metric | Count |
 |--------|-------|
-| **Total service areas** | 191 (146 MS Learn + 5 Compute + 3 AKS + 7 Management + 29 Support + 1 other) |
+| **Total service areas** | 192 (146 MS Learn + 5 Compute + 3 AKS + 7 Management + 29 Support + 1 other) |
 | **All ingested** | ✅ Yes |
 | **Deep coverage (entity→concept/comparison links)** | 129/129 (100%) |
-| **Total raw articles** | 14,695 |
-| **Total wiki pages** | 379 |
-| — Entities | 138 |
-| — Concepts | 39 |
+| **Total raw articles** | 14,869 |
+| **Total wiki pages** | 386 |
+| — Entities | 139 |
+| — Concepts | 44 |
 | — Comparisons | 22 |
 | — Patterns | 5 |
-| — Sources | 175 |
+| — Sources | 176 |
 | — System | 3 (index, log, tracker) |
 | **qmd vectors** | ~82,000 chunks |
 
@@ -119,6 +119,20 @@ Source: `MicrosoftDocs/azure-management-docs` — synced via `sync-raw.sh <servi
 | azure-portal | 30 | entity (portal-quotas) |
 | azure-linux | 28 | entity + container-compute |
 | quotas | 15 | entity (portal-quotas) |
+
+
+## Azure Well-Architected Framework (Deep Ingest)
+
+Source:  — 224 articles covering 5 pillars, 30+ service guides, and specialized workloads.
+
+| Page | Content |
+|------|---------|
+| entities/azure-well-architected-framework | Overview, pillars, service guides, workload guidance |
+| concepts/waf-reliability | Resilience, availability, recovery + Azure mapping |
+| concepts/waf-security | Zero trust, defense in depth + Azure mapping |
+| concepts/waf-cost-optimization | Right-sizing, reservations, spot, tagging |
+| concepts/waf-operational-excellence | DevOps, IaC, CI/CD, safe deployment |
+| concepts/waf-performance-efficiency | Testing, caching, CDN, scaling |
 
 ## Other Sources
 

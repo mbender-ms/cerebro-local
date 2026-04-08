@@ -6,12 +6,11 @@ updated: 2026-04-07
 
 # Knowledge Base Index
 
-> Master catalog of all wiki pages. Use `qmd query` for search — do NOT read this file into context for queries.
-> Total: 379 pages.
+> Master catalog of all wiki pages. Use `qmd query` for search. Total: 386 pages.
 
 ## Entities
 
-_138 Azure services, tools, and people._
+_139 Azure services, tools, and people._
 
 - [[entities/active-directory-b2c]] — Azure Active Directory B2C provides business-to-customer identity as a service. Your customers can use their preferred s...
 - [[entities/andrej-karpathy]] — AI researcher and educator. Former Director of AI at Tesla, founding member of OpenAI. Known for neural network lectures...
@@ -74,6 +73,7 @@ _138 Azure services, tools, and people._
 - [[entities/azure-vpn-gateway]] — Sends encrypted traffic between Azure VNets and on-premises locations over the public internet. Also encrypts traffic be...
 - [[entities/azure-waf]] — Centralized protection for web applications from common exploits (SQL injection, XSS, etc.). Deployed in front of web ap...
 - [[entities/azure-web-pubsub]] — Azure Web PubSub Service makes it easy to build web applications where server and clients need to exchange data in real-...
+- [[entities/azure-well-architected-framework]] — A design framework for improving workload quality across five pillars of architectural excellence. Provides recommended ...
 - [[entities/backup]] — Azure service. See raw articles in `raw/articles/backup/` for details.
 - [[entities/baremetal-infrastructure]] — Azure service. See raw articles in `raw/articles/baremetal-infrastructure/` for details.
 - [[entities/batch]] — Azure service. See raw articles in `raw/articles/batch/` for details.
@@ -154,7 +154,7 @@ _138 Azure services, tools, and people._
 
 ## Concepts
 
-_39 Technical concepts, protocols, and troubleshooting guides._
+_44 Technical concepts, protocols, troubleshooting, WAF pillars._
 
 - [[concepts/aks-networking]] — How networking works in Azure Kubernetes Service — CNI models, egress control, network policies, and DNS. (source: conce...
 - [[concepts/availability-zones-nat]] — How Azure NAT Gateway handles availability zones differs significantly between the two SKUs. This is the primary reliabi...
@@ -194,6 +194,11 @@ _39 Technical concepts, protocols, and troubleshooting guides._
 - [[concepts/virtual-wan-routing]] — Virtual WAN hubs contain a Microsoft-managed router that handles all routing between branches, VNets, and users. The hub...
 - [[concepts/vm-availability]] — Strategies for keeping VMs running during infrastructure failures. Choose based on the failure scope you need to protect...
 - [[concepts/vnet-peering]] — Connects two Azure virtual networks so resources in either VNet can communicate directly. Traffic routes through the Mic...
+- [[concepts/waf-cost-optimization]] — Deliver sufficient return on investment while managing costs. (source: well-architected/cost-optimization)
+- [[concepts/waf-operational-excellence]] — Support responsible development and operations throughout the workload lifecycle. (source: well-architected/operational-...
+- [[concepts/waf-performance-efficiency]] — Ensure workloads accomplish their purpose within acceptable timeframes. (source: well-architected/performance-efficiency...
+- [[concepts/waf-reliability]] — Ensure workloads are resilient, available, and recoverable. (source: well-architected/reliability)
+- [[concepts/waf-security]] — Protect workloads from threats to confidentiality, integrity, and availability. (source: well-architected/security)
 - [[concepts/write-back]] — The practice of filing valuable query answers, syntheses, comparisons, and analyses back into the wiki as new pages. Par...
 
 ## Comparisons
@@ -225,7 +230,7 @@ _22 Decision matrices and side-by-side analyses._
 
 ## Patterns
 
-_5 Deployment architectures and recurring solutions._
+_5 Deployment architectures._
 
 - [[patterns/dns-hybrid-resolution]] — Patterns for resolving DNS across Azure VNets, Private DNS zones, and on-premises networks using [[entities/azure-dns-pr...
 - [[patterns/karpathy-wiki-setup]] — A practical setup pattern for implementing the [[concepts/llm-wiki-pattern]]. Based on Karpathy's gist and community ref...
@@ -235,7 +240,7 @@ _5 Deployment architectures and recurring solutions._
 
 ## Sources
 
-_175 Source summary pages._
+_176 Source summary pages._
 
 - [[sources/active-directory-b2c-docs]]
 - [[sources/aks-docs]]
@@ -412,3 +417,4 @@ _175 Source summary pages._
 - [[sources/virtual-wan-docs]]
 - [[sources/vpn-gateway-docs]]
 - [[sources/web-application-firewall-docs]]
+- [[sources/well-architected-docs]]

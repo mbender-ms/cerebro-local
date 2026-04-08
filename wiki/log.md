@@ -144,3 +144,19 @@ Deep wiki pages created (8):
 Index rebuilt with all 379 pages.
 
 Totals: 379 wiki pages, 14,695 raw articles, 191 service areas.
+
+## [2026-04-07] ingest | Azure Well-Architected Framework (224 articles)
+
+Source: `well-architected-pr/well-architected/`
+
+7 deep wiki pages created:
+- entities/azure-well-architected-framework — 5 pillars, service guides, workload guidance
+- concepts/waf-reliability — resilience, availability, recovery principles + Azure mapping
+- concepts/waf-security — zero trust, defense in depth, data protection + Azure mapping
+- concepts/waf-cost-optimization — right-sizing, reservations, spot, tagging
+- concepts/waf-operational-excellence — DevOps, IaC, CI/CD, observability, safe deployment
+- concepts/waf-performance-efficiency — testing, caching, CDN, async, auto-scaling
+
+Index rebuilt: 386 pages. Source summary created.
+
+Totals: 386 wiki pages, 14,869 raw articles, 192 service areas.

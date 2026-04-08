@@ -33,7 +33,15 @@ for arg in "${@:2}"; do
   esac
 done
 
-REMOTE_PATH="articles/$SERVICE"
+# Handle special path mappings
+case "$SERVICE" in
+  ip-services)
+    REMOTE_PATH="articles/virtual-network/ip-services"
+    ;;
+  *)
+    REMOTE_PATH="articles/$SERVICE"
+    ;;
+esac
 LOCAL_DIR="$RAW_DIR/$SERVICE"
 
 echo "Syncing: $REPO/$REMOTE_PATH → $LOCAL_DIR"

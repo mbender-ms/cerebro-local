@@ -12,6 +12,10 @@ updated: 2026-04-07
 
 _Service pages, tools, people, organizations._
 
+- [[entities/azure-dns]] — DNS hosting service: Public DNS, Private DNS, and DNS Private Resolver (73 sources)
+- [[entities/azure-public-dns]] — Public DNS zone hosting with anycast, DNSSEC, alias records (4 sources)
+- [[entities/azure-private-dns]] — Private DNS zones for VNets with autoregistration and split-horizon (5 sources)
+- [[entities/azure-dns-private-resolver]] — Hybrid DNS resolution between Azure and on-premises (4 sources)
 - [[entities/azure-nat-gateway]] — Fully managed NAT service for outbound internet connectivity; Standard and StandardV2 SKUs (27 sources)
 - [[entities/andrej-karpathy]] — AI researcher, author of the LLM Wiki pattern (1 source)
 - [[entities/obsidian]] — Local-first markdown knowledge base app; viewing interface for the wiki (1 source)
@@ -21,6 +25,11 @@ _Service pages, tools, people, organizations._
 
 _Protocols, patterns, principles, mental models._
 
+- [[concepts/dns-zones-and-records]] — DNS zones, record types (A/AAAA/CNAME/MX/PTR/SRV/TXT/CAA/DS/TLSA), TTL, wildcards (1 source)
+- [[concepts/dns-alias-records]] — Dynamic Azure resource references, dangling DNS prevention, zone apex support (1 source)
+- [[concepts/dnssec]] — Zone signing for origin authenticity, chain of trust, Azure public DNS support (3 sources)
+- [[concepts/dns-security-policy]] — VNet-level DNS query filtering, logging, threat intelligence feed (2 sources)
+- [[concepts/reverse-dns]] — PTR records, ARPA zones, reverse lookup for IPs (3 sources)
 - [[concepts/snat]] — Source Network Address Translation: how NAT Gateway rewrites private IPs to public IPs for outbound (3 sources)
 - [[concepts/default-outbound-access]] — Azure's implicit outbound connectivity; being deprecated, replace with NAT Gateway (3 sources)
 - [[concepts/availability-zones-nat]] — Zone behavior: Standard is zonal, StandardV2 is zone-redundant (4 sources)
@@ -43,6 +52,7 @@ _Side-by-side analysis across topics._
 
 _Recurring solutions, deployment patterns, workflows._
 
+- [[patterns/dns-hybrid-resolution]] — On-prem↔Azure DNS patterns using Private Resolver inbound/outbound endpoints (5 sources)
 - [[patterns/nat-gateway-hub-spoke]] — Hub-and-spoke patterns: NAT Gateway + Firewall, NAT Gateway + NVA, per-spoke NAT (3 sources)
 - [[patterns/nat-gateway-with-load-balancer]] — Integration with internal/public load balancers, outbound priority rules (3 sources)
 - [[patterns/karpathy-wiki-setup]] — Practical setup pattern: directory structure, toolchain, steps, pros/cons (1 source)
@@ -51,5 +61,6 @@ _Recurring solutions, deployment patterns, workflows._
 
 _Per-source summary pages._
 
+- [[sources/dns-docs]] — Azure DNS documentation: 73 articles from MicrosoftDocs/azure-docs (Public DNS, Private DNS, Private Resolver)
 - [[sources/nat-gateway-docs]] — Azure NAT Gateway documentation: 27 articles, ~60K words from MicrosoftDocs/azure-docs
 - [[sources/karpathy-llm-wiki]] — "LLM Wiki" by Andrej Karpathy, GitHub Gist, April 2026 (5,000+ stars)

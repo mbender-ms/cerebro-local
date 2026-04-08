@@ -57,3 +57,27 @@ Pages created (8):
 
 Pages updated (1):
 - `wiki/index.md` — added all 9 new pages
+
+## [2026-04-07] ingest | Azure DNS Documentation (73 articles)
+
+Source: `raw/articles/dns/*.md` (73 MS Learn articles)
+
+Downloaded from: https://github.com/MicrosoftDocs/azure-docs/tree/main/articles/dns
+
+Article types: 4 overviews, 12 concepts, 22 how-to, 7 tutorials, 1 troubleshooting, 1 reference.
+
+Pages created (11):
+- `wiki/entities/azure-dns.md` — top-level service (3 sub-services)
+- `wiki/entities/azure-public-dns.md` — public DNS hosting
+- `wiki/entities/azure-private-dns.md` — private zones, autoregistration, VNet links
+- `wiki/entities/azure-dns-private-resolver.md` — hybrid resolution, endpoints, rulesets
+- `wiki/concepts/dns-zones-and-records.md` — record types, TTL, wildcards, etags
+- `wiki/concepts/dns-alias-records.md` — dynamic resource references, zone apex
+- `wiki/concepts/dnssec.md` — zone signing, chain of trust
+- `wiki/concepts/dns-security-policy.md` — query filtering, threat intelligence
+- `wiki/concepts/reverse-dns.md` — PTR records, ARPA zones
+- `wiki/patterns/dns-hybrid-resolution.md` — on-prem↔Azure resolution patterns
+- `wiki/sources/dns-docs.md` — source summary for all 73 articles
+
+Pages updated (1):
+- `wiki/index.md` — added all 11 new pages

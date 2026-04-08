@@ -79,7 +79,10 @@ cerebro-local/
 ├── scripts/                      # Helper scripts
 │   ├── chunk-article.js          #   MS Learn article chunker (H2 splits, tab separation)
 │   ├── sync-raw.sh               #   Sync one service area from GitHub (git trees API)
-│   └── sync-all.sh               #   Sync all 68 service areas across 8 repos
+│   ├── sync-all.sh               #   Sync all 68 service areas across 8 repos
+│   └── search-server.js          #   Browser-based search UI server (zero deps)
+│
+├── search.html                    # Web search UI (open via search-server.js)
 │
 ├── AGENTS.md                     # Layer 3: Schema — LLM behavior instructions
 ├── README.md                     # This file
@@ -183,6 +186,23 @@ qmd search "ExpressRoute Global Reach"
 # Get a specific file
 qmd get wiki/entities/azure-nat-gateway.md
 ```
+
+### Search in the Browser
+
+A built-in web UI for searching without the command line:
+
+```bash
+# Start the search server
+node scripts/search-server.js
+# → 🧠 Cerebro Search → http://localhost:3333
+```
+
+Open **http://localhost:3333** in your browser. Features:
+- Natural language search with collection filtering (Wiki / Raw / All)
+- Hybrid (BM25 + vector + reranking) or keyword-only mode
+- Color-coded result cards by type (entity, concept, comparison, pattern, raw)
+- Rendered markdown file viewer (tables, code blocks, headers) or raw source view
+- Zero dependencies beyond Node.js
 
 ### Browse in Obsidian
 
@@ -366,6 +386,20 @@ Batch sync for all 68 service areas across 8 repos.
 ./scripts/sync-all.sh --learn      # only MS Learn networking (21 areas)
 ./scripts/sync-all.sh --support    # only support articles (29 areas)
 ```
+
+### `scripts/search-server.js`
+
+Zero-dependency Node.js HTTP server for browser-based search.
+
+```bash
+node scripts/search-server.js              # start on default port 3333
+node scripts/search-server.js --port 8080  # custom port
+```
+
+Serves `search.html` at the root and provides APIs:
+- `POST /api/search` — runs `qmd query` or `qmd search`, returns parsed JSON
+- `GET /api/file?path=...` — returns file content for the viewer
+- `GET /api/status` — returns `qmd status`
 
 ---
 

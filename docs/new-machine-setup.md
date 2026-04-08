@@ -224,6 +224,11 @@ qmd query "what load balancer should I use for global HTTP traffic"
 # Check status
 qmd status
 # Should show: ~16,108 files indexed, ~93,344 vectors
+
+# Web search UI
+node scripts/search-server.js
+# Open http://localhost:3333 in your browser
+# Ctrl+C to stop the server
 ```
 
 ## 7. Optional: Set Up Sync

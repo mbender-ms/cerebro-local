@@ -209,3 +209,10 @@ Created a browser-based search interface for the knowledge base.
 Usage: `node scripts/search-server.js` → open http://localhost:3333
 
 Features: hybrid + keyword search, collection filtering (wiki/raw/all), color-coded result types (entity/concept/comparison/pattern/raw), score badges, inline file viewer, responsive design.
+
+## [2026-04-07] maintain | Documented web search UI in README, workflow, setup docs
+
+Added search-server.js and search.html references to:
+- README.md: architecture tree, "Search in the Browser" section, scripts reference
+- docs/workflow.md: daily use section
+- docs/new-machine-setup.md: verify section

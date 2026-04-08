@@ -12,6 +12,13 @@ qmd query "your question" -c raw     # full articles (detailed)
 qmd query "your question"            # both collections
 ```
 
+### Search in the browser
+```bash
+node scripts/search-server.js        # start server
+# Open http://localhost:3333
+```
+Features: collection filtering, hybrid/keyword mode, rendered markdown viewer.
+
 ### Browse in Obsidian
 Open Obsidian → the vault is `~/github/cerebro-local`.
 - Graph View: see wiki structure

@@ -54,28 +54,28 @@ Optional:
 
 ```
 cerebro-local/
-├── raw/                          # Layer 1: Immutable source material (141 MB)
-│   └── articles/                 # 10,752 articles across 146 Azure service areas
+├── raw/                          # Layer 1: Immutable source material (203 MB)
+│   └── articles/                 # 15,711 articles across 194 service areas
 │       ├── nat-gateway/          #   Organized by service area
 │       ├── virtual-network/
-│       ├── storage/
-│       ├── azure-functions/
-│       └── ...                   #   (146 directories total)
+│       ├── architecture-center/
+│       ├── well-architected/
+│       └── ...                   #   (194 directories total)
 │
 ├── wiki/                         # Layer 2: LLM-generated compiled knowledge
 │   ├── index.md                  #   Content catalog (maintained but use qmd for queries)
 │   ├── log.md                    #   Chronological operations log
 │   ├── ingest-tracker.md         #   Ingest status per service area
-│   ├── entities/                 #   125 service pages (one per Azure service)
-│   ├── concepts/                 #   26 concept pages (NSGs, SNAT, UDRs, DNS, etc.)
-│   ├── comparisons/              #   18 comparison pages (decision matrices)
+│   ├── entities/                 #   141 service pages (one per Azure service)
+│   ├── concepts/                 #   47 concept pages (NSGs, SNAT, UDRs, DNS, WAF, CAF, etc.)
+│   ├── comparisons/              #   23 comparison pages (decision matrices)
 │   ├── patterns/                 #   5 deployment pattern pages
-│   └── sources/                  #   131 source summary pages
+│   └── sources/                  #   179 source summary + validation pages
 │
 ├── scripts/                      # Helper scripts
 │   ├── chunk-article.js          #   MS Learn article chunker (H2 splits, tab separation)
-│   ├── sync-raw.sh               #   Sync one service area from GitHub
-│   └── sync-all.sh               #   Sync all 21 networking service areas from GitHub
+│   ├── sync-raw.sh               #   Sync one service area from GitHub (git trees API)
+│   └── sync-all.sh               #   Sync all 68 service areas across 8 repos
 │
 ├── AGENTS.md                     # Layer 3: Schema — LLM behavior instructions
 ├── README.md                     # This file
@@ -101,21 +101,22 @@ cerebro-local/
 
 | Metric | Count |
 |--------|-------|
-| Wiki pages | 308 |
-| Raw articles | 10,752 |
-| Service areas | 146 |
-| qmd vectors | 64,495 chunks |
-| Disk size | ~150 MB |
+| Wiki pages | 398 |
+| Raw articles | 15,711 |
+| Service areas | 194 |
+| qmd vectors | 93,229 |
+| Disk size | ~260 MB |
+| Sync repos | 8 (all public MicrosoftDocs/*) |
 
 ### Wiki Page Types
 
 | Type | Count | Description |
 |------|-------|-------------|
-| **Entities** (`wiki/entities/`) | 125 | One per Azure service — features, SKUs, limits, links |
-| **Concepts** (`wiki/concepts/`) | 26 | Cross-service technical concepts (NSGs, SNAT, UDRs, DNS, peering, etc.) |
-| **Comparisons** (`wiki/comparisons/`) | 18 | Decision matrices with side-by-side tables |
+| **Entities** (`wiki/entities/`) | 141 | One per Azure service — features, SKUs, limits, links |
+| **Concepts** (`wiki/concepts/`) | 47 | Cross-service technical concepts (NSGs, SNAT, UDRs, DNS, WAF pillars, CAF phases, architecture patterns, troubleshooting) |
+| **Comparisons** (`wiki/comparisons/`) | 23 | Decision matrices with side-by-side tables |
 | **Patterns** (`wiki/patterns/`) | 5 | Deployment architectures (hub-spoke, hybrid DNS, etc.) |
-| **Sources** (`wiki/sources/`) | 131 | Per-service-area source summaries |
+| **Sources** (`wiki/sources/`) | 179 | Per-service-area source summaries + validation reports |
 | **System** | 3 | index.md, log.md, ingest-tracker.md |
 
 ### Deep Coverage Areas
@@ -126,6 +127,10 @@ These service areas have multiple wiki pages (entity + concepts + comparisons + 
 - **Azure NAT Gateway** — SNAT, availability zones, SKU comparison, hub-spoke patterns, LB integration, troubleshooting
 - **Azure DNS** — Public DNS, Private DNS, Private Resolver, zones/records, DNSSEC, alias records, security policy, hybrid resolution
 - **Azure Networking (cross-service)** — Load balancing options, Firewall SKUs, Firewall vs NSG, App Gateway vs Front Door, VPN vs ExpressRoute, Virtual WAN vs hub-spoke, Private endpoints vs service endpoints
+- **Azure Well-Architected Framework** — All 5 pillars (reliability, security, cost, operational excellence, performance)
+- **Cloud Adoption Framework** — Landing zones, governance
+- **Azure Architecture Center** — 20+ cloud design patterns, reference architectures
+- **Support/Troubleshooting** — VMs, AKS, networking, storage, Azure Monitor (29 support areas)
 
 ### Comparison Pages
 
@@ -235,19 +240,39 @@ git push
 # Check one service area for upstream changes
 ./scripts/sync-raw.sh nat-gateway
 
-# Check all 21 networking service areas
+# Check all 68 service areas across 8 repos
 ./scripts/sync-all.sh
 
 # Preview without downloading
-./scripts/sync-raw.sh nat-gateway --dry-run
+./scripts/sync-all.sh --dry-run
+
+# Sync specific repo groups
+./scripts/sync-all.sh --learn       # 21 MS Learn networking areas
+./scripts/sync-all.sh --compute      # 5 compute areas
+./scripts/sync-all.sh --aks          # 3 AKS areas
+./scripts/sync-all.sh --mgmt         # 7 management areas
+./scripts/sync-all.sh --frameworks   # WAF, CAF, Architecture Center
+./scripts/sync-all.sh --support      # 29 support areas
 
 # After sync finds changes, a report is written to pending-changes.md
 # Tell your LLM: "Process pending-changes.md"
 ```
 
-The sync script compares local files against the GitHub repo using git blob SHA
-matching — byte-level exact, no false positives. Only changed/new files are
-downloaded.
+The sync uses the **git trees API** (1 API call per repo) to compare git blob
+SHAs — byte-level exact match, no false positives.
+
+#### Sync Source Repos (8 public)
+
+| Repo | Flag | Areas |
+|------|------|-------|
+| `MicrosoftDocs/azure-docs` | `--learn` | 21 networking service areas |
+| `MicrosoftDocs/azure-compute-docs` | `--compute` | VMs, VMSS, containers, service fabric |
+| `MicrosoftDocs/azure-aks-docs` | `--aks` | AKS, application-network, kubernetes-fleet |
+| `MicrosoftDocs/azure-management-docs` | `--mgmt` | Arc, container-registry, copilot, lighthouse, quotas |
+| `MicrosoftDocs/well-architected` | `--frameworks` | WAF 5 pillars |
+| `MicrosoftDocs/cloud-adoption-framework` | `--frameworks` | CAF landing zones, governance |
+| `MicrosoftDocs/architecture-center` | `--frameworks` | Design patterns, reference architectures |
+| `MicrosoftDocs/SupportArticles-docs` | `--support` | 29 troubleshooting areas |
 
 ### Lint the Wiki
 
@@ -311,23 +336,31 @@ node scripts/chunk-article.js raw/articles/nat-gateway/article.md --dry-run
 
 ### `scripts/sync-raw.sh`
 
-Syncs one service area from GitHub. Compares git blob SHAs to detect changes.
+Syncs one service area from GitHub. Uses git trees API (1 call per repo) for
+recursive repos, contents API for flat repos. Compares git blob SHAs.
 
 ```bash
 ./scripts/sync-raw.sh <service-area>           # sync
 ./scripts/sync-raw.sh <service-area> --dry-run  # preview only
 ```
 
-Special path mappings:
-- `ip-services` → `articles/virtual-network/ip-services` in the repo
+Service-to-repo routing:
+- `support-*` → `MicrosoftDocs/SupportArticles-docs`
+- `aks`, `application-network`, `kubernetes-fleet` → `MicrosoftDocs/azure-aks-docs`
+- `virtual-machines`, `virtual-machine-scale-sets`, etc. → `MicrosoftDocs/azure-compute-docs`
+- `azure-arc`, `container-registry`, etc. → `MicrosoftDocs/azure-management-docs`
+- `well-architected`, `cloud-adoption-framework`, `architecture-center` → respective repos
+- Everything else → `MicrosoftDocs/azure-docs`
 
 ### `scripts/sync-all.sh`
 
-Batch sync for all 21 Azure networking service areas.
+Batch sync for all 68 service areas across 8 repos.
 
 ```bash
 ./scripts/sync-all.sh              # sync all
 ./scripts/sync-all.sh --dry-run    # preview all
+./scripts/sync-all.sh --learn      # only MS Learn networking (21 areas)
+./scripts/sync-all.sh --support    # only support articles (29 areas)
 ```
 
 ---
@@ -335,6 +368,7 @@ Batch sync for all 21 Azure networking service areas.
 ## qmd Reference
 
 qmd is the local search engine. Runs entirely on-device — no API calls, no cloud.
+Index size: ~754 MB at `~/.cache/qmd/index.sqlite`.
 
 ### Models (auto-downloaded to `~/.cache/qmd/models/`)
 
@@ -348,8 +382,8 @@ qmd is the local search engine. Runs entirely on-device — no API calls, no clo
 
 | Name | Path | Contents |
 |------|------|----------|
-| `wiki` | `./wiki` | 308 compiled wiki pages |
-| `raw` | `./raw` | 10,752 raw MS Learn articles |
+| `wiki` | `./wiki` | 398 compiled wiki pages |
+| `raw` | `./raw` | 15,711 raw articles from 8 repos |
 
 ### Commands
 
@@ -392,9 +426,9 @@ npm install -g @tobilu/qmd
 cd ~/github/cerebro-local
 qmd collection add wiki ./wiki
 qmd collection add raw ./raw
-qmd context add qmd://wiki/ "LLM-generated wiki pages"
-qmd context add qmd://raw/ "Immutable MS Learn source articles"
-qmd update      # indexes all files
+qmd context add qmd://wiki/ "LLM-generated wiki: entities, concepts, comparisons, patterns, sources"
+qmd context add qmd://raw/ "Immutable source documents from Microsoft Learn and other sources"
+qmd update      # indexes all files (~16K documents)
 qmd embed       # generates vectors (~30 min first time, downloads 3 models)
 ```
 
@@ -432,6 +466,12 @@ lives and how to use it:
 | Profile configs (×6) | `kindle-ebooks/.github/profiles/*/` | Per-profile CLAUDE.md and copilot-instructions.md |
 
 All configs direct agents to use `qmd query` for retrieval (not index.md).
+
+> **Note**: There are two Cerebro systems:
+> - **Cerebro MCP** (cloud) — personal notes, tasks, ideas via `cerebro` CLI → Supabase + pgvector
+> - **Cerebro-local** (this repo) — Azure docs knowledge base via `qmd` → local git + vectors
+>
+> Both are configured in `~/.pi/agent/AGENTS.md`.
 
 ---
 
@@ -478,10 +518,10 @@ Subsequent runs only embed new/changed files. On Apple Silicon with Metal GPU,
 ```
 
 ### Git repo too large
-The raw articles are ~141 MB. Git compresses to ~40 MB in the pack file.
+The raw articles are ~203 MB. Git compresses to ~55 MB in the pack file.
 This is intentional — the repo is self-contained and portable.
 
-### Obsidian is slow with 10K+ files
+### Obsidian is slow with 15K+ files
 Exclude `raw/` from Obsidian's indexing:
 Settings → Files and links → Excluded files → add `raw/`
-This keeps Obsidian's graph and search focused on the 308 wiki pages.
+This keeps Obsidian's graph and search focused on the ~400 wiki pages.

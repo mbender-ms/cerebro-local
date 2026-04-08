@@ -34,9 +34,13 @@ Just ask naturally. The LLM reads AGENTS.md and uses qmd:
 3. `qmd update && qmd embed`
 4. `git add -A && git commit -m "ingest: article-name" && git push`
 
-### Ingest a service area from azure-docs
+### Ingest a service area
 ```bash
-# Copy from local clone
+# Sync from upstream GitHub repo (preferred — auto-routes to correct repo)
+./scripts/sync-raw.sh <service>
+qmd update && qmd embed
+
+# Or copy from local clone
 mkdir -p raw/articles/<service>
 cp ~/github/azure-docs-pr/articles/<service>/*.md raw/articles/<service>/
 qmd update && qmd embed
@@ -58,7 +62,9 @@ When the LLM produces a valuable comparison or analysis:
 ### Check for upstream article changes
 ```bash
 ./scripts/sync-raw.sh nat-gateway              # one service
-./scripts/sync-all.sh                          # all 21 networking services
+./scripts/sync-all.sh                          # all 68 service areas across 8 repos
+./scripts/sync-all.sh --learn                  # only 21 MS Learn networking areas
+./scripts/sync-all.sh --support                # only 29 support areas
 # If changes found → "Process pending-changes.md"
 ```
 
@@ -85,8 +91,8 @@ npm install -g @tobilu/qmd
 cd ~/github/cerebro-local
 qmd collection add wiki ./wiki
 qmd collection add raw ./raw
-qmd context add qmd://wiki/ "LLM-generated wiki pages"
-qmd context add qmd://raw/ "MS Learn source articles"
+qmd context add qmd://wiki/ "LLM-generated wiki: entities, concepts, comparisons, patterns, sources"
+qmd context add qmd://raw/ "Immutable source documents from Microsoft Learn and other sources"
 qmd update && qmd embed
 # Open in Obsidian, done.
 ```

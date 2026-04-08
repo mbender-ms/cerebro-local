@@ -363,8 +363,8 @@ qmd update
 qmd embed
 ```
 
-When the wiki is small (<100 pages), reading `wiki/index.md` is sufficient.
-Use qmd when the index becomes unwieldy or when searching raw sources.
+The wiki has ~400 pages and 15K+ raw articles — always use qmd for search.
+Do NOT read index.md into context (it is too large).
 
 ## Syncing Raw Sources from GitHub
 
@@ -381,18 +381,21 @@ and produces a change report.
 # Preview changes without downloading
 ./scripts/sync-raw.sh nat-gateway --dry-run
 
-# Sync a new service area (downloads everything as "added")
-./scripts/sync-raw.sh virtual-network
+# Sync all 68 service areas across 8 repos
+./scripts/sync-all.sh
 
-# Sync multiple areas
-for svc in nat-gateway virtual-network load-balancer dns private-link traffic-manager; do
-  ./scripts/sync-raw.sh $svc
-done
+# Sync specific repo groups
+./scripts/sync-all.sh --learn       # 21 MS Learn networking areas
+./scripts/sync-all.sh --compute      # 5 compute areas
+./scripts/sync-all.sh --aks          # 3 AKS areas
+./scripts/sync-all.sh --mgmt         # 7 management areas
+./scripts/sync-all.sh --frameworks   # WAF, CAF, Architecture Center
+./scripts/sync-all.sh --support      # 29 support areas
 ```
 
 ### What the script does
 
-1. Fetches the file list + SHAs from `MicrosoftDocs/azure-docs` via GitHub API
+1. Fetches the file tree + SHAs via GitHub git trees API (1 call per repo)
 2. Compares each remote SHA against `git hash-object` of the local file
 3. Downloads new and modified files into `raw/articles/<service>/`
 4. Detects files deleted from the remote repo

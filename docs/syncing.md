@@ -20,7 +20,7 @@ to check for changes.
 
 **What it does:**
 
-1. Fetches file list + SHAs from `MicrosoftDocs/azure-docs` via GitHub API
+1. Fetches file list + SHAs via GitHub git trees API (1 call per repo)
 2. Compares each remote SHA against local file's `git hash-object`
 3. Downloads new and modified files
 4. Detects files deleted from remote
@@ -30,17 +30,37 @@ to check for changes.
 - `ip-services` → `articles/virtual-network/ip-services` in the repo
 
 **GitHub API rate limits:**
-- Unauthenticated: 60 requests/hour (1 request per service area)
+- Unauthenticated: 60 requests/hour (~10 calls for all 8 repos via trees API)
 - Authenticated (`gh`): 5,000 requests/hour
 
-### `sync-all.sh` — Sync All Networking Service Areas
+### `sync-all.sh` — Sync All Service Areas
 
 ```bash
-./scripts/sync-all.sh              # sync all 21
+./scripts/sync-all.sh              # sync all 68 service areas
 ./scripts/sync-all.sh --dry-run    # preview all
+./scripts/sync-all.sh --learn      # 21 MS Learn networking areas
+./scripts/sync-all.sh --compute    # 5 compute areas
+./scripts/sync-all.sh --aks        # 3 AKS areas
+./scripts/sync-all.sh --mgmt       # 7 management areas
+./scripts/sync-all.sh --frameworks # WAF, CAF, Architecture Center
+./scripts/sync-all.sh --support    # 29 support areas
 ```
 
-Runs `sync-raw.sh` for each of the 21 Azure networking service areas.
+Runs `sync-raw.sh` for each of the 68 service areas across 8 public repos.
+Uses git trees API — 1 API call per repo returns the entire file tree with SHAs.
+
+### Sync Source Repos (8 public)
+
+| Repo | Flag | Areas |
+|------|------|-------|
+| `MicrosoftDocs/azure-docs` | `--learn` | 21 networking service areas |
+| `MicrosoftDocs/azure-compute-docs` | `--compute` | VMs, VMSS, containers, service fabric |
+| `MicrosoftDocs/azure-aks-docs` | `--aks` | AKS, application-network, kubernetes-fleet |
+| `MicrosoftDocs/azure-management-docs` | `--mgmt` | Arc, container-registry, copilot, lighthouse, quotas |
+| `MicrosoftDocs/well-architected` | `--frameworks` | WAF 5 pillars |
+| `MicrosoftDocs/cloud-adoption-framework` | `--frameworks` | CAF landing zones, governance |
+| `MicrosoftDocs/architecture-center` | `--frameworks` | Design patterns, reference architectures |
+| `MicrosoftDocs/SupportArticles-docs` | `--support` | 29 troubleshooting areas |
 
 ## After Syncing
 
@@ -83,17 +103,22 @@ Or sync all networking services:
 0 */4 * * * cd ~/github/cerebro-local && ./scripts/sync-all.sh >> sync-log.txt 2>&1
 ```
 
-## Adding Non-Networking Service Areas
+## Adding New Service Areas
 
-For the 125 non-networking service areas, articles were copied from a local
-`azure-docs-pr` clone rather than downloaded via API. To sync these:
+The sync script supports any service area across all 8 repos. Service-to-repo
+routing is automatic based on the service name:
 
 ```bash
-# Option 1: Re-copy from local clone
-cp ~/github/azure-docs-pr/articles/<service>/*.md raw/articles/<service>/
-
-# Option 2: Add the service to sync-raw.sh (uses GitHub API)
+# Sync any service from azure-docs
 ./scripts/sync-raw.sh <service>
+
+# Support articles use support- prefix
+./scripts/sync-raw.sh support-<service>
+
+# Compute/AKS/management services are auto-routed
+./scripts/sync-raw.sh virtual-machines    # → azure-compute-docs
+./scripts/sync-raw.sh aks                 # → azure-aks-docs
+./scripts/sync-raw.sh container-registry  # → azure-management-docs
 ```
 
-The sync script works for any service area in the `MicrosoftDocs/azure-docs` repo.
+To add a new service to `sync-all.sh`, add it to the appropriate array in the script.

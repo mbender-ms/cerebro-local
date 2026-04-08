@@ -134,3 +134,15 @@ Key findings:
 - Support articles surface for troubleshooting, Architecture Center for design,
   WAF/CAF for best practices, wiki for comparisons
 - BM25 keyword search works for exact CLI command lookups
+
+## [2026-04-07] maintain | Updated all docs to reflect current state
+
+Updated README.md, AGENTS.md, docs/syncing.md, docs/new-machine-setup.md,
+docs/workflow.md with current stats and sync architecture:
+
+- 398 wiki pages, 15,711 raw articles, 194 service areas, 93,229 vectors
+- 8 public sync repos (all MicrosoftDocs/*)
+- 68 service areas across repos with --learn/--compute/--aks/--mgmt/--frameworks/--support flags
+- Git trees API (1 call per repo) for SHA-based sync
+- Added two-system note (Cerebro MCP vs cerebro-local)
+- Saved setup reference + two-system comparison to Cerebro MCP cloud

@@ -9,7 +9,7 @@ git clone git@github.com:asudbring/cerebro-local.git ~/github/cerebro-local
 cd ~/github/cerebro-local
 ```
 
-The repo contains everything: wiki pages, raw articles (141 MB), scripts, schema,
+The repo contains everything: wiki pages, raw articles (203 MB), scripts, schema,
 and Obsidian config. No external dependencies to download.
 
 ## 2. Install Prerequisites
@@ -60,8 +60,8 @@ qmd collection add wiki ./wiki
 qmd collection add raw ./raw
 
 # Add context descriptions (improves search quality)
-qmd context add qmd://wiki/ "LLM-generated wiki: entities, concepts, comparisons, patterns, source summaries. All Azure services."
-qmd context add qmd://raw/ "Immutable source documents from Microsoft Learn. 10,752 articles across 146 Azure service areas."
+qmd context add qmd://wiki/ "LLM-generated wiki: entities, concepts, comparisons, patterns, sources"
+qmd context add qmd://raw/ "Immutable source documents from Microsoft Learn and other sources"
 
 # Index all files (fast — reads file metadata)
 qmd update
@@ -72,7 +72,7 @@ qmd embed
 
 **First-run timing:**
 - Model downloads: ~2 minutes (3 models, 2.3 GB total)
-- Embedding 11K documents: ~30 minutes on Apple Silicon, longer on CPU-only
+- Embedding 16K documents: ~30 minutes on Apple Silicon, longer on CPU-only
 
 Subsequent `qmd embed` runs only process new/changed files — typically seconds.
 
@@ -142,7 +142,7 @@ qmd query "what load balancer should I use for global HTTP traffic"
 
 # Check status
 qmd status
-# Should show: ~11,060 files indexed, ~64,495 vectors
+# Should show: ~16,108 files indexed, ~93,229 vectors
 ```
 
 ## 7. Optional: Set Up Sync
@@ -180,8 +180,8 @@ qmd update
 
 ### Obsidian is very slow
 Add `raw/` to excluded files in Obsidian settings. This prevents Obsidian
-from indexing 10,752 raw articles — it only needs the 308 wiki pages.
+from indexing 15,711 raw articles — it only needs the ~400 wiki pages.
 
 ### Git push is slow
-The repo is ~150 MB. First push/clone takes a minute. Subsequent pushes only
+The repo is ~260 MB. First push/clone takes a minute. Subsequent pushes only
 send deltas and are fast.

@@ -146,3 +146,43 @@ docs/workflow.md with current stats and sync architecture:
 - Git trees API (1 call per repo) for SHA-based sync
 - Added two-system note (Cerebro MCP vs cerebro-local)
 - Saved setup reference + two-system comparison to Cerebro MCP cloud
+
+## [2026-04-07] deep | Full deep dive — all 194 service areas now have entity coverage
+
+Went deep on all ~70 service areas that were entity-only or source-only.
+Worked category by category:
+
+Category 1 - Networking (4): ip-services, route-server, cdn, web-application-firewall
+  → Deep entity pages + BGP/routing concepts + CDN vs Front Door comparison
+
+Category 2 - Containers (2): container-registry, kubernetes-fleet
+  → Full entity pages with SKU tables, features, integration points
+
+Category 3 - Identity (1): active-directory-b2c
+  → User flows vs custom policies, CIAM architecture
+
+Category 4 - Compute & HPC (9): databox-online, cloud-services-extended-support,
+  azure-linux, cyclecloud, high-performance-computing, azure-compute-fleet,
+  automanage, resiliency, azure-resource-manager
+  → HPC comparison page, IaC concept page
+
+Category 5 - Remaining entities (24): all remaining entity-only and source-only areas
+  → iot-hub-device-update, azure-government, api-center, healthcare-apis,
+    databox-gateway, external-attack-surface-management, firmware-analysis,
+    application-network, storage-discovery, durable-task, azure-fluid-relay,
+    azure-impact-reporting, site-reliability-engineering, + 11 more
+
+Category 6 - Support troubleshooting (20): all support-* areas
+  → Common issues tables, category breakdowns, links to parent services
+
+Category 7 - Major services (16): defender-for-iot, iot-central, spring-apps,
+  storage, governance, security, devtest + 9 support areas
+
+New concept pages (6): bgp-dynamic-routing, routing-preference, infrastructure-as-code,
+  container-networking, edge-computing, bcdr-backup-disaster-recovery
+
+New comparison pages (4): hpc-compute-options, registry-artifact-services,
+  cdn-vs-front-door, sovereign-compliance-options
+
+Final counts: 183 entities, 53 concepts, 27 comparisons, 5 patterns, 179 sources = 447 wiki pages
+All 194 raw article service areas now have entity page coverage.

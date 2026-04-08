@@ -1,0 +1,53 @@
+---
+title: Troubleshoot the VMExtensionError_CniDownloadTimeout message
+description: Fix the VMExtensionError_CniDownloadTimeout error in AKS. Learn why CNI download fails and follow step-by-step guidance to deploy your cluster successfully.
+ms.date: 05/03/2023
+editor: v-jsitser
+ms.reviewer: axelg, chiragpa, mariochaves, v-weizhu, v-leedennis
+ms.service: azure-kubernetes-service
+#Customer intent: As an Azure Kubernetes user, I want to troubleshoot the VMExtensionError_CniDownloadTimeout message so that I can successfully create and deploy an Azure Kubernetes Service (AKS) cluster.
+ms.custom: sap:Create, Upgrade, Scale and Delete operations (cluster or nodepool)
+---
+# Troubleshoot the VMExtensionError_CniDownloadTimeout error in AKS
+
+## Summary
+
+This article explains how to identify and resolve the `VMExtensionError_CniDownloadTimeout` error (also known as error code `ERR_CNI_DOWNLOAD_TIMEOUT`) in Azure Kubernetes Service (AKS) so that you can successfully create and deploy your cluster.
+
+## Prerequisites
+
+- The [Curl](https://curl.se/download.html) command-line tool
+
+## Symptoms
+
+When you try to create a Linux-based AKS cluster, you receive the following error message:
+
+> Message: We are unable to serve this request due to an internal error
+>
+> SubCode: VMExtensionError_CniDownloadTimeout;
+>
+> Message="VM has reported a failure when processing extension 'vmssCSE'.
+>
+> Error message: "CSE failed with 'VMExtensionError_CniDownloadTimeout', which means agents are unable to connect to the endpoint that's used to download the container network interface libraries. It's likely that a network virtual appliance is blocking SSL communication or an SSL certificate, please see https://aka.ms/aks/vmextensionerror_cnidownloadtimeout for more information.
+
+## Cause
+
+Your cluster nodes can't connect to the endpoint that's used to download the Container Network Interface (CNI) libraries. In most cases, this issue occurs because a network virtual appliance is blocking Secure Sockets Layer (SSL) communication or an SSL certificate.
+
+## Solution
+
+Run a Curl command to verify that your nodes can download the binaries:
+
+```bash
+curl https://acs-mirror.azureedge.net/cni/azure-vnet-cni-linux-amd64-v1.0.25.tgz
+
+curl --fail --ssl https://acs-mirror.azureedge.net/cni/azure-vnet-cni-linux-amd64-v1.0.25.tgz  --output /opt/cni/downloads/azure-vnet-cni-linux-amd64-v1.0.25.tgz
+```
+
+If you can't download these files, make sure that traffic is allowed to the downloading endpoint. For more information, see [Azure Global required FQDN/application rules](/azure/aks/outbound-rules-control-egress#azure-global-required-fqdn--application-rules).
+
+## References
+
+- [General troubleshooting of AKS cluster creation issues](../create-upgrade-delete/troubleshoot-aks-cluster-creation-issues.md)
+
+ 

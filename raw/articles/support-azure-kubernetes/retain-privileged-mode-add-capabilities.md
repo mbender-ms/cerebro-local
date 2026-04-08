@@ -1,0 +1,26 @@
+---
+title: Retain privileged mode while adding capabilities
+description: Learn how to retain privileged mode while adding capabilities in AKS with Azure Policy Add-on to meet policy requirements and secure node access. Start now.
+ms.date: 04/23/2024
+author: mosbahmajed
+ms.author: momajed
+editor: v-jsitser
+ms.reviewer: cssakscic, v-rekhanain, v-leedennis
+ms.service: azure-kubernetes-service
+ms.topic: how-to
+ms.custom: sap:Extensions, Policies and Add-Ons
+#Customer intent: As an Azure Kubernetes user, I want to learn how to retain privileged mode while I add capabilities so that I increase security when I use the Azure Policy Add-on for Azure Kubernetes Service.
+---
+# Retain privileged mode while adding capabilities
+
+## Summary
+
+This article explains how to retain privileged mode while adding capabilities in AKS by using the Azure Policy Add-on. Use this guidance to improve security while meeting policy requirements.
+
+## Policy requirements for node access
+
+Node access always requires a certain level of privilege. Default policies flag these access levels. Even if you don't grant full node access, there are policies that detect access to the file system. In most cases, you have to create exceptions or carefully fine-tune policies based on your requirements.
+
+Although it's possible to specify individual capabilities in the pod's security context without marking the pod as privileged, other policies still apply. You can find a list of these policies in [Azure Kubernetes built-in policy definitions](/azure/governance/policy/samples/built-in-policies#kubernetes). Even if the daemonset's container doesn't trigger the "privileged" policy, the container still requires access to the host's file system in order to copy agent files and scripts and so on. Consider the requirements of your container, and review the policy requirements accordingly.
+
+ 

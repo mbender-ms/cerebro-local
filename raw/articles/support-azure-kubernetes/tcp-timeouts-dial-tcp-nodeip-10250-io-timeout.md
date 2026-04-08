@@ -1,0 +1,49 @@
+---
+title: TCP 10250 I/O timeout errors when connecting to a node's Kubelet for log retrieval
+description: Fix TCP 10250 i/o timeout errors when running kubectl logs in AKS. Follow these troubleshooting steps to restore log access quickly.
+ms.date: 09/19/2024
+ms.reviewer: chiragpa, nickoman, v-leedennis
+ms.service: azure-kubernetes-service
+keywords:
+#Customer intent: As an Azure Kubernetes user, I want to troubleshoot why I'm receiving TCP timeouts (such as 'dial tcp <Node_IP>:10250: i/o timeout') so that I can use my Azure Kubernetes Service (AKS) cluster successfully.
+ms.custom: sap:Connectivity, innovation-engine
+---
+
+# 10250 I/O timeouts error when running kubectl log command
+
+## Summary
+
+A TCP 10250 i/o timeout in kubectl logs is often caused by blocked internal traffic between cluster nodes. Use this article to verify whether [network security groups](/azure/aks/concepts-security#azure-network-security-groups) (NSGs) are blocking required node subnet traffic and restore log retrieval.
+
+## Connect to the AKS cluster
+
+First, connect to your Azure Kubernetes Service (AKS) cluster by running the following command:
+
+```bash
+export RESOURCE_GROUP=<your-resource-group>
+export CLUSTER_NAME=<your-cluster-name>
+
+az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
+```
+
+## Symptoms
+
+Tunnel functionalities, such as `kubectl logs` and code execution, work only for pods that are hosted on nodes on which tunnel service pods are deployed. Pods on other nodes that have no tunnel service pods cannot reach to the tunnel. When viewing the logs of these pods, you receive the following error message:
+
+```bash
+kubectl logs $POD_NAME
+```
+
+Results:
+
+<!-- expected_similarity=0.3 -->
+
+```output
+Error from server: Get "https://aks-agentpool-xxxxxxxxx-vmssxxxxxxxxx:10250/containerLogs/vsm-mba-prod/mba-api-app-xxxxxxxxxx/technosvc": dial tcp <IP-Address>:10250: i/o timeout
+```
+
+## Solution
+
+To resolve this issue, allow traffic on port 10250 as described in this [article](tunnel-connectivity-issues.md).
+
+ 

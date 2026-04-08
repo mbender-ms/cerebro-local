@@ -120,8 +120,8 @@ echo ""
 echo "Fetching remote file list..."
 
 if [ "$RECURSIVE" = true ]; then
-  # For repos with nested subdirs (support articles), use the git trees API
-  # First get the tree SHA for the directory
+  # Use git trees API — returns ENTIRE repo tree in 1 API call with SHAs
+  # 1 call per repo instead of 1 call per subdirectory
   REMOTE_FILES=$(python3 -c "
 import urllib.request, json, sys
 
@@ -130,39 +130,37 @@ branch = '$BRANCH'
 remote_path = '$REMOTE_PATH'
 all_files = '$ALL_FILES' == 'true'
 
-def fetch_json(url):
+try:
+    url = f'https://api.github.com/repos/{repo}/git/trees/{branch}?recursive=1'
     req = urllib.request.Request(url)
     with urllib.request.urlopen(req) as resp:
-        return json.loads(resp.read())
+        data = json.loads(resp.read())
 
-def list_files_recursive(repo, branch, path):
-    '''Recursively list all files under a path using contents API.'''
-    results = []
-    try:
-        url = f'https://api.github.com/repos/{repo}/contents/{path}?ref={branch}'
-        items = fetch_json(url)
-        if not isinstance(items, list):
-            print(f'ERROR: {items.get(\"message\",\"\")}', file=sys.stderr)
-            return results
-        for item in items:
-            if item['type'] == 'file':
-                name = item['name']
-                if all_files or name.endswith('.md'):
-                    results.append((item['sha'], item['size'], name, item['download_url']))
-            elif item['type'] == 'dir':
-                # Recurse into subdirectories
-                sub_results = list_files_recursive(repo, branch, item['path'])
-                results.extend(sub_results)
-    except Exception as e:
-        print(f'ERROR: {e}', file=sys.stderr)
-    return results
+    if data.get('truncated', False):
+        print(f'WARNING: tree truncated for {repo}', file=sys.stderr)
 
-files = list_files_recursive(repo, branch, remote_path)
-for sha, size, name, url in files:
-    print(f'{sha}\t{size}\t{name}\t{url}')
+    prefix = remote_path.rstrip('/') + '/'
+
+    for entry in data.get('tree', []):
+        if entry['type'] != 'blob':
+            continue
+        path = entry['path']
+        if not path.startswith(prefix):
+            continue
+        name = path.split('/')[-1]
+        if not all_files and not name.endswith('.md'):
+            continue
+        sha = entry['sha']
+        size = entry.get('size', 0)
+        download_url = f'https://raw.githubusercontent.com/{repo}/{branch}/{path}'
+        print(f'{sha}\t{size}\t{name}\t{download_url}')
+
+except Exception as e:
+    print(f'ERROR: {e}', file=sys.stderr)
 " 2>&1)
 else
   # Standard single-level directory (MS Learn articles)
+
   REMOTE_JSON=$(curl -s "https://api.github.com/repos/$REPO/contents/$REMOTE_PATH?ref=$BRANCH")
 
   # Check for API errors

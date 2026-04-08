@@ -111,3 +111,13 @@ Deep wiki pages (3):
 Sync scripts updated for 8 public repos. Index rebuilt: 394 pages.
 
 Totals: 397 wiki pages, 15,755 raw articles, 194 service areas.
+
+## [2026-04-07] fix | Sync script: git trees API for all recursive repos
+
+Replaced per-directory contents API fetcher with git trees API.
+1 API call per repo returns entire file tree with SHAs.
+
+Before: 45 service areas showing false changes (false "deleted" from flattening).
+After: 9 service areas with real upstream changes, 0 false deletes.
+
+All 68 service areas across 8 repos now have accurate SHA-based sync.

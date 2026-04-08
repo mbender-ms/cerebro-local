@@ -19,3 +19,4 @@ Service Connector helps you connect Azure compute services to other backing serv
 ## Links
 
 - [[sources/service-connector-docs]]
+- [[comparisons/integration-api-services]]

@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/internet-peering/` for details.
 ## Links
 
 - [[sources/internet-peering-docs]]
+- [[comparisons/operator-edge-services]]

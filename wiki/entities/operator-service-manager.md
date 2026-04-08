@@ -19,3 +19,4 @@ Azure Operator Service Manager is a cloud orchestration service designed to auto
 ## Links
 
 - [[sources/operator-service-manager-docs]]
+- [[comparisons/operator-edge-services]]

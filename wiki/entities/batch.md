@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/batch/` for details.
 ## Links
 
 - [[sources/batch-docs]]
+- [[comparisons/compute-options]]

@@ -19,3 +19,6 @@ Azure CycleCloud is an enterprise-friendly tool for orchestrating and managing H
 ## Links
 
 - [[sources/cyclecloud-docs]]
+- [[entities/azure-virtual-machines]]
+- [[entities/azure-virtual-machines]]
+- [[concepts/vm-availability]]

@@ -19,3 +19,4 @@ tags:
 ## Links
 
 - [[sources/storage-discovery-docs]]
+- [[comparisons/storage-options]]

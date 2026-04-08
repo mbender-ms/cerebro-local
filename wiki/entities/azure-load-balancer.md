@@ -55,3 +55,7 @@ Layer 4 (TCP/UDP) load balancer. Distributes inbound flows from frontend to back
 - [[entities/azure-nat-gateway]] — preferred for outbound SNAT
 - [[patterns/nat-gateway-with-load-balancer]] — integration patterns
 - [[sources/load-balancer-docs]]
+- [[comparisons/load-balancing-options]]
+- [[concepts/load-balancer-components]]
+- [[concepts/troubleshooting-aks]]
+- [[concepts/vm-availability]]

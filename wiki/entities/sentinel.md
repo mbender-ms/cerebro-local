@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/sentinel/` for details.
 ## Links
 
 - [[sources/sentinel-docs]]
+- [[comparisons/security-services]]

@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/logic-apps/` for details.
 ## Links
 
 - [[sources/logic-apps-docs]]
+- [[comparisons/integration-api-services]]

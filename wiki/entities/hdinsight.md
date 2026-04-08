@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/hdinsight/` for details.
 ## Links
 
 - [[sources/hdinsight-docs]]
+- [[comparisons/data-analytics-services]]

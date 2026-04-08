@@ -19,3 +19,4 @@ Azure App Configuration provides a service to centrally manage application setti
 ## Links
 
 - [[sources/azure-app-configuration-docs]]
+- [[concepts/azure-operations-management]]

@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/migrate/` for details.
 ## Links
 
 - [[sources/migrate-docs]]
+- [[comparisons/migration-services]]

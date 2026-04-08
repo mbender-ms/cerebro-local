@@ -19,3 +19,4 @@ As mentioned in [Supported Data Types](./supported-data-types.md), Microsoft Pla
 ## Links
 
 - [[sources/planetary-computer-docs]]
+- [[concepts/azure-data-services]]

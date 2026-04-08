@@ -49,3 +49,4 @@ Create and manage a group of load-balanced VM instances that auto-scale based on
 - [[concepts/vm-availability]] — availability options
 - [[entities/azure-load-balancer]] — load balance VMSS instances
 - [[sources/virtual-machine-scale-sets-docs]]
+- [[concepts/managed-disks]]

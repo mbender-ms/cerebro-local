@@ -19,3 +19,5 @@ Azure Extended Zones provides small-footprint extensions of Azure that you can p
 ## Links
 
 - [[sources/extended-zones-docs]]
+- [[comparisons/hybrid-edge-options]]
+- [[comparisons/operator-edge-services]]

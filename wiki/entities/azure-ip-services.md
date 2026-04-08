@@ -37,3 +37,7 @@ Azure VNets support dual-stack (IPv4 + IPv6). IPv6 support across VMs, LB (Stand
 - [[entities/azure-virtual-network]] — IPs used within VNets
 - [[entities/azure-nat-gateway]] — uses public IPs/prefixes for outbound SNAT
 - [[sources/ip-services-docs]]
+- [[entities/azure-virtual-network]]
+- [[entities/azure-nat-gateway]]
+
+- [[concepts/snat]]

@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/update-manager/` for details.
 ## Links
 
 - [[sources/update-manager-docs]]
+- [[concepts/azure-operations-management]]

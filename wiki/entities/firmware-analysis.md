@@ -19,3 +19,4 @@ Many users of the firmware analysis service may need to automate their workflow.
 ## Links
 
 - [[sources/firmware-analysis-docs]]
+- [[comparisons/security-services]]

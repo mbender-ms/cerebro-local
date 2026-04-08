@@ -47,3 +47,5 @@ Global L7 load balancer and CDN. Delivers fast, reliable, secure access to web a
 - [[entities/azure-application-gateway]] — regional L7 LB (compare)
 - [[entities/azure-cdn]] — being replaced by Front Door
 - [[sources/frontdoor-docs]]
+- [[comparisons/app-gateway-vs-front-door]]
+- [[comparisons/load-balancing-options]]

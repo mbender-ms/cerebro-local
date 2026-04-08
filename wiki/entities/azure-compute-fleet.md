@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/azure-compute-fleet/` for detai
 ## Links
 
 - [[sources/azure-compute-fleet-docs]]
+- [[concepts/vm-availability]]

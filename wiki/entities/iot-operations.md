@@ -19,3 +19,4 @@ Azure IoT Operations is a unified data plane for the edge. It offers modular and
 ## Links
 
 - [[sources/iot-operations-docs]]
+- [[comparisons/iot-services]]

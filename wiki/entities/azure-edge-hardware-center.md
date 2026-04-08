@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/azure-edge-hardware-center/` fo
 ## Links
 
 - [[sources/azure-edge-hardware-center-docs]]
+- [[comparisons/hybrid-edge-options]]

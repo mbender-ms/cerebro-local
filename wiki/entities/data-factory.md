@@ -19,3 +19,5 @@ Azure service. See raw articles in `raw/articles/data-factory/` for details.
 ## Links
 
 - [[sources/data-factory-docs]]
+- [[comparisons/data-analytics-services]]
+- [[comparisons/integration-api-services]]

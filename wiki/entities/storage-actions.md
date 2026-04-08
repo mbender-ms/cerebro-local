@@ -19,3 +19,4 @@ Azure Storage Actions is a fully managed platform designed to automate data mana
 ## Links
 
 - [[sources/storage-actions-docs]]
+- [[comparisons/storage-options]]

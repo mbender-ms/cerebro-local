@@ -52,3 +52,6 @@ Attach [[entities/azure-nat-gateway]] to the AzureFirewallSubnet for determinist
 - [[entities/azure-waf]] — L7 web application protection (complementary)
 - [[patterns/nat-gateway-hub-spoke]] — Firewall + NAT Gateway patterns
 - [[sources/firewall-docs]]
+- [[comparisons/firewall-sku-comparison]]
+- [[comparisons/firewall-vs-nsg]]
+- [[comparisons/security-services]]

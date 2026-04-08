@@ -41,3 +41,4 @@ Fully managed PaaS service for secure RDP/SSH connectivity to VMs over TLS direc
 
 - [[entities/azure-virtual-network]] — deployed within VNet
 - [[sources/bastion-docs]]
+- [[concepts/troubleshooting-virtual-machines]]

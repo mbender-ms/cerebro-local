@@ -19,3 +19,4 @@ The Azure Internet of Things (IoT) is a collection of Microsoft-managed cloud se
 ## Links
 
 - [[sources/iot-docs]]
+- [[comparisons/iot-services]]

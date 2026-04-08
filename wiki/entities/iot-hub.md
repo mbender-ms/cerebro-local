@@ -19,3 +19,4 @@ Certificate management is an optional feature of Azure Device Registry (ADR) tha
 ## Links
 
 - [[sources/iot-hub-docs]]
+- [[comparisons/iot-services]]

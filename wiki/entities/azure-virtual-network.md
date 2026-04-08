@@ -79,3 +79,7 @@ Hardware offload via SR-IOV to the NIC. Reduces latency, jitter, CPU utilization
 - [[entities/azure-nat-gateway]]
 - [[entities/azure-dns]]
 - [[sources/virtual-network-docs]]
+- [[concepts/aks-networking]]
+- [[concepts/flow-logs]]
+- [[concepts/troubleshooting-aks]]
+- [[concepts/troubleshooting-virtual-machines]]

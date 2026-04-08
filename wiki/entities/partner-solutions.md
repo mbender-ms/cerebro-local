@@ -19,3 +19,4 @@ Azure Native Integrations are services that Microsoft and software development c
 ## Links
 
 - [[sources/partner-solutions-docs]]
+- [[concepts/azure-operations-management]]

@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/api-management/` for details.
 ## Links
 
 - [[sources/api-management-docs]]
+- [[comparisons/integration-api-services]]

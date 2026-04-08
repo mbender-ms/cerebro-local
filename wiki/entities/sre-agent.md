@@ -19,3 +19,4 @@ Azure SRE Agent automates operational work and reduces toil, so developers and o
 ## Links
 
 - [[sources/sre-agent-docs]]
+- [[concepts/azure-operations-management]]

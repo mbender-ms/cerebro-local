@@ -19,3 +19,4 @@ When you build a workflow using Azure Logic Apps, you can use a *connector* to w
 ## Links
 
 - [[sources/connectors-docs]]
+- [[comparisons/integration-api-services]]

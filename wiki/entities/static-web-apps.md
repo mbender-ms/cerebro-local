@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/static-web-apps/` for details.
 ## Links
 
 - [[sources/static-web-apps-docs]]
+- [[comparisons/compute-options]]

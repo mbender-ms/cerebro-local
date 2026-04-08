@@ -19,3 +19,4 @@ Azure Active Directory B2C provides business-to-customer identity as a service. 
 ## Links
 
 - [[sources/active-directory-b2c-docs]]
+- [[concepts/azure-rbac]]

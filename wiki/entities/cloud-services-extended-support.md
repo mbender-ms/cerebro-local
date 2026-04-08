@@ -19,3 +19,5 @@ Azure service. See raw articles in `raw/articles/cloud-services-extended-support
 ## Links
 
 - [[sources/cloud-services-extended-support-docs]]
+- [[entities/azure-virtual-machines]]
+- [[concepts/vm-availability]]

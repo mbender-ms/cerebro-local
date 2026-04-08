@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/iot-edge/` for details.
 ## Links
 
 - [[sources/iot-edge-docs]]
+- [[comparisons/iot-services]]

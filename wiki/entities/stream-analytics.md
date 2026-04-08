@@ -19,3 +19,4 @@ Azure Stream Analytics is a fully managed stream processing engine that analyzes
 ## Links
 
 - [[sources/stream-analytics-docs]]
+- [[comparisons/data-analytics-services]]

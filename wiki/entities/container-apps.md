@@ -19,3 +19,5 @@ Azure Container Apps is a serverless platform that allows you to maintain less i
 ## Links
 
 - [[sources/container-apps-docs]]
+- [[comparisons/compute-options]]
+- [[comparisons/container-compute-options]]

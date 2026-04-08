@@ -91,3 +91,8 @@ Key behaviors:
 - [[patterns/nat-gateway-hub-spoke]] — hub-and-spoke deployment patterns
 - [[patterns/nat-gateway-with-load-balancer]] — integration with load balancers
 - [[sources/nat-gateway-docs]] — source summary for all 27 articles
+- [[concepts/aks-networking]]
+- [[concepts/availability-zones-nat]]
+- [[concepts/load-balancer-components]]
+- [[concepts/troubleshooting-aks]]
+- [[concepts/troubleshooting-nat-gateway]]

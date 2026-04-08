@@ -42,3 +42,4 @@ Azure SQL Database, Cosmos DB, Cortana, Power BI, Intune, Event Hubs, IoT Hub, D
 - [[comparisons/compute-options]]
 - [[entities/azure-container-instances]] — simpler container hosting
 - [[sources/service-fabric-docs]]
+- [[comparisons/container-compute-options]]

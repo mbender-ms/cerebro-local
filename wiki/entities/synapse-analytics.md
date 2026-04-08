@@ -19,3 +19,4 @@ tags:
 ## Links
 
 - [[sources/synapse-analytics-docs]]
+- [[comparisons/data-analytics-services]]

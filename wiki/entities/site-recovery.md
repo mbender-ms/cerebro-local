@@ -19,3 +19,5 @@ Azure service. See raw articles in `raw/articles/site-recovery/` for details.
 ## Links
 
 - [[sources/site-recovery-docs]]
+- [[concepts/backup-and-dr]]
+- [[comparisons/migration-services]]

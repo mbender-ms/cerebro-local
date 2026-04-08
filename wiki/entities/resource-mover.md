@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/resource-mover/` for details.
 ## Links
 
 - [[sources/resource-mover-docs]]
+- [[comparisons/migration-services]]

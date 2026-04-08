@@ -51,3 +51,4 @@ Centralized management service for grouping, configuring, deploying, and managin
 - [[concepts/network-security-groups]] — security admin rules complement NSGs
 - [[concepts/user-defined-routes]] — centralized UDR management
 - [[sources/virtual-network-manager-docs]]
+- [[concepts/security-admin-rules]]

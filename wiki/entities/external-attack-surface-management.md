@@ -19,3 +19,4 @@ Microsoft Defender External Attack Surface Management (Defender EASM) continuous
 ## Links
 
 - [[sources/external-attack-surface-management-docs]]
+- [[comparisons/security-services]]

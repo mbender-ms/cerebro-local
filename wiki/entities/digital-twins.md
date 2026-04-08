@@ -19,3 +19,4 @@ tags:
 ## Links
 
 - [[sources/digital-twins-docs]]
+- [[comparisons/iot-services]]

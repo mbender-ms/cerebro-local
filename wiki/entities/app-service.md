@@ -19,3 +19,4 @@ Azure App Service is a platform that lets you run web applications, mobile back 
 ## Links
 
 - [[sources/app-service-docs]]
+- [[comparisons/compute-options]]

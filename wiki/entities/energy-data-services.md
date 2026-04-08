@@ -19,3 +19,4 @@ Authentication confirms the identity of users. The access flows can be user trig
 ## Links
 
 - [[sources/energy-data-services-docs]]
+- [[concepts/azure-data-services]]

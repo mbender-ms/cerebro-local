@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/automanage/` for details.
 ## Links
 
 - [[sources/automanage-docs]]
+- [[concepts/azure-operations-management]]

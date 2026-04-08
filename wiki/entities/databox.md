@@ -19,3 +19,5 @@ Azure service. See raw articles in `raw/articles/databox/` for details.
 ## Links
 
 - [[sources/databox-docs]]
+- [[comparisons/migration-services]]
+- [[comparisons/storage-options]]

@@ -53,3 +53,5 @@ qmd update && qmd embed                 # refresh after changes
 
 - [[concepts/llm-wiki-pattern]]
 - [[entities/obsidian]] — complementary viewing tool
+- [[concepts/query]]
+- [[patterns/karpathy-wiki-setup]]

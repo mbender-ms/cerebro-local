@@ -19,3 +19,4 @@ This article helps you understand the use cases and key features of Azure NetApp
 ## Links
 
 - [[sources/azure-netapp-files-docs]]
+- [[comparisons/storage-options]]

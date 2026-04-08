@@ -66,3 +66,4 @@ Block-level storage volumes managed by Azure. 99.999% availability, 3 replicas. 
 - [[concepts/troubleshooting-virtual-machines]] — support article compilation
 - [[comparisons/compute-options]] — VMs vs Functions vs Container Apps
 - [[sources/virtual-machines-docs]]
+- [[comparisons/container-compute-options]]

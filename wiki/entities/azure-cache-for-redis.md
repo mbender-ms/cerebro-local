@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/azure-cache-for-redis/` for det
 ## Links
 
 - [[sources/azure-cache-for-redis-docs]]
+- [[comparisons/caching-options]]

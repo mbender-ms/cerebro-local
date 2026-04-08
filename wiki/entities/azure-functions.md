@@ -19,3 +19,5 @@ Azure Functions is a serverless solution that allows you to build robust apps wh
 ## Links
 
 - [[sources/azure-functions-docs]]
+- [[comparisons/compute-options]]
+- [[comparisons/integration-api-services]]

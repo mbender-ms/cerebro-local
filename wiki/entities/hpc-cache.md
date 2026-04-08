@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/hpc-cache/` for details.
 ## Links
 
 - [[sources/hpc-cache-docs]]
+- [[comparisons/storage-options]]

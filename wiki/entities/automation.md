@@ -19,3 +19,4 @@ Automation is needed in three broad areas of cloud operations:
 ## Links
 
 - [[sources/automation-docs]]
+- [[concepts/azure-operations-management]]

@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/azure-large-instances/` for det
 ## Links
 
 - [[sources/azure-large-instances-docs]]
+- [[comparisons/hybrid-edge-options]]

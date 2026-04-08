@@ -49,3 +49,6 @@ Suite of tools to monitor, diagnose, view metrics, and manage logs for Azure Iaa
 - [[concepts/network-security-groups]] — NSG flow logs and diagnostics
 - [[entities/azure-virtual-network]]
 - [[sources/network-watcher-docs]]
+- [[concepts/flow-logs]]
+- [[concepts/troubleshooting-azure-monitor]]
+- [[concepts/troubleshooting-networking-support]]

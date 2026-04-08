@@ -19,3 +19,5 @@ Azure Cloud Shell is an interactive, authenticated, browser-accessible terminal 
 ## Links
 
 - [[sources/cloud-shell-docs]]
+- [[comparisons/compute-options]]
+- [[comparisons/developer-services]]

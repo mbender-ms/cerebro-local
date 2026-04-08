@@ -51,3 +51,4 @@ DNS-based global traffic load balancer. Distributes traffic to public-facing end
 - [[entities/azure-load-balancer]] — L4 regional load balancing
 - [[concepts/dns-alias-records]] — zone apex support via alias records
 - [[sources/traffic-manager-docs]]
+- [[comparisons/load-balancing-options]]

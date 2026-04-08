@@ -19,3 +19,4 @@ Resiliency in Azure is a cloud-native unified experience for resiliency posture 
 ## Links
 
 - [[sources/resiliency-docs]]
+- [[concepts/backup-and-dr]]

@@ -19,3 +19,4 @@ Azure Health Data Services is a cloud-based solution that helps you collect, sto
 ## Links
 
 - [[sources/healthcare-apis-docs]]
+- [[concepts/azure-data-services]]

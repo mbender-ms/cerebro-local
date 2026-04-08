@@ -19,3 +19,4 @@ Azure Managed Redis provides an in-memory data store based on the [Redis Enterpr
 ## Links
 
 - [[sources/redis-docs]]
+- [[comparisons/caching-options]]

@@ -19,3 +19,6 @@ Azure service. See raw articles in `raw/articles/oracle/` for details.
 ## Links
 
 - [[sources/oracle-docs]]
+- [[entities/azure-virtual-machines]]
+
+- [[concepts/vm-availability]]

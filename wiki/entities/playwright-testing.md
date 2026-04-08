@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/playwright-testing/` for detail
 ## Links
 
 - [[sources/playwright-testing-docs]]
+- [[comparisons/developer-services]]

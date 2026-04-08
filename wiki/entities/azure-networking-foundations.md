@@ -29,3 +29,7 @@ This is a small collection (17 articles) of cross-cutting content, not a specifi
 - [[entities/azure-dns]] — DNS foundation
 - [[entities/azure-private-link]] — private connectivity foundation
 - [[entities/azure-network-watcher]] — monitoring tools
+- [[entities/azure-virtual-network]]
+- [[entities/azure-dns]]
+
+- [[concepts/network-security-groups]]

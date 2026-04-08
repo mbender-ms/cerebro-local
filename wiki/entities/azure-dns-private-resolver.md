@@ -72,3 +72,5 @@ Requires ExpressRoute or VPN for on-premises connectivity. (source: dns-private-
 - [[entities/azure-dns]] — parent service
 - [[entities/azure-private-dns]] — private zones resolved through this
 - [[patterns/dns-hybrid-resolution]] — architecture patterns
+- [[concepts/dns-security-policy]]
+- [[concepts/private-link-dns]]

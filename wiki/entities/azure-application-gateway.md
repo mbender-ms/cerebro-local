@@ -48,3 +48,5 @@ A web traffic (Layer 7) load balancer that makes routing decisions based on HTTP
 - [[entities/azure-front-door]] — global L7 load balancing (compare)
 - [[entities/azure-load-balancer]] — L4 load balancing
 - [[sources/application-gateway-docs]]
+- [[comparisons/app-gateway-vs-front-door]]
+- [[comparisons/load-balancing-options]]

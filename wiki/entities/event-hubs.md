@@ -19,3 +19,5 @@ This article explains how you can use Azure Event Hubs to stream data from [Apac
 ## Links
 
 - [[sources/event-hubs-docs]]
+- [[comparisons/data-analytics-services]]
+- [[comparisons/messaging-options]]

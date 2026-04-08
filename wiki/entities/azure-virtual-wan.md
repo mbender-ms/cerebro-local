@@ -61,3 +61,8 @@ Virtual WAN provides hub-and-spoke topology with **Microsoft-managed virtual hub
 - [[entities/azure-expressroute]] — private connectivity into hubs
 - [[entities/azure-firewall-manager]] — secured hub management
 - [[sources/virtual-wan-docs]]
+- [[comparisons/hybrid-edge-options]]
+- [[comparisons/virtual-wan-vs-hub-spoke]]
+- [[comparisons/vpn-gateway-vs-expressroute]]
+- [[concepts/virtual-wan-routing]]
+- [[patterns/vpn-gateway-connections]]

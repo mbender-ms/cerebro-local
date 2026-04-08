@@ -19,3 +19,6 @@ Azure service. See raw articles in `raw/articles/high-performance-computing/` fo
 ## Links
 
 - [[sources/high-performance-computing-docs]]
+- [[entities/azure-virtual-machines]]
+- [[entities/azure-virtual-machines]]
+- [[concepts/managed-disks]]

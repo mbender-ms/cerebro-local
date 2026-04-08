@@ -19,3 +19,4 @@ Azure VMware Solution provides private clouds that contain VMware vSphere cluste
 ## Links
 
 - [[sources/azure-vmware-docs]]
+- [[comparisons/hybrid-edge-options]]

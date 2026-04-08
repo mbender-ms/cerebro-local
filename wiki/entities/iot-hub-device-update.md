@@ -19,3 +19,4 @@ The Device Update agent consists of two conceptual layers:
 ## Links
 
 - [[sources/iot-hub-device-update-docs]]
+- [[comparisons/iot-services]]

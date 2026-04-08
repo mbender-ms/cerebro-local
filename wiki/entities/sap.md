@@ -19,3 +19,5 @@ Azure service. See raw articles in `raw/articles/sap/` for details.
 ## Links
 
 - [[sources/sap-docs]]
+- [[entities/azure-virtual-machines]]
+- [[concepts/managed-disks]]

@@ -19,3 +19,4 @@ The IoT Hub Device Provisioning Service (DPS) is a helper service for IoT Hub th
 ## Links
 
 - [[sources/iot-dps-docs]]
+- [[comparisons/iot-services]]

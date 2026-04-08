@@ -19,3 +19,4 @@ Azure Managed Grafana is a data visualization platform built on top of the Grafa
 ## Links
 
 - [[sources/managed-grafana-docs]]
+- [[concepts/azure-operations-management]]

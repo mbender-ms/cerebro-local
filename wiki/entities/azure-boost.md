@@ -19,3 +19,5 @@ Azure service. See raw articles in `raw/articles/azure-boost/` for details.
 ## Links
 
 - [[sources/azure-boost-docs]]
+- [[entities/azure-virtual-machines]]
+- [[concepts/vm-availability]]

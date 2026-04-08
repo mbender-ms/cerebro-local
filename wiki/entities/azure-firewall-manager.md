@@ -41,3 +41,5 @@ Hierarchical resource that contains NAT, network, application, and TLS inspectio
 - [[entities/azure-firewall]] — the firewalls it manages
 - [[entities/azure-virtual-wan]] — secured virtual hub integration
 - [[sources/firewall-manager-docs]]
+- [[comparisons/firewall-sku-comparison]]
+- [[concepts/virtual-wan-routing]]

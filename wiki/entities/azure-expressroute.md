@@ -53,3 +53,7 @@ Private connectivity from on-premises to Microsoft cloud (Azure, M365) via a con
 - [[entities/azure-vpn-gateway]] — alternative for internet-based encrypted connectivity
 - [[entities/azure-virtual-wan]] — hub-level ExpressRoute integration
 - [[sources/expressroute-docs]]
+- [[comparisons/hybrid-edge-options]]
+- [[comparisons/virtual-wan-vs-hub-spoke]]
+- [[comparisons/vpn-gateway-vs-expressroute]]
+- [[concepts/expressroute-peering]]

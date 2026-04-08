@@ -19,3 +19,4 @@ Azure Data Share enables organizations to securely share data with multiple cust
 ## Links
 
 - [[sources/data-share-docs]]
+- [[concepts/azure-data-services]]

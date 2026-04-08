@@ -57,3 +57,8 @@ Active-active mode supported for HA — two gateway instances, two tunnels. (sou
 - [[entities/azure-virtual-wan]] — managed hub-level VPN
 - [[entities/azure-virtual-network]] — gateway deployed in GatewaySubnet
 - [[sources/vpn-gateway-docs]]
+- [[comparisons/hybrid-edge-options]]
+- [[comparisons/virtual-wan-vs-hub-spoke]]
+- [[comparisons/vpn-gateway-vs-expressroute]]
+- [[concepts/expressroute-peering]]
+- [[patterns/vpn-gateway-connections]]

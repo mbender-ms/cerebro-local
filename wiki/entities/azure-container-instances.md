@@ -44,3 +44,4 @@ Fastest and simplest way to run containers in Azure. No VM management, no orches
 - [[comparisons/compute-options]] — VM vs Functions vs Container Apps vs ACI
 - [[entities/azure-virtual-machines]] — IaaS alternative
 - [[sources/container-instances-docs]]
+- [[comparisons/container-compute-options]]

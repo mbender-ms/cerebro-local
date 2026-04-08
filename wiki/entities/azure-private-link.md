@@ -46,3 +46,6 @@ Connection requests can be auto-approved or require manual approval by the resou
 - [[concepts/service-endpoints]] — simpler alternative (no private IP)
 - [[entities/azure-virtual-network]]
 - [[sources/private-link-docs]]
+- [[comparisons/security-services]]
+- [[concepts/private-link-dns]]
+- [[concepts/troubleshooting-storage]]

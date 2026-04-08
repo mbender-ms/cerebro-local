@@ -175,3 +175,18 @@ Deep wiki pages created (5):
 3 source summary pages. Sync scripts updated for 4 repos.
 
 Totals: 362 wiki pages, 14,009 raw articles, 184 service areas.
+
+## [2026-04-07] deep | Deep analysis for remaining 58 service areas
+
+Created 7 new cross-cutting concept/comparison pages:
+- concepts/azure-rbac — RBAC, ABAC, role assignments, built-in roles
+- concepts/backup-and-dr — Azure Backup vs Site Recovery, RPO/RTO comparison
+- comparisons/caching-options — Azure Cache for Redis vs Managed Redis (Enterprise)
+- concepts/azure-operations-management — Automation, Update Manager, Grafana, App Config, SRE Agent
+- comparisons/operator-edge-services — telecom/edge services matrix
+- concepts/azure-data-services — Maps, Planetary Computer, AgriFood, Data Share, Energy
+- concepts/azure-realtime-services — Web PubSub vs SignalR vs Communication Services
+
+Updated 36 entity pages with cross-links to new deep pages.
+
+All 125+ service areas now have deep analysis coverage.

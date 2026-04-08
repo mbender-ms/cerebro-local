@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/lab-services/` for details.
 ## Links
 
 - [[sources/lab-services-docs]]
+- [[comparisons/developer-services]]

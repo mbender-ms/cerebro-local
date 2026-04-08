@@ -19,3 +19,5 @@ Azure API Center enables you to track all your APIs in a centralized location fo
 ## Links
 
 - [[sources/api-center-docs]]
+- [[entities/api-management]]
+- [[comparisons/integration-api-services]]

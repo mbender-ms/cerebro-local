@@ -33,3 +33,5 @@ Azure CDN is available through multiple providers: Microsoft (classic), Edgio (S
 
 - [[entities/azure-front-door]] — recommended replacement for new deployments
 - [[sources/cdn-docs]]
+- [[entities/azure-front-door]]
+- [[comparisons/load-balancing-options]]

@@ -47,3 +47,6 @@ WAF can be deployed on:
 - [[entities/azure-front-door]] — global WAF host
 - [[entities/azure-firewall]] — L3/L4 firewall (complementary, not substitute)
 - [[sources/waf-docs]]
+- [[comparisons/app-gateway-vs-front-door]]
+- [[comparisons/firewall-sku-comparison]]
+- [[comparisons/security-services]]

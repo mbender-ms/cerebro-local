@@ -44,3 +44,4 @@ Key features for wiki use:
 - [[concepts/llm-wiki-pattern]]
 - [[entities/andrej-karpathy]]
 - [[entities/qmd]] — complementary search tool
+- [[patterns/karpathy-wiki-setup]]

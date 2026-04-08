@@ -19,3 +19,5 @@ Azure Data Box Gateway is a storage solution that enables you to seamlessly send
 ## Links
 
 - [[sources/databox-gateway-docs]]
+- [[comparisons/storage-options]]
+- [[comparisons/migration-services]]

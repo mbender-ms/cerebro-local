@@ -19,3 +19,4 @@ Azure App Testing lets developers and QA teams run large-scale functional and pe
 ## Links
 
 - [[sources/app-testing-docs]]
+- [[comparisons/developer-services]]

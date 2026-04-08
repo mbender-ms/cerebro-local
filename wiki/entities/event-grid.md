@@ -19,3 +19,5 @@ Azure service. See raw articles in `raw/articles/event-grid/` for details.
 ## Links
 
 - [[sources/event-grid-docs]]
+- [[comparisons/integration-api-services]]
+- [[comparisons/messaging-options]]

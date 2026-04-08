@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/network-function-manager/` for 
 ## Links
 
 - [[sources/network-function-manager-docs]]
+- [[comparisons/operator-edge-services]]

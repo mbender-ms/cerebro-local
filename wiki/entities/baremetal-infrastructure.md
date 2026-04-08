@@ -19,3 +19,4 @@ Azure service. See raw articles in `raw/articles/baremetal-infrastructure/` for 
 ## Links
 
 - [[sources/baremetal-infrastructure-docs]]
+- [[comparisons/hybrid-edge-options]]

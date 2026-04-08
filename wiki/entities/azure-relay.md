@@ -19,3 +19,4 @@ The Azure Relay service enables you to securely expose services that run in your
 ## Links
 
 - [[sources/azure-relay-docs]]
+- [[comparisons/messaging-options]]

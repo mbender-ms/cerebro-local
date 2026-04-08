@@ -19,3 +19,4 @@ Azure Data Manager for Agriculture supports a range of data ingress connectors t
 ## Links
 
 - [[sources/data-manager-for-agri-docs]]
+- [[concepts/azure-data-services]]

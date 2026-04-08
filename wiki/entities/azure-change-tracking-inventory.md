@@ -19,3 +19,4 @@ Azure Change Tracking and Inventory monitors changes and provides inventory logs
 ## Links
 
 - [[sources/azure-change-tracking-inventory-docs]]
+- [[concepts/azure-operations-management]]

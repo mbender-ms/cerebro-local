@@ -26,9 +26,7 @@ updated: 2026-04-07
 | — System | 3 (index, log, tracker) |
 | **qmd vectors** | 88,488 chunks |
 
-## Sync Sources
-
-### Public repos (via GitHub API — `sync-raw.sh` / `sync-all.sh`)
+## Sync Sources (7 public repos)
 
 | Repo | Script | Flag | Service areas |
 |------|--------|------|---------------|
@@ -36,17 +34,11 @@ updated: 2026-04-07
 | `MicrosoftDocs/azure-compute-docs` | `sync-raw.sh <service>` | `--compute` | virtual-machines, vmss, aci, service-fabric, impact-reporting |
 | `MicrosoftDocs/azure-aks-docs` | `sync-raw.sh <service>` | `--aks` | aks, application-network, kubernetes-fleet |
 | `MicrosoftDocs/azure-management-docs` | `sync-raw.sh <service>` | `--mgmt` | azure-arc, acr, copilot, lighthouse, portal, linux, quotas |
+| `MicrosoftDocs/well-architected` | `sync-raw.sh well-architected` | `--frameworks` | well-architected |
+| `MicrosoftDocs/cloud-adoption-framework` | `sync-raw.sh cloud-adoption-framework` | `--frameworks` | cloud-adoption-framework |
 | `MicrosoftDocs/SupportArticles-docs` | `sync-raw.sh support-<service>` | `--support` | 29 support areas |
 
-### Private/internal repos (via local git pull — `sync-local.sh`)
-
-| Local clone | Raw destination | Articles |
-|-------------|----------------|----------|
-| `~/github/cloud-adoption-framework-pr/docs` | `cloud-adoption-framework` | 473 |
-| `~/github/well-architected-pr/well-architected` | `well-architected` | 224 |
-
-> These repos are Microsoft-internal (-pr suffix). Cannot sync via public GitHub API.
-> Use `./scripts/sync-local.sh` to git pull and re-copy.
+All repos are **public**. No local git pull required. Sync uses GitHub API + raw downloads.
 
 ## MS Learn — Azure Networking (21 service areas, Deep Ingest)
 

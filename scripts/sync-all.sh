@@ -2,11 +2,13 @@
 #
 # sync-all.sh — Sync all service areas from public GitHub repos
 #
-# Checks 5 public repos:
+# Checks 7 public repos:
 #   - MicrosoftDocs/azure-docs (MS Learn) — 21 networking service areas
 #   - MicrosoftDocs/azure-compute-docs (Compute) — 5 service areas
 #   - MicrosoftDocs/azure-aks-docs (AKS) — 3 service areas
 #   - MicrosoftDocs/azure-management-docs (Management) — 7 service areas
+#   - MicrosoftDocs/well-architected (WAF) — 1 service area
+#   - MicrosoftDocs/cloud-adoption-framework (CAF) — 1 service area
 #   - MicrosoftDocs/SupportArticles-docs (Support) — 29 service areas
 #
 # For private repos (CAF, WAF), use: ./scripts/sync-local.sh
@@ -18,6 +20,7 @@
 #   ./scripts/sync-all.sh --compute    # Compute only
 #   ./scripts/sync-all.sh --aks        # AKS only
 #   ./scripts/sync-all.sh --mgmt       # Management only
+#   ./scripts/sync-all.sh --frameworks  # WAF + CAF only
 #   ./scripts/sync-all.sh --support    # Support only
 #
 set -euo pipefail
@@ -77,6 +80,12 @@ MGMT_SERVICES=(
   quotas
 )
 
+# --- Frameworks (MicrosoftDocs/well-architected + cloud-adoption-framework) ---
+FRAMEWORK_SERVICES=(
+  well-architected
+  cloud-adoption-framework
+)
+
 # --- Support articles (MicrosoftDocs/SupportArticles-docs) ---
 SUPPORT_SERVICES=(
   support-api-mgmt
@@ -116,16 +125,18 @@ SYNC_LEARN=true
 SYNC_COMPUTE=true
 SYNC_AKS=true
 SYNC_MGMT=true
+SYNC_FRAMEWORKS=true
 SYNC_SUPPORT=true
 
 for arg in "$@"; do
   case "$arg" in
     --dry-run) EXTRA_ARGS="--dry-run" ;;
-    --learn) SYNC_COMPUTE=false; SYNC_AKS=false; SYNC_MGMT=false; SYNC_SUPPORT=false ;;
-    --compute) SYNC_LEARN=false; SYNC_AKS=false; SYNC_MGMT=false; SYNC_SUPPORT=false ;;
-    --aks) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_MGMT=false; SYNC_SUPPORT=false ;;
-    --mgmt) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_AKS=false; SYNC_SUPPORT=false ;;
-    --support) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_AKS=false; SYNC_MGMT=false ;;
+    --learn) SYNC_COMPUTE=false; SYNC_AKS=false; SYNC_MGMT=false; SYNC_FRAMEWORKS=false; SYNC_SUPPORT=false ;;
+    --compute) SYNC_LEARN=false; SYNC_AKS=false; SYNC_MGMT=false; SYNC_FRAMEWORKS=false; SYNC_SUPPORT=false ;;
+    --aks) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_MGMT=false; SYNC_FRAMEWORKS=false; SYNC_SUPPORT=false ;;
+    --mgmt) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_AKS=false; SYNC_FRAMEWORKS=false; SYNC_SUPPORT=false ;;
+    --frameworks) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_AKS=false; SYNC_MGMT=false; SYNC_SUPPORT=false ;;
+    --support) SYNC_LEARN=false; SYNC_COMPUTE=false; SYNC_AKS=false; SYNC_MGMT=false; SYNC_FRAMEWORKS=false ;;
   esac
 done
 
@@ -203,6 +214,28 @@ if [ "$SYNC_MGMT" = true ]; then
   echo ""
 
   for svc in "${MGMT_SERVICES[@]}"; do
+    result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
+
+    if echo "$result" | grep -q "Everything up to date"; then
+      count=$(echo "$result" | grep "Unchanged:" | awk '{print $2}')
+      printf "  ✓ %-35s %s files\n" "$svc" "$count"
+    else
+      added=$(echo "$result" | grep "Added:" | awk '{print $2}')
+      modified=$(echo "$result" | grep "Modified:" | awk '{print $2}')
+      deleted=$(echo "$result" | grep "Deleted:" | awk '{print $2}')
+      printf "  ⚡ %-35s +%s ~%s -%s\n" "$svc" "$added" "$modified" "$deleted"
+      CHANGED_SERVICES+=("$svc")
+    fi
+  done
+  echo ""
+fi
+
+# --- Sync Framework articles ---
+if [ "$SYNC_FRAMEWORKS" = true ]; then
+  echo "=== Syncing ${#FRAMEWORK_SERVICES[@]} Framework sources (WAF + CAF) ==="
+  echo ""
+
+  for svc in "${FRAMEWORK_SERVICES[@]}"; do
     result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
 
     if echo "$result" | grep -q "Everything up to date"; then

@@ -93,4 +93,4 @@ Updated log.md (complete), ingest-tracker.md (accurate counts + all sync sources
 sync-local.sh (new script for private repos). Verified all counts match actual state.
 
 Final: 394 wiki pages, 15,229 raw articles, 193 service areas, 88,488 qmd vectors.
-5 public sync repos + 2 private local-clone repos.
+7 public sync repos. All sync via GitHub API — no local git pull needed.

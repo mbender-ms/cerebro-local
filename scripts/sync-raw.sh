@@ -11,6 +11,8 @@
 #   - MicrosoftDocs/azure-compute-docs (Compute articles: VMs, VMSS, ACI, Service Fabric)
 #   - MicrosoftDocs/azure-aks-docs (AKS, Fleet, Application Network)
 #   - MicrosoftDocs/azure-management-docs (Arc, ACR, Copilot, Lighthouse, Portal, Linux, Quotas)
+#   - MicrosoftDocs/well-architected (Well-Architected Framework)
+#   - MicrosoftDocs/cloud-adoption-framework (Cloud Adoption Framework)
 #   - MicrosoftDocs/SupportArticles-docs (Support articles)
 #
 # Usage:
@@ -69,6 +71,20 @@ elif [[ "$SERVICE" == azure-arc || "$SERVICE" == azure-linux || "$SERVICE" == az
   REPO="MicrosoftDocs/azure-management-docs"
   BRANCH="main"
   REMOTE_PATH="articles/$SERVICE"
+  LOCAL_DIR="$RAW_DIR/$SERVICE"
+  RECURSIVE=true
+elif [[ "$SERVICE" == well-architected ]]; then
+  # Well-Architected Framework: MicrosoftDocs/well-architected
+  REPO="MicrosoftDocs/well-architected"
+  BRANCH="main"
+  REMOTE_PATH="well-architected"
+  LOCAL_DIR="$RAW_DIR/$SERVICE"
+  RECURSIVE=true
+elif [[ "$SERVICE" == cloud-adoption-framework ]]; then
+  # Cloud Adoption Framework: MicrosoftDocs/cloud-adoption-framework
+  REPO="MicrosoftDocs/cloud-adoption-framework"
+  BRANCH="main"
+  REMOTE_PATH="docs"
   LOCAL_DIR="$RAW_DIR/$SERVICE"
   RECURSIVE=true
 else

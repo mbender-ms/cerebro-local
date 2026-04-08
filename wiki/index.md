@@ -6,98 +6,395 @@ updated: 2026-04-07
 
 # Knowledge Base Index
 
-> Master catalog of all wiki pages. The LLM reads this first when answering queries.
+> Master catalog of all wiki pages. Use `qmd query` for search — do NOT read this file into context for queries.
+> Total: 365 pages across 5 categories.
 
 ## Entities
 
-_Azure networking services, tools, people._
+_132 Azure services, tools, and people._
 
-- [[entities/azure-application-gateway]] — L7 web traffic load balancer; URL routing, SSL, WAF, autoscaling (126 sources)
-- [[entities/azure-bastion]] — Managed RDP/SSH over TLS; no public IP needed on VMs (41 sources)
-- [[entities/azure-cdn]] — Content delivery network; being replaced by Front Door (49 sources)
-- [[entities/azure-dns]] — DNS hosting: Public DNS, Private DNS, DNS Private Resolver (73 sources)
-- [[entities/azure-public-dns]] — Public DNS zone hosting with anycast, DNSSEC, alias records
-- [[entities/azure-private-dns]] — Private DNS zones with autoregistration and split-horizon
-- [[entities/azure-dns-private-resolver]] — Hybrid DNS between Azure and on-premises
-- [[entities/azure-expressroute]] — Private connectivity to Azure via connectivity provider; no public internet (92 sources)
-- [[entities/azure-firewall]] — Cloud-native stateful firewall; Basic/Standard/Premium SKUs (85 sources)
-- [[entities/azure-firewall-manager]] — Central policy and route management for Azure Firewall (27 sources)
-- [[entities/azure-front-door]] — Global L7 load balancer + CDN + WAF at the edge (78 sources)
-- [[entities/azure-ip-services]] — Public/private IPs, prefixes, routing preference (52 sources)
-- [[entities/azure-load-balancer]] — L4 TCP/UDP load balancer; public, internal, gateway, cross-region (94 sources)
-- [[entities/azure-nat-gateway]] — Managed NAT for outbound connectivity; Standard and StandardV2 SKUs (27 sources)
-- [[entities/azure-network-watcher]] — Network diagnostics, monitoring, flow logs, packet capture (64 sources)
-- [[entities/azure-networking-foundations]] — Cross-service foundational articles (17 sources)
-- [[entities/azure-private-link]] — Private endpoints for PaaS; data exfiltration protection (48 sources)
-- [[entities/azure-route-server]] — Dynamic BGP routing between NVAs and Azure SDN (21 sources)
-- [[entities/azure-traffic-manager]] — DNS-based global traffic load balancer; 6 routing methods (44 sources)
-- [[entities/azure-virtual-network]] — Foundational VNet: subnets, NSGs, UDRs, peering, encryption (76 sources)
-- [[entities/azure-virtual-network-manager]] — Centralized VNet governance; connectivity, security, IPAM (52 sources)
-- [[entities/azure-virtual-wan]] — Managed hub-and-spoke WAN; S2S, P2S, ExpressRoute, transit (133 sources)
-- [[entities/azure-vpn-gateway]] — Encrypted tunnels over public internet; S2S, P2S, VNet-to-VNet (122 sources)
-- [[entities/azure-waf]] — Web Application Firewall for App Gateway, Front Door, CDN (9 sources)
-- [[entities/andrej-karpathy]] — AI researcher, author of the LLM Wiki pattern (1 source)
-- [[entities/obsidian]] — Local-first markdown knowledge base app (1 source)
-- [[entities/qmd]] — Local hybrid search engine for markdown files (1 source)
+- [[entities/active-directory-b2c]] — Azure Active Directory B2C provides business-to-customer identity as a service. Your customers can use their preferred s...
+- [[entities/andrej-karpathy]] — AI researcher and educator. Former Director of AI at Tesla, founding member of OpenAI. Known for neural network lectures...
+- [[entities/api-center]] — Azure API Center enables you to track all your APIs in a centralized location for discovery, reuse, and governance. Use ...
+- [[entities/api-management]] — Azure service. See raw articles in `raw/articles/api-management/` for details.
+- [[entities/app-service]] — Azure App Service is a platform that lets you run web applications, mobile back ends, and RESTful APIs without worrying ...
+- [[entities/app-testing]] — Azure App Testing lets developers and QA teams run large-scale functional and performance tests to identify issues in th...
+- [[entities/artifact-signing]] — Certificate signing can be a challenge for organizations. The process involves getting certificates, securing them, and ...
+- [[entities/automanage]] — Azure service. See raw articles in `raw/articles/automanage/` for details.
+- [[entities/automation]] — Automation is needed in three broad areas of cloud operations:
+- [[entities/azure-aks]] — Managed Kubernetes service. Deploy and manage containerized applications with minimal orchestration expertise. Azure han...
+- [[entities/azure-app-configuration]] — Azure App Configuration provides a service to centrally manage application settings and feature flags. Modern programs, ...
+- [[entities/azure-application-gateway]] — A web traffic (Layer 7) load balancer that makes routing decisions based on HTTP request attributes like URL paths and h...
+- [[entities/azure-application-network]] — Application-layer networking service for AKS. Provides observability, metrics, and logging for application traffic withi...
+- [[entities/azure-bastion]] — Fully managed PaaS service for secure RDP/SSH connectivity to VMs over TLS directly from the Azure portal or native clie...
+- [[entities/azure-boost]] — Azure service. See raw articles in `raw/articles/azure-boost/` for details.
+- [[entities/azure-cache-for-redis]] — Azure service. See raw articles in `raw/articles/azure-cache-for-redis/` for details.
+- [[entities/azure-cdn]] — Content delivery network that caches static content at edge locations worldwide to reduce latency and offload origin ser...
+- [[entities/azure-change-tracking-inventory]] — Azure Change Tracking and Inventory monitors changes and provides inventory logs for servers across Azure, on-premises, ...
+- [[entities/azure-compute-fleet]] — Azure service. See raw articles in `raw/articles/azure-compute-fleet/` for details.
+- [[entities/azure-container-instances]] — Fastest and simplest way to run containers in Azure. No VM management, no orchestrator required. Start Linux or Windows ...
+- [[entities/azure-dns-private-resolver]] — Fully managed service for DNS resolution between Azure virtual networks and on-premises environments. Eliminates need to...
+- [[entities/azure-dns]] — Azure DNS is a hosting service for DNS domains using Microsoft Azure infrastructure. It consists of three distinct servi...
+- [[entities/azure-edge-hardware-center]] — Azure service. See raw articles in `raw/articles/azure-edge-hardware-center/` for details.
+- [[entities/azure-expressroute]] — Private connectivity from on-premises to Microsoft cloud (Azure, M365) via a connectivity provider. Does NOT traverse th...
+- [[entities/azure-firewall-manager]] — Central security policy and route management for cloud-based security perimeters. Manages [[entities/azure-firewall]] po...
+- [[entities/azure-firewall]] — Cloud-native, intelligent network firewall security service. Fully stateful firewall-as-a-service with built-in HA and u...
+- [[entities/azure-front-door]] — Global L7 load balancer and CDN. Delivers fast, reliable, secure access to web applications using Microsoft's global edg...
+- [[entities/azure-functions]] — Azure Functions is a serverless solution that allows you to build robust apps while using less code, and with less infra...
+- [[entities/azure-government]] — Microsoft Azure is a hyperscale public multitenant cloud services platform that provides you with access to a feature-ri...
+- [[entities/azure-ip-services]] — Collection of IP address services for Azure virtual networks. Covers public IPs, private IPs, prefixes, and routing pref...
+- [[entities/azure-kubernetes-fleet]] — At-scale management of multiple Kubernetes clusters. Provides automated safe multi-cluster updates, intelligent resource...
+- [[entities/azure-large-instances]] — Azure service. See raw articles in `raw/articles/azure-large-instances/` for details.
+- [[entities/azure-load-balancer]] — Layer 4 (TCP/UDP) load balancer. Distributes inbound flows from frontend to backend pool instances based on configured r...
+- [[entities/azure-maps]] — This article provides the information needed to migrate applications created in Bing Maps for Enterprise to Azure Maps, ...
+- [[entities/azure-nat-gateway]] — A fully managed, highly resilient Network Address Translation (NAT) service. Provides outbound internet connectivity for...
+- [[entities/azure-netapp-files]] — This article helps you understand the use cases and key features of Azure NetApp Files application volume group for SAP ...
+- [[entities/azure-network-watcher]] — Suite of tools to monitor, diagnose, view metrics, and manage logs for Azure IaaS networking resources (VMs, VNets, appl...
+- [[entities/azure-networking-foundations]] — The `networking` folder contains cross-service foundational articles covering network monitoring, architecture guidance,...
+- [[entities/azure-private-dns]] — Managed DNS service for virtual networks using custom domain names without deploying custom DNS servers. Resolves names ...
+- [[entities/azure-private-link]] — Enables access to Azure PaaS services (Storage, SQL, etc.) and customer/partner-hosted services over a **private endpoin...
+- [[entities/azure-public-dns]] — Hosting service for public DNS domains using Azure's global anycast network of name servers. Manage DNS records with Azu...
+- [[entities/azure-relay]] — The Azure Relay service enables you to securely expose services that run in your corporate network to the public cloud. ...
+- [[entities/azure-route-server]] — Fully managed service that simplifies dynamic routing between NVAs and Azure VNets via BGP. Eliminates manual route tabl...
+- [[entities/azure-service-fabric]] — Distributed systems platform for packaging, deploying, and managing scalable microservices and containers. Supports stat...
+- [[entities/azure-signalr]] — A reverse proxy server can be used in front of Azure SignalR Service. Reverse proxy servers sit in between the clients a...
+- [[entities/azure-traffic-manager]] — DNS-based global traffic load balancer. Distributes traffic to public-facing endpoints across Azure regions. Operates at...
+- [[entities/azure-virtual-machines]] — IaaS compute — on-demand, scalable VMs running Windows or Linux. The foundational Azure compute service. (source: virtua...
+- [[entities/azure-virtual-network-manager]] — Centralized management service for grouping, configuring, deploying, and managing VNets globally across subscriptions an...
+- [[entities/azure-virtual-network]] — The fundamental building block for private networking in Azure. Enables Azure resources (VMs, AKS, App Service Environme...
+- [[entities/azure-virtual-wan]] — Networking service that unifies site-to-site VPN, point-to-site VPN, ExpressRoute, VNet connectivity, and security into ...
+- [[entities/azure-vmss]] — Create and manage a group of load-balanced VM instances that auto-scale based on demand or schedule. No cost for the sca...
+- [[entities/azure-vmware]] — Azure VMware Solution provides private clouds that contain VMware vSphere clusters built from dedicated bare-metal Azure...
+- [[entities/azure-vpn-gateway]] — Sends encrypted traffic between Azure VNets and on-premises locations over the public internet. Also encrypts traffic be...
+- [[entities/azure-waf]] — Centralized protection for web applications from common exploits (SQL injection, XSS, etc.). Deployed in front of web ap...
+- [[entities/azure-web-pubsub]] — Azure Web PubSub Service makes it easy to build web applications where server and clients need to exchange data in real-...
+- [[entities/backup]] — Azure service. See raw articles in `raw/articles/backup/` for details.
+- [[entities/baremetal-infrastructure]] — Azure service. See raw articles in `raw/articles/baremetal-infrastructure/` for details.
+- [[entities/batch]] — Azure service. See raw articles in `raw/articles/batch/` for details.
+- [[entities/business-process-tracking]] — Azure service. See raw articles in `raw/articles/business-process-tracking/` for details.
+- [[entities/certification]] — Edge Secured-Core is Microsoft's recommended standard for highly secured embedded devices. Such devices must include har...
+- [[entities/cloud-services-extended-support]] — Azure service. See raw articles in `raw/articles/cloud-services-extended-support/` for details.
+- [[entities/cloud-shell]] — Azure Cloud Shell is an interactive, authenticated, browser-accessible terminal for managing Azure
+- [[entities/communication-services]] — <!-- [!INCLUDE [Survey Request](includes/survey-request.md)] -->
+- [[entities/confidential-computing]] — Azure service. See raw articles in `raw/articles/confidential-computing/` for details.
+- [[entities/connectors]] — When you build a workflow using Azure Logic Apps, you can use a *connector* to work with data, events, and resources in ...
+- [[entities/container-apps]] — Azure Container Apps is a serverless platform that allows you to maintain less infrastructure and save costs while runni...
+- [[entities/cost-management-billing]] — Billing is where you can manage your accounts, invoices, and payments. Billing is available to anyone with access to a b...
+- [[entities/cyclecloud]] — Azure CycleCloud is an enterprise-friendly tool for orchestrating and managing High Performance Computing (HPC) environm...
+- [[entities/data-factory]] — Azure service. See raw articles in `raw/articles/data-factory/` for details.
+- [[entities/data-manager-for-agri]] — Azure Data Manager for Agriculture supports a range of data ingress connectors to centralize your fragmented accounts. T...
+- [[entities/data-share]] — Azure Data Share enables organizations to securely share data with multiple customers and partners. Data providers are a...
+- [[entities/databox-gateway]] — Azure Data Box Gateway is a storage solution that enables you to seamlessly send data to Azure. This article provides yo...
+- [[entities/databox-online]] — Azure service. See raw articles in `raw/articles/databox-online/` for details.
+- [[entities/databox]] — Azure service. See raw articles in `raw/articles/databox/` for details.
+- [[entities/ddos-protection]] — Azure service. See raw articles in `raw/articles/ddos-protection/` for details.
+- [[entities/deployment-environments]] — Azure Deployment Environments empowers development teams to quickly and easily spin up app infrastructure with project-b...
+- [[entities/dev-box]] — The Microsoft Dev Box Model Context Protocol (MCP) Server is an open-source integration layer that connects AI agents wi...
+- [[entities/devtest-labs]] — Azure service. See raw articles in `raw/articles/devtest-labs/` for details.
+- [[entities/digital-twins]] — *Azure Digital Twins* is a platform as a service (PaaS) offering that enables the creation of twin graphs based on digit...
+- [[entities/education-hub]] — [Azure for Students Starter](https://azure.microsoft.com/pricing/offers/ms-azr-0144p/) is a Microsoft program that gives...
+- [[entities/energy-data-services]] — Authentication confirms the identity of users. The access flows can be user triggered, system triggered, or system API c...
+- [[entities/event-grid]] — Azure service. See raw articles in `raw/articles/event-grid/` for details.
+- [[entities/event-hubs]] — This article explains how you can use Azure Event Hubs to stream data from [Apache Kafka](https://kafka.apache.org) appl...
+- [[entities/extended-zones]] — Azure Extended Zones provides small-footprint extensions of Azure that you can place in metropolitan areas, industry cen...
+- [[entities/external-attack-surface-management]] — Microsoft Defender External Attack Surface Management (Defender EASM) continuously discovers and maps your digital attac...
+- [[entities/firmware-analysis]] — Many users of the firmware analysis service may need to automate their workflow. The command `az login` creates an inter...
+- [[entities/hdinsight]] — Azure service. See raw articles in `raw/articles/hdinsight/` for details.
+- [[entities/healthcare-apis]] — Azure Health Data Services is a cloud-based solution that helps you collect, store, and analyze health data from differe...
+- [[entities/high-performance-computing]] — Azure service. See raw articles in `raw/articles/high-performance-computing/` for details.
+- [[entities/hpc-cache]] — Azure service. See raw articles in `raw/articles/hpc-cache/` for details.
+- [[entities/import-export]] — If you come across any issues with your Import/Export service, you can create a service request for technical support.
+- [[entities/integration-environments]] — Azure service. See raw articles in `raw/articles/integration-environments/` for details.
+- [[entities/internet-peering]] — Azure service. See raw articles in `raw/articles/internet-peering/` for details.
+- [[entities/iot-dps]] — The IoT Hub Device Provisioning Service (DPS) is a helper service for IoT Hub that enables zero-touch, just-in-time prov...
+- [[entities/iot-edge]] — Azure service. See raw articles in `raw/articles/iot-edge/` for details.
+- [[entities/iot-hub-device-update]] — The Device Update agent consists of two conceptual layers:
+- [[entities/iot-hub]] — Certificate management is an optional feature of Azure Device Registry (ADR) that enables you to issue and manage X.509 ...
+- [[entities/iot-operations]] — Azure IoT Operations is a unified data plane for the edge. It offers modular and scalable data services on [Azure Arc-en...
+- [[entities/iot]] — The Azure Internet of Things (IoT) is a collection of Microsoft-managed cloud services, edge components, and SDKs that l...
+- [[entities/lab-services]] — Azure service. See raw articles in `raw/articles/lab-services/` for details.
+- [[entities/logic-apps]] — Azure service. See raw articles in `raw/articles/logic-apps/` for details.
+- [[entities/managed-grafana]] — Azure Managed Grafana is a data visualization platform built on top of the Grafana software by Grafana Labs. It's built ...
+- [[entities/migrate]] — Azure service. See raw articles in `raw/articles/migrate/` for details.
+- [[entities/migration]] — This article series provides architects and engineers with prescriptive, actionable guidance for migrating a single work...
+- [[entities/network-function-manager]] — Azure service. See raw articles in `raw/articles/network-function-manager/` for details.
+- [[entities/notification-hubs]] — *Azure Notification Hubs* provides an easy-to-use and scaled-out push engine that enables you to send notifications to a...
+- [[entities/obsidian]] — A local-first markdown knowledge base application. Files live on disk as plain `.md` files — no proprietary format, no c...
+- [[entities/operator-service-manager]] — Azure Operator Service Manager is a cloud orchestration service designed to automate lifecycle management of complex mob...
+- [[entities/oracle]] — Azure service. See raw articles in `raw/articles/oracle/` for details.
+- [[entities/partner-solutions]] — Azure Native Integrations are services that Microsoft and software development companies jointly develop and natively in...
+- [[entities/peering-service]] — Azure service. See raw articles in `raw/articles/peering-service/` for details.
+- [[entities/planetary-computer]] — As mentioned in [Supported Data Types](./supported-data-types.md), Microsoft Planetary Computer Pro supports ingestion, ...
+- [[entities/playwright-testing]] — Azure service. See raw articles in `raw/articles/playwright-testing/` for details.
+- [[entities/qmd]] — A local search engine for markdown files by Tobi Lütke. Provides hybrid BM25/vector search with LLM re-ranking, all on-d...
+- [[entities/redis]] — Azure Managed Redis provides an in-memory data store based on the [Redis Enterprise](https://redis.io/about/redis-enterp...
+- [[entities/resiliency]] — Resiliency in Azure is a cloud-native unified experience for resiliency posture management that enables you to manage yo...
+- [[entities/resource-mover]] — Azure service. See raw articles in `raw/articles/resource-mover/` for details.
+- [[entities/role-based-access-control]] — Access management for cloud resources is a critical function for any organization that is using the cloud. Azure role-ba...
+- [[entities/sap]] — Azure service. See raw articles in `raw/articles/sap/` for details.
+- [[entities/sentinel]] — Azure service. See raw articles in `raw/articles/sentinel/` for details.
+- [[entities/service-bus-messaging]] — Service Bus includes advanced features that help you solve more complex messaging problems. This article describes sever...
+- [[entities/service-connector]] — Service Connector helps you connect Azure compute services to other backing services. Service Connector configures the n...
+- [[entities/signups]] — Microsoft is here to support your startup from idea to scale. Get started with $1,000 USD in Azure credits–no applicatio...
+- [[entities/site-recovery]] — Azure service. See raw articles in `raw/articles/site-recovery/` for details.
+- [[entities/sre-agent]] — Azure SRE Agent automates operational work and reduces toil, so developers and operators can focus on high-value tasks.
+- [[entities/static-web-apps]] — Azure service. See raw articles in `raw/articles/static-web-apps/` for details.
+- [[entities/storage-actions]] — Azure Storage Actions is a fully managed platform designed to automate data management tasks for Azure Blob Storage and ...
+- [[entities/storage-discovery]] — **Azure Storage Discovery** is a fully managed service that provides enterprise-wide visibility into your Azure Blob Sto...
+- [[entities/storage-mover]] — (source: storage-mover/*.md — 24 articles)
+- [[entities/stream-analytics]] — Azure Stream Analytics is a fully managed stream processing engine that analyzes and processes large volumes of streamin...
+- [[entities/synapse-analytics]] — **Azure Synapse** is an enterprise analytics service that accelerates time to insight across data warehouses and big dat...
+- [[entities/update-manager]] — Azure service. See raw articles in `raw/articles/update-manager/` for details.
 
 ## Concepts
 
-_Protocols, patterns, principles, mental models._
+_39 technical concepts, protocols, and troubleshooting guides._
 
-- [[concepts/network-security-groups]] — Stateful L3/L4 packet filter: rules, defaults, ASGs, service tags (3 sources)
-- [[concepts/user-defined-routes]] — Custom routes; next hop types, route selection, BGP (1 source)
-- [[concepts/vnet-peering]] — Connect VNets via backbone; gateway transit, service chaining (1 source)
-- [[concepts/service-endpoints]] — Extend VNet identity to PaaS; optimal routing (2 sources)
-- [[concepts/snat]] — Source NAT: dynamic port allocation, port reuse timers (3 sources)
-- [[concepts/default-outbound-access]] — Legacy implicit outbound; being deprecated (3 sources)
-- [[concepts/availability-zones-nat]] — Standard zonal vs StandardV2 zone-redundant (4 sources)
-- [[concepts/troubleshooting-nat-gateway]] — Compiled symptom→cause→fix guide (3 sources)
-- [[concepts/dns-zones-and-records]] — Record types, TTL, wildcards, etags (1 source)
-- [[concepts/dns-alias-records]] — Dynamic Azure resource references, zone apex (1 source)
-- [[concepts/dnssec]] — Zone signing for authenticity and data integrity (3 sources)
-- [[concepts/dns-security-policy]] — VNet-level DNS filtering and threat intelligence (2 sources)
-- [[concepts/reverse-dns]] — PTR records, ARPA zones (3 sources)
-- [[concepts/llm-wiki-pattern]] — LLM incrementally builds persistent wiki from raw sources (1 source)
-- [[concepts/three-layer-architecture]] — Raw sources → wiki → schema (1 source)
-- [[concepts/ingest]] — Process new sources into wiki (1 source)
-- [[concepts/query]] — Ask questions, file good answers back (1 source)
-- [[concepts/lint]] — Periodic health check (1 source)
-- [[concepts/write-back]] — Filing answers back; key to compounding (1 source)
-- [[concepts/memex]] — Vannevar Bush's 1945 vision (1 source)
+- [[concepts/aks-networking]] — How networking works in Azure Kubernetes Service — CNI models, egress control, network policies, and DNS. (source: conce...
+- [[concepts/availability-zones-nat]] — How Azure NAT Gateway handles availability zones differs significantly between the two SKUs. This is the primary reliabi...
+- [[concepts/azure-data-services]] — - [[comparisons/data-analytics-services]] — general analytics comparison
+- [[concepts/azure-operations-management]] — Key services for managing, automating, and monitoring Azure resources at scale.
+- [[concepts/azure-rbac]] — Authorization system that manages who has access to Azure resources, what they can do, and what scope. Built on Azure Re...
+- [[concepts/azure-realtime-services]] — - [[comparisons/messaging-options]] — broader messaging comparison
+- [[concepts/backup-and-dr]] — Two complementary services for data protection and business continuity.
+- [[concepts/default-outbound-access]] — Azure provides default outbound internet connectivity to VMs that don't have explicit outbound configuration (no NAT Gat...
+- [[concepts/dns-alias-records]] — Alias records are qualifications on a DNS record set that dynamically reference Azure resources instead of static IP val...
+- [[concepts/dns-security-policy]] — Filter, log, and control DNS queries at the virtual network level. Applies to both public and private DNS traffic within...
+- [[concepts/dns-zones-and-records]] — Foundational concepts for Azure DNS — how zones and records are structured. (source: dns-zones-records.md)
+- [[concepts/dnssec]] — DNS Security Extensions — a suite of extensions that add cryptographic validation to DNS responses. Prevents DNS spoofin...
+- [[concepts/expressroute-peering]] — An ExpressRoute **circuit** is the logical connection between on-premises and Microsoft through a connectivity provider....
+- [[concepts/flow-logs]] — Log IP traffic flowing through your network. Two types: NSG flow logs (legacy) and VNet flow logs (newer, recommended).
+- [[concepts/ingest]] — One of the four core operations in the [[concepts/llm-wiki-pattern]]. Triggered when a new source is added to `raw/` and...
+- [[concepts/lint]] — One of the four core operations in the [[concepts/llm-wiki-pattern]]. A periodic health check of the wiki. (source: karp...
+- [[concepts/llm-wiki-pattern]] — A pattern for building personal knowledge bases using LLMs, proposed by [[entities/andrej-karpathy]] in April 2026. The ...
+- [[concepts/load-balancer-components]] — (source: components.md)
+- [[concepts/managed-disks]] — Block-level storage volumes managed by Azure for use with VMs. 99.999% availability with 3 replicas. Eliminates the need...
+- [[concepts/memex]] — A hypothetical device described by Vannevar Bush in his 1945 essay "As We May Think." A personal, curated knowledge stor...
+- [[concepts/network-security-groups]] — Stateful packet filter at L3/L4. Contains security rules that allow or deny inbound/outbound traffic by source, destinat...
+- [[concepts/private-link-dns]] — Private endpoints require DNS to resolve the service FQDN to the private IP instead of the public IP. This is the most c...
+- [[concepts/query]] — One of the four core operations in the [[concepts/llm-wiki-pattern]]. Triggered when you ask a question against the know...
+- [[concepts/reverse-dns]] — Maps IP addresses back to domain names (the opposite of forward DNS). Uses PTR records in special ARPA zones. (source: d...
+- [[concepts/security-admin-rules]] — Centralized security rules in [[entities/azure-virtual-network-manager]] that enforce network security policies across a...
+- [[concepts/service-endpoints]] — Extend your VNet's identity and private address space to Azure PaaS services over a direct connection on the Azure backb...
+- [[concepts/snat]] — Source Network Address Translation (SNAT)
+- [[concepts/three-layer-architecture]] — The foundational structure of the [[concepts/llm-wiki-pattern]]. Three distinct layers with clear ownership boundaries.
+- [[concepts/troubleshooting-aks]] — Compiled from 189 Microsoft Support articles covering cluster operations, networking, node issues, and workload failures...
+- [[concepts/troubleshooting-azure-monitor]] — Compiled from 73 Microsoft Support articles covering Azure Monitor Agent, Log Analytics, Application Insights, and diagn...
+- [[concepts/troubleshooting-nat-gateway]] — Common failure modes, their causes, and solutions for [[entities/azure-nat-gateway]]. Compiled from three troubleshootin...
+- [[concepts/troubleshooting-networking-support]] — Compiled from 53 Microsoft Support articles across VNet, VPN Gateway, ExpressRoute, Application Gateway, and Front Door.
+- [[concepts/troubleshooting-storage]] — Compiled from 29 Microsoft Support articles covering Blob, Files, connectivity, and performance issues.
+- [[concepts/troubleshooting-virtual-machines]] — Compiled from 292 Microsoft Support articles covering VM boot failures, connectivity, extensions, performance, and deplo...
+- [[concepts/user-defined-routes]] — Custom static routes that override Azure's default system routes. Created in route tables and associated with subnets. (...
+- [[concepts/virtual-wan-routing]] — Virtual WAN hubs contain a Microsoft-managed router that handles all routing between branches, VNets, and users. The hub...
+- [[concepts/vm-availability]] — Strategies for keeping VMs running during infrastructure failures. Choose based on the failure scope you need to protect...
+- [[concepts/vnet-peering]] — Connects two Azure virtual networks so resources in either VNet can communicate directly. Traffic routes through the Mic...
+- [[concepts/write-back]] — The practice of filing valuable query answers, syntheses, comparisons, and analyses back into the wiki as new pages. Par...
 
 ## Comparisons
 
-- [[comparisons/private-endpoints-vs-service-endpoints]] — Scope, security, access, cost, complexity (2 sources)
-- [[comparisons/nat-gateway-standard-vs-standardv2]] — Feature table, migration path (3 sources)
+_21 decision matrices and side-by-side analyses._
+
+- [[comparisons/app-gateway-vs-front-door]] — Application Gateway vs Front Door
+- [[comparisons/caching-options]] — Azure Caching Options
+- [[comparisons/compute-options]] — Azure Compute Options
+- [[comparisons/container-compute-options]] — Azure Container Compute Options
+- [[comparisons/data-analytics-services]] — Azure Data and Analytics Services
+- [[comparisons/developer-services]] — Azure DevOps and Developer Services
+- [[comparisons/firewall-sku-comparison]] — Azure Firewall SKU Comparison
+- [[comparisons/firewall-vs-nsg]] — Azure Firewall vs NSG
+- [[comparisons/hybrid-edge-options]] — Azure Hybrid and Edge Options
+- [[comparisons/integration-api-services]] — Azure Integration and API Services
+- [[comparisons/iot-services]] — Azure IoT Services
+- [[comparisons/load-balancing-options]] — Azure Load Balancing Options
+- [[comparisons/messaging-options]] — Azure Messaging and Eventing Options
+- [[comparisons/migration-services]] — Azure Migration Services
+- [[comparisons/nat-gateway-standard-vs-standardv2]] — NAT Gateway Standard vs StandardV2
+- [[comparisons/operator-edge-services]] — Azure Operator and Edge Services
+- [[comparisons/private-endpoints-vs-service-endpoints]] — Private Endpoints vs Service Endpoints
+- [[comparisons/security-services]] — Azure Security Services
+- [[comparisons/storage-options]] — Azure Storage Options
+- [[comparisons/virtual-wan-vs-hub-spoke]] — Virtual WAN vs Hub-Spoke with VPN/ER Gateways
+- [[comparisons/vpn-gateway-vs-expressroute]] — VPN Gateway vs ExpressRoute
 
 ## Patterns
 
-- [[patterns/dns-hybrid-resolution]] — On-prem↔Azure DNS via Private Resolver (5 sources)
-- [[patterns/nat-gateway-hub-spoke]] — Hub-spoke with Firewall, NVA, per-spoke (3 sources)
-- [[patterns/nat-gateway-with-load-balancer]] — Internal/public LB integration, priority rules (3 sources)
-- [[patterns/karpathy-wiki-setup]] — Knowledge base setup pattern (1 source)
+_5 deployment architectures and recurring solutions._
+
+- [[patterns/dns-hybrid-resolution]] — DNS Hybrid Resolution Patterns
+- [[patterns/karpathy-wiki-setup]] — Karpathy Wiki Setup Pattern
+- [[patterns/nat-gateway-hub-spoke]] — NAT Gateway Hub-and-Spoke Patterns
+- [[patterns/nat-gateway-with-load-balancer]] — NAT Gateway with Load Balancer Patterns
+- [[patterns/vpn-gateway-connections]] — VPN Gateway Connection Patterns
 
 ## Sources
 
-- [[sources/application-gateway-docs]] — 126 articles
-- [[sources/bastion-docs]] — 41 articles
-- [[sources/cdn-docs]] — 49 articles
-- [[sources/dns-docs]] — 73 articles
-- [[sources/expressroute-docs]] — 92 articles
-- [[sources/firewall-docs]] — 85 articles
-- [[sources/firewall-manager-docs]] — 27 articles
-- [[sources/frontdoor-docs]] — 78 articles
-- [[sources/ip-services-docs]] — 52 articles
-- [[sources/karpathy-llm-wiki]] — LLM Wiki gist (1 article)
-- [[sources/load-balancer-docs]] — 94 articles
-- [[sources/nat-gateway-docs]] — 27 articles
-- [[sources/network-watcher-docs]] — 64 articles
-- [[sources/networking-docs]] — 17 articles
-- [[sources/private-link-docs]] — 48 articles
-- [[sources/route-server-docs]] — 21 articles
-- [[sources/traffic-manager-docs]] — 44 articles
-- [[sources/virtual-network-docs]] — 76 articles
-- [[sources/virtual-network-manager-docs]] — 52 articles
-- [[sources/virtual-wan-docs]] — 133 articles
-- [[sources/vpn-gateway-docs]] — 122 articles
-- [[sources/web-application-firewall-docs]] — 9 articles
+_168 source summary pages (one per service area or source document)._
+
+- [[sources/active-directory-b2c-docs]]
+- [[sources/aks-docs]]
+- [[sources/api-center-docs]]
+- [[sources/api-management-docs]]
+- [[sources/app-service-docs]]
+- [[sources/app-testing-docs]]
+- [[sources/application-gateway-docs]]
+- [[sources/application-network-docs]]
+- [[sources/artifact-signing-docs]]
+- [[sources/automanage-docs]]
+- [[sources/automation-docs]]
+- [[sources/azure-app-configuration-docs]]
+- [[sources/azure-boost-docs]]
+- [[sources/azure-cache-for-redis-docs]]
+- [[sources/azure-change-tracking-inventory-docs]]
+- [[sources/azure-compute-fleet-docs]]
+- [[sources/azure-edge-hardware-center-docs]]
+- [[sources/azure-fluid-relay-docs]]
+- [[sources/azure-functions-docs]]
+- [[sources/azure-government-docs]]
+- [[sources/azure-impact-reporting-docs]]
+- [[sources/azure-large-instances-docs]]
+- [[sources/azure-maps-docs]]
+- [[sources/azure-netapp-files-docs]]
+- [[sources/azure-relay-docs]]
+- [[sources/azure-resource-manager-docs]]
+- [[sources/azure-signalr-docs]]
+- [[sources/azure-vmware-docs]]
+- [[sources/azure-web-pubsub-docs]]
+- [[sources/backup-docs]]
+- [[sources/baremetal-infrastructure-docs]]
+- [[sources/bastion-docs]]
+- [[sources/batch-docs]]
+- [[sources/business-process-tracking-docs]]
+- [[sources/cdn-docs]]
+- [[sources/certification-docs]]
+- [[sources/cloud-services-extended-support-docs]]
+- [[sources/cloud-shell-docs]]
+- [[sources/communication-services-docs]]
+- [[sources/confidential-computing-docs]]
+- [[sources/connectors-docs]]
+- [[sources/container-apps-docs]]
+- [[sources/container-instances-docs]]
+- [[sources/cost-management-billing-docs]]
+- [[sources/cyclecloud-docs]]
+- [[sources/data-factory-docs]]
+- [[sources/data-manager-for-agri-docs]]
+- [[sources/data-share-docs]]
+- [[sources/databox-docs]]
+- [[sources/databox-gateway-docs]]
+- [[sources/databox-online-docs]]
+- [[sources/ddos-protection-docs]]
+- [[sources/defender-for-iot-docs]]
+- [[sources/deployment-environments-docs]]
+- [[sources/dev-box-docs]]
+- [[sources/devtest-docs]]
+- [[sources/devtest-labs-docs]]
+- [[sources/digital-twins-docs]]
+- [[sources/dns-docs]]
+- [[sources/durable-task-docs]]
+- [[sources/education-hub-docs]]
+- [[sources/energy-data-services-docs]]
+- [[sources/event-grid-docs]]
+- [[sources/event-hubs-docs]]
+- [[sources/expressroute-docs]]
+- [[sources/extended-zones-docs]]
+- [[sources/external-attack-surface-management-docs]]
+- [[sources/firewall-docs]]
+- [[sources/firewall-manager-docs]]
+- [[sources/firmware-analysis-docs]]
+- [[sources/frontdoor-docs]]
+- [[sources/governance-docs]]
+- [[sources/hdinsight-docs]]
+- [[sources/healthcare-apis-docs]]
+- [[sources/high-performance-computing-docs]]
+- [[sources/hpc-cache-docs]]
+- [[sources/import-export-docs]]
+- [[sources/integration-environments-docs]]
+- [[sources/internet-peering-docs]]
+- [[sources/iot-central-docs]]
+- [[sources/iot-docs]]
+- [[sources/iot-dps-docs]]
+- [[sources/iot-edge-docs]]
+- [[sources/iot-hub-device-update-docs]]
+- [[sources/iot-hub-docs]]
+- [[sources/iot-operations-docs]]
+- [[sources/ip-services-docs]]
+- [[sources/karpathy-llm-wiki]]
+- [[sources/kubernetes-fleet-docs]]
+- [[sources/lab-services-docs]]
+- [[sources/load-balancer-docs]]
+- [[sources/logic-apps-docs]]
+- [[sources/managed-grafana-docs]]
+- [[sources/migrate-docs]]
+- [[sources/migration-docs]]
+- [[sources/nat-gateway-docs]]
+- [[sources/network-function-manager-docs]]
+- [[sources/network-watcher-docs]]
+- [[sources/networking-docs]]
+- [[sources/notification-hubs-docs]]
+- [[sources/operator-service-manager-docs]]
+- [[sources/oracle-docs]]
+- [[sources/partner-solutions-docs]]
+- [[sources/peering-service-docs]]
+- [[sources/planetary-computer-docs]]
+- [[sources/playwright-testing-docs]]
+- [[sources/private-link-docs]]
+- [[sources/redis-docs]]
+- [[sources/resiliency-docs]]
+- [[sources/resource-mover-docs]]
+- [[sources/role-based-access-control-docs]]
+- [[sources/route-server-docs]]
+- [[sources/sap-docs]]
+- [[sources/security-docs]]
+- [[sources/sentinel-docs]]
+- [[sources/service-bus-messaging-docs]]
+- [[sources/service-connector-docs]]
+- [[sources/service-fabric-docs]]
+- [[sources/signups-docs]]
+- [[sources/site-recovery-docs]]
+- [[sources/site-reliability-engineering-docs]]
+- [[sources/spring-apps-docs]]
+- [[sources/sre-agent-docs]]
+- [[sources/static-web-apps-docs]]
+- [[sources/storage-actions-docs]]
+- [[sources/storage-discovery-docs]]
+- [[sources/storage-docs]]
+- [[sources/storage-mover-docs]]
+- [[sources/stream-analytics-docs]]
+- [[sources/support-api-mgmt-docs]]
+- [[sources/support-app-service-docs]]
+- [[sources/support-application-gateway-docs]]
+- [[sources/support-automation-docs]]
+- [[sources/support-azure-container-instances-docs]]
+- [[sources/support-azure-container-registry-docs]]
+- [[sources/support-azure-functions-docs]]
+- [[sources/support-azure-kubernetes-docs]]
+- [[sources/support-azure-monitor-docs]]
+- [[sources/support-azure-stack-edge-docs]]
+- [[sources/support-azure-storage-docs]]
+- [[sources/support-cloud-services-docs]]
+- [[sources/support-cosmos-db-docs]]
+- [[sources/support-data-api-builder-docs]]
+- [[sources/support-expressroute-docs]]
+- [[sources/support-front-door-docs]]
+- [[sources/support-general-docs]]
+- [[sources/support-hpc-docs]]
+- [[sources/support-kubernetes-fleet-docs]]
+- [[sources/support-logic-apps-docs]]
+- [[sources/support-partner-solutions-docs]]
+- [[sources/support-service-fabric-docs]]
+- [[sources/support-site-recovery-docs]]
+- [[sources/support-synapse-analytics-docs]]
+- [[sources/support-virtual-desktop-docs]]
+- [[sources/support-virtual-machine-scale-sets-docs]]
+- [[sources/support-virtual-machines-docs]]
+- [[sources/support-virtual-network-docs]]
+- [[sources/support-vpn-gateway-docs]]
+- [[sources/synapse-analytics-docs]]
+- [[sources/traffic-manager-docs]]
+- [[sources/update-manager-docs]]
+- [[sources/virtual-machine-scale-sets-docs]]
+- [[sources/virtual-machines-docs]]
+- [[sources/virtual-network-docs]]
+- [[sources/virtual-network-manager-docs]]
+- [[sources/virtual-wan-docs]]
+- [[sources/vpn-gateway-docs]]
+- [[sources/web-application-firewall-docs]]

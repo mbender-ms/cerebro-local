@@ -6,7 +6,7 @@ updated: 2026-04-07
 
 # Knowledge Base Index
 
-> Use `qmd query` for search. Total: 394 pages.
+> Use `qmd query` for search. Total: 395 pages.
 
 ## Entities
 
@@ -246,7 +246,7 @@ _5 Deployment architectures._
 
 ## Sources
 
-_178 Source summary pages._
+_179 Source summary pages and validation reports._
 
 - [[sources/active-directory-b2c-docs]]
 - [[sources/aks-docs]]
@@ -370,6 +370,7 @@ _178 Source summary pages._
 - [[sources/role-based-access-control-docs]]
 - [[sources/route-server-docs]]
 - [[sources/sap-docs]]
+- [[sources/search-validation-2026-04-07]]
 - [[sources/security-docs]]
 - [[sources/sentinel-docs]]
 - [[sources/service-bus-messaging-docs]]

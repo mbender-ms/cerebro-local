@@ -121,3 +121,16 @@ Before: 45 service areas showing false changes (false "deleted" from flattening)
 After: 9 service areas with real upstream changes, 0 false deletes.
 
 All 68 service areas across 8 repos now have accurate SHA-based sync.
+
+## [2026-04-07] query | Search validation — 15 cross-repo test queries
+
+Ran 15 queries across the full knowledge base to validate search quality.
+Results filed back as: wiki/sources/search-validation-2026-04-07.md
+
+Key findings:
+- 15/15 queries found cross-repo results (multiple source repos per query)
+- 93% average top result score
+- All 8 source repos represented in results
+- Support articles surface for troubleshooting, Architecture Center for design,
+  WAF/CAF for best practices, wiki for comparisons
+- BM25 keyword search works for exact CLI command lookups

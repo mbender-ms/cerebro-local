@@ -81,7 +81,8 @@ cerebro-local/
 │   ├── chunk-article.js          #   MS Learn article chunker (H2 splits, tab separation)
 │   ├── sync-raw.sh               #   Sync one service area from GitHub (git trees API)
 │   ├── sync-all.sh               #   Sync all 68 service areas across 8 repos
-│   └── search-server.js          #   Browser-based search UI server (zero deps)
+│   ├── search-server.js          #   Browser search UI server (qmd backend, GPU recommended)
+│   └── search-server-lite.js     #   Browser search UI server (MiniSearch, CPU-only, no qmd)
 │
 ├── search.html                    # Web search UI (open via search-server.js)
 │
@@ -190,20 +191,27 @@ qmd get wiki/entities/azure-nat-gateway.md
 
 ### Search in the Browser
 
-A built-in web UI for searching without the command line:
+Two search servers available — same web UI, different backends:
+
+| Server | Engine | Requires | Best for |
+|--------|--------|----------|----------|
+| `search-server.js` | qmd (hybrid BM25 + vector + reranking) | qmd + GPU | macOS, Linux, Windows with GPU |
+| `search-server-lite.js` | MiniSearch (BM25 + fuzzy) | Node.js only | Windows CPU-only laptops/VMs |
 
 ```bash
-# Start the search server
+# Option A: Full search (requires qmd installed + embedded)
 node scripts/search-server.js
-# → 🧠 Cerebro Search → http://localhost:3333
+
+# Option B: Lite search (CPU-only, no qmd needed)
+npm install minisearch    # one-time
+node scripts/search-server-lite.js
 ```
 
-Open **http://localhost:3333** in your browser. Features:
+Both serve **http://localhost:3333** with the same UI. Features:
 - Natural language search with collection filtering (Wiki / Raw / All)
-- Hybrid (BM25 + vector + reranking) or keyword-only mode
 - Color-coded result cards by type (entity, concept, comparison, pattern, raw)
 - Rendered markdown file viewer (tables, code blocks, headers) or raw source view
-- Zero dependencies beyond Node.js
+- Lite server indexes 19K files in ~12 seconds, no GPU needed
 
 ### Browse in Obsidian
 
@@ -390,7 +398,8 @@ Batch sync for all 68 service areas across 8 repos.
 
 ### `scripts/search-server.js`
 
-Zero-dependency Node.js HTTP server for browser-based search.
+Full search server — uses qmd for hybrid BM25 + vector + LLM reranking.
+Requires qmd installed with `qmd embed` completed. GPU recommended.
 
 ```bash
 node scripts/search-server.js              # start on default port 3333
@@ -401,6 +410,21 @@ Serves `search.html` at the root and provides APIs:
 - `POST /api/search` — runs `qmd query` or `qmd search`, returns parsed JSON
 - `GET /api/file?path=...` — returns file content for the viewer
 - `GET /api/status` — returns `qmd status`
+
+### `scripts/search-server-lite.js`
+
+Lightweight search server — uses MiniSearch (pure JavaScript). No qmd, no GPU,
+no models. Works on any machine with Node.js including CPU-only Windows laptops.
+
+```bash
+npm install minisearch                          # one-time dependency
+node scripts/search-server-lite.js              # start on default port 3333
+node scripts/search-server-lite.js --port 8080  # custom port
+```
+
+Indexes all 19K+ markdown files at startup (~12 seconds). Same API as the full
+server — `search.html` works with either backend. Provides BM25 ranking with
+fuzzy matching and prefix search.
 
 ---
 

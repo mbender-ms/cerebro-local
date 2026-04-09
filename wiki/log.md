@@ -307,3 +307,23 @@ Windows 11 (Node.js v24.14.0, qmd 2.1.0):
 Updated: docs/new-machine-setup.md (full native Windows section rewritten),
 docs/workflow.md (Windows recovery section), README.md (Windows note).
 Saved findings to Cerebro MCP cloud.
+
+## [2026-04-08] feat | search-server-lite.js — CPU-only search for Windows
+
+Built a lightweight alternative search server using MiniSearch (pure JavaScript).
+For Windows laptops/VMs without GPU where qmd is impractical.
+
+- Same search.html frontend (no changes needed)
+- Same API (/api/search, /api/file, /api/status)
+- Indexes 19,612 files in ~12 seconds at startup
+- BM25 ranking + fuzzy matching + prefix search
+- Zero native dependencies — just Node.js + npm install minisearch
+- No qmd, no GPU, no models, no embedding step
+
+Tested: NAT Gateway SNAT → entity page #1, VPN vs ExpressRoute → comparison page #1,
+hub spoke firewall → tutorial direct hit. Quality is good for keyword/BM25 search.
+
+Three Windows install options now documented:
+A. WSL (full Linux, recommended)
+B. Native Windows with qmd (PowerShell function fix, GPU recommended)
+C. Windows CPU-only with search-server-lite.js (no qmd needed)

@@ -14,7 +14,8 @@ qmd query "your question"            # both collections
 
 ### Search in the browser
 ```bash
-node scripts/search-server.js        # start server
+node scripts/search-server.js        # full (qmd backend, GPU recommended)
+node scripts/search-server-lite.js   # lite (MiniSearch, CPU-only, no qmd)
 # Open http://localhost:3333
 ```
 Features: collection filtering, hybrid/keyword mode, rendered markdown viewer.

@@ -175,6 +175,47 @@ qmd query "NAT Gateway" -c "C:\Users\<username>\github\cerebro-local\wiki"
 - Check: `qmd status` → look for "GPU: cuda"
 - CPU fallback works but embedding is slower (~60 min for 19K docs vs ~30 min on GPU)
 
+#### Option C: Windows CPU-Only (No GPU, No qmd)
+
+For Windows laptops or VMs without a GPU, skip qmd entirely and use the
+lightweight search server. It uses MiniSearch (pure JavaScript) — no models,
+no GPU, no native dependencies. Just Node.js.
+
+```powershell
+# 1. Install Node.js
+winget install OpenJS.NodeJS.LTS
+
+# 2. Clone the repo
+cd $HOME\github
+git clone git@github.com:asudbring/cerebro-local.git
+cd cerebro-local
+
+# 3. Install MiniSearch (one-time, ~50KB)
+npm install minisearch
+
+# 4. Start the search server
+node scripts\search-server-lite.js
+# → Indexes 19K files in ~12 seconds
+# → Open http://localhost:3333
+```
+
+That's it. No qmd install, no PowerShell function fix, no models, no embedding.
+Same web UI as the full version with BM25 + fuzzy matching.
+
+**Limitations vs full qmd:**
+
+| Feature | search-server-lite | qmd (full) |
+|---------|-------------------|------------|
+| Keyword search (BM25) | ✅ | ✅ |
+| Fuzzy matching | ✅ | ✅ |
+| Semantic/vector search | ❌ | ✅ |
+| Query expansion (LLM) | ❌ | ✅ |
+| Result reranking (LLM) | ❌ | ✅ |
+| Command-line search | ❌ (web UI only) | ✅ |
+| GPU required | ❌ | Recommended |
+| Install time | ~1 minute | ~30-60 min (models + embed) |
+| Index time | ~12 seconds | ~2-30 min |
+
 ## 3. Initialize qmd
 
 qmd stores its index in `~/.cache/qmd/`. On a new machine, you need to create
@@ -272,10 +313,14 @@ qmd query "what load balancer should I use for global HTTP traffic"
 qmd status
 # Should show: ~16,108 files indexed, ~93,344 vectors
 
-# Web search UI
+# Web search UI (full — requires qmd)
 node scripts/search-server.js
 # Open http://localhost:3333 in your browser
-# Ctrl+C to stop the server
+
+# Web search UI (lite — CPU-only Windows, no qmd needed)
+npm install minisearch
+node scripts/search-server-lite.js
+# Same URL: http://localhost:3333
 ```
 
 ## 7. Optional: Set Up Sync

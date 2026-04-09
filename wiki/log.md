@@ -327,3 +327,15 @@ Three Windows install options now documented:
 A. WSL (full Linux, recommended)
 B. Native Windows with qmd (PowerShell function fix, GPU recommended)
 C. Windows CPU-only with search-server-lite.js (no qmd needed)
+
+## [2026-04-08] feat | cerebro-search.js — CLI search for agents on CPU-only Windows
+
+Built a command-line search tool as a drop-in qmd alternative for CPU-only
+Windows machines. Coding agents (Claude Code, Copilot, Pi) can use this
+instead of qmd query/search.
+
+Commands: query, search, get, status, rebuild
+Output format matches qmd (qmd://path, Score: N%) for agent compatibility.
+Caches index to .qmd/search-index.json — first run ~12s, subsequent ~1.7s.
+
+AGENTS.md updated with cerebro-search.js as alternative query tool.

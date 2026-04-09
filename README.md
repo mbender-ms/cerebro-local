@@ -82,7 +82,8 @@ cerebro-local/
 │   ├── sync-raw.sh               #   Sync one service area from GitHub (git trees API)
 │   ├── sync-all.sh               #   Sync all 68 service areas across 8 repos
 │   ├── search-server.js          #   Browser search UI server (qmd backend, GPU recommended)
-│   └── search-server-lite.js     #   Browser search UI server (MiniSearch, CPU-only, no qmd)
+│   ├── search-server-lite.js     #   Browser search UI server (MiniSearch, CPU-only, no qmd)
+│   └── cerebro-search.js         #   CLI search tool (MiniSearch, CPU-only, agent-friendly)
 │
 ├── search.html                    # Web search UI (open via search-server.js)
 │
@@ -425,6 +426,28 @@ node scripts/search-server-lite.js --port 8080  # custom port
 Indexes all 19K+ markdown files at startup (~12 seconds). Same API as the full
 server — `search.html` works with either backend. Provides BM25 ranking with
 fuzzy matching and prefix search.
+
+### `scripts/cerebro-search.js`
+
+CLI search tool for agents and terminals — drop-in alternative to `qmd` on
+CPU-only Windows machines. Same MiniSearch engine as the lite server.
+Caches index to disk for fast subsequent searches (~1.7s load).
+
+```bash
+# First run: builds + caches index (~12s)
+node scripts/cerebro-search.js rebuild
+
+# Search (loads cached index in ~1.7s)
+node scripts/cerebro-search.js query "how does NAT Gateway SNAT work"
+node scripts/cerebro-search.js query "compare VPN vs ExpressRoute" -c wiki
+node scripts/cerebro-search.js search "az network nat gateway create"
+node scripts/cerebro-search.js get wiki/entities/azure-nat-gateway.md
+node scripts/cerebro-search.js status
+```
+
+Output format matches qmd (`qmd://path`, `Score: N%`) so agents can parse
+results the same way. Coding agents (Claude Code, Copilot, Pi) can use this
+instead of `qmd query` on machines without GPU.
 
 ---
 

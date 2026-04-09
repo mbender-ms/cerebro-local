@@ -277,13 +277,16 @@ Workflow:
 Triggered when: the human asks a question about the knowledge base.
 
 > **IMPORTANT**: Do NOT read `wiki/index.md` to find pages. The index is too large
-> to read into context. Always use `qmd` for retrieval.
+> to read into context. Always use `qmd` or `cerebro-search` for retrieval.
 
 Workflow:
 1. **Search wiki first**: `cd ~/github/cerebro-local && qmd query "<question>" -c wiki`
-2. Read the top-scoring wiki pages returned by qmd.
+   - On CPU-only Windows: `node scripts/cerebro-search.js query "<question>" -c wiki`
+2. Read the top-scoring wiki pages returned.
 3. **If wiki results are thin, search raw**: `qmd query "<question>" -c raw`
+   - On CPU-only Windows: `node scripts/cerebro-search.js query "<question>" -c raw`
 4. For exact keyword/name lookups, use: `qmd search "<exact terms>"` (BM25 only, fast)
+   - On CPU-only Windows: `node scripts/cerebro-search.js search "<exact terms>"`
 5. Synthesize an answer with citations to wiki pages and sources.
 6. **Important**: If the answer is a valuable synthesis (comparison, analysis,
    new connection), offer to file it back into the wiki as a new page.

@@ -178,8 +178,7 @@ qmd query "NAT Gateway" -c "C:\Users\<username>\github\cerebro-local\wiki"
 #### Option C: Windows CPU-Only (No GPU, No qmd)
 
 For Windows laptops or VMs without a GPU, skip qmd entirely and use the
-lightweight search server. It uses MiniSearch (pure JavaScript) — no models,
-no GPU, no native dependencies. Just Node.js.
+lightweight MiniSearch tools. No models, no GPU, no native dependencies. Just Node.js.
 
 ```powershell
 # 1. Install Node.js
@@ -193,28 +192,60 @@ cd cerebro-local
 # 3. Install MiniSearch (one-time, ~50KB)
 npm install minisearch
 
-# 4. Start the search server
+# 4. Build the search index (first time only, ~12 seconds)
+node scripts\cerebro-search.js rebuild
+```
+
+**Command-line search (for agents and terminal):**
+
+```powershell
+# Search wiki (compiled knowledge)
+node scripts\cerebro-search.js query "how does NAT Gateway SNAT work" -c wiki
+
+# Search raw articles (full detail)
+node scripts\cerebro-search.js query "create load balancer CLI" -c raw
+
+# Search everything
+node scripts\cerebro-search.js query "compare VPN vs ExpressRoute"
+
+# Exact keyword search
+node scripts\cerebro-search.js search "az network nat gateway create"
+
+# View a file
+node scripts\cerebro-search.js get wiki/entities/azure-nat-gateway.md
+
+# Check index status
+node scripts\cerebro-search.js status
+```
+
+First search loads the cached index in ~1.7 seconds. Output format matches
+qmd (`qmd://path`, `Score: N%`) so coding agents (Claude Code, Copilot, Pi)
+can parse results the same way.
+
+**Web UI search (browser):**
+
+```powershell
+# Start the lite web server
 node scripts\search-server-lite.js
-# → Indexes 19K files in ~12 seconds
 # → Open http://localhost:3333
 ```
 
-That's it. No qmd install, no PowerShell function fix, no models, no embedding.
 Same web UI as the full version with BM25 + fuzzy matching.
 
 **Limitations vs full qmd:**
 
-| Feature | search-server-lite | qmd (full) |
+| Feature | Lite (MiniSearch) | Full (qmd) |
 |---------|-------------------|------------|
 | Keyword search (BM25) | ✅ | ✅ |
 | Fuzzy matching | ✅ | ✅ |
 | Semantic/vector search | ❌ | ✅ |
 | Query expansion (LLM) | ❌ | ✅ |
 | Result reranking (LLM) | ❌ | ✅ |
-| Command-line search | ❌ (web UI only) | ✅ |
+| Command-line search | ✅ `cerebro-search.js` | ✅ `qmd` |
+| Web UI search | ✅ `search-server-lite.js` | ✅ `search-server.js` |
 | GPU required | ❌ | Recommended |
 | Install time | ~1 minute | ~30-60 min (models + embed) |
-| Index time | ~12 seconds | ~2-30 min |
+| Index time | ~12 seconds (cached: ~1.7s) | ~2-30 min |
 
 ## 3. Initialize qmd
 

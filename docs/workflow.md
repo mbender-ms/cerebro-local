@@ -6,10 +6,16 @@ Quick reference for common tasks.
 
 ### Search for something
 ```bash
+# Full (qmd — macOS, Linux, Windows with GPU)
 cd ~/github/cerebro-local
 qmd query "your question" -c wiki    # compiled wiki (concise)
 qmd query "your question" -c raw     # full articles (detailed)
 qmd query "your question"            # both collections
+
+# Lite (CPU-only Windows — no qmd needed)
+node scripts/cerebro-search.js query "your question" -c wiki
+node scripts/cerebro-search.js query "your question" -c raw
+node scripts/cerebro-search.js search "exact keywords"
 ```
 
 ### Search in the browser

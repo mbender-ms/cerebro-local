@@ -111,14 +111,24 @@ qmd update && qmd embed
 ```powershell
 winget install OpenJS.NodeJS.LTS
 npm install -g @tobilu/qmd
+
+# Fix qmd wrapper (required — npm generates broken .ps1 on Windows)
+# Add to PowerShell profile: notepad $PROFILE
+#   function qmd { node "$env:APPDATA\npm\node_modules\@tobilu\qmd\dist\cli\qmd.js" @args }
+# Restart PowerShell after saving.
+
 cd $HOME\github
 git clone git@github.com:asudbring/cerebro-local.git
 cd cerebro-local
 qmd collection add wiki .\wiki
 qmd collection add raw .\raw
-qmd context add qmd://wiki/ "LLM-generated wiki: entities, concepts, comparisons, patterns, sources"
-qmd context add qmd://raw/ "Immutable source documents from Microsoft Learn and other sources"
 qmd update
+# Context add uses full paths on Windows (run 'qmd collection list' to see them)
+qmd context add "qmd://C:\Users\<username>\github\cerebro-local\wiki/" "LLM-generated wiki: entities, concepts, comparisons, patterns, sources"
+qmd context add "qmd://C:\Users\<username>\github\cerebro-local\raw/" "Immutable source documents from Microsoft Learn and other sources"
+qmd embed
+# Run sync scripts via Git Bash (not PowerShell): bash ./scripts/sync-all.sh --dry-run
+```
 qmd embed
 # Run sync scripts via Git Bash: bash ./scripts/sync-all.sh --dry-run
 ```

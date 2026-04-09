@@ -86,7 +86,7 @@ qmd embed
 
 #### Option B: Native Windows (PowerShell)
 
-qmd runs natively on Windows. Sync scripts require Git Bash or adaptation.
+qmd runs natively on Windows. Sync scripts require Git Bash.
 
 ```powershell
 # 1. Install Node.js (winget)
@@ -98,19 +98,65 @@ npm install -g @tobilu/qmd
 # 3. Install optional tools
 winget install BurntSushi.ripgrep.MSVC
 winget install Git.Git
+```
 
+**Fix qmd command (required on Windows):**
+
+npm generates a broken `.ps1` wrapper that tries to use `/bin/sh` (Unix).
+You must create a PowerShell function to call qmd directly via Node.js:
+
+```powershell
+# Open your PowerShell profile
+notepad $PROFILE
+
+# Add this line and save:
+function qmd { node "$env:APPDATA\npm\node_modules\@tobilu\qmd\dist\cli\qmd.js" @args }
+
+# Restart PowerShell, then verify:
+qmd --version
+```
+
+**Clone and initialize:**
+
+```powershell
 # 4. Clone the repo
 cd $HOME\github
 git clone git@github.com:asudbring/cerebro-local.git
 cd cerebro-local
 
-# 5. Initialize qmd
+# 5. Add collections and index
 qmd collection add wiki .\wiki
 qmd collection add raw .\raw
-qmd context add qmd://wiki/ "LLM-generated wiki: entities, concepts, comparisons, patterns, sources"
-qmd context add qmd://raw/ "Immutable source documents from Microsoft Learn and other sources"
 qmd update
+
+# 6. Add context descriptions (AFTER qmd update — requires indexed collections)
+#    On Windows, collection names are full paths. Use the paths shown by 'qmd collection list'.
+qmd context add "qmd://C:\Users\<username>\github\cerebro-local\wiki/" "LLM-generated wiki: entities, concepts, comparisons, patterns, sources"
+qmd context add "qmd://C:\Users\<username>\github\cerebro-local\raw/" "Immutable source documents from Microsoft Learn and other sources"
+
+# 7. Generate embeddings (~30-60 min first run, downloads 3 models ~2.3 GB)
 qmd embed
+```
+
+**Windows-specific notes:**
+
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| `qmd` command not found or `/bin/sh` error | npm generates broken `.ps1` wrapper | Add PowerShell function (see above) |
+| `context add` says "Collection not found: wiki" | On Windows, collection names are full paths, not short names | Run `qmd collection list` to see names, use full path in URI |
+| `context add` fails after `collection add` | Collections must be indexed first | Run `qmd update` before `qmd context add` |
+| Context descriptions are optional | They improve query expansion slightly | Skip if problematic — search works without them |
+
+**Searching on Windows:**
+
+```powershell
+# Short collection names work for search
+qmd query "NAT Gateway SNAT" -c wiki
+qmd query "create load balancer CLI" -c raw
+qmd query "compare VPN vs ExpressRoute"
+
+# If short names don't work, use full path from 'qmd collection list'
+qmd query "NAT Gateway" -c "C:\Users\<username>\github\cerebro-local\wiki"
 ```
 
 **Sync scripts on native Windows:**
@@ -121,12 +167,13 @@ qmd embed
   cd ~/github/cerebro-local
   ./scripts/sync-all.sh --dry-run
   ```
-- Or install WSL just for sync, keep everything else native
+- Do NOT run qmd from Git Bash — Git Bash mangles Windows paths
+- Use PowerShell for all qmd commands, Git Bash only for sync scripts
 
 **GPU acceleration on Windows:**
 - NVIDIA: CUDA auto-detected by qmd
 - Check: `qmd status` → look for "GPU: cuda"
-- CPU fallback works but embedding is slower (~60 min for 16K docs vs ~30 min on GPU)
+- CPU fallback works but embedding is slower (~60 min for 19K docs vs ~30 min on GPU)
 
 ## 3. Initialize qmd
 
@@ -262,7 +309,29 @@ qmd update
 - Ensure you have 4+ GB free disk space (for models)
 - On macOS: Metal GPU should be auto-detected
 - On Linux without GPU: embedding is slower but works on CPU
+- On Windows: CUDA auto-detected if NVIDIA GPU present; falls back to CPU
 - Check: `qmd status` → look for "GPU: metal" or "GPU: cuda"
+
+### Windows: qmd gives `/bin/sh` error or `MODULE_NOT_FOUND`
+npm generates a broken wrapper script on Windows. Fix:
+```powershell
+# Add to PowerShell profile (notepad $PROFILE):
+function qmd { node "$env:APPDATA\npm\node_modules\@tobilu\qmd\dist\cli\qmd.js" @args }
+# Restart PowerShell
+```
+Do NOT run qmd from Git Bash — it mangles Windows paths (converts `C:\Users\`
+to `/c/Users/` which breaks Node.js module resolution).
+
+### Windows: `context add` says "Collection not found"
+On Windows, qmd uses full paths as collection names, not short names.
+```powershell
+# Check your collection names:
+qmd collection list
+# Use the full path in the URI:
+qmd context add "qmd://C:\Users\<username>\github\cerebro-local\wiki/" "description"
+```
+Also: run `qmd update` before `context add` — collections must be indexed first.
+Context descriptions are optional; search works without them.
 
 ### Obsidian is very slow
 Add `raw/` to excluded files in Obsidian settings. This prevents Obsidian

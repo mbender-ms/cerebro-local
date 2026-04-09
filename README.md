@@ -49,8 +49,9 @@ Optional:
 | **GitHub CLI** | `brew install gh` / `winget install GitHub.cli` | Push/pull repo; used by sync scripts |
 
 > **Windows**: WSL recommended for full compatibility (sync scripts are bash).
+> Native Windows works but requires a PowerShell function for qmd (npm wrapper is broken).
 > See [docs/new-machine-setup.md](docs/new-machine-setup.md) for detailed Windows
-> instructions (WSL and native PowerShell options).
+> instructions (WSL and native options, qmd fix, path quirks).
 
 ---
 

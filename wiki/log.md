@@ -290,3 +290,20 @@ Ingest tracker refreshed with accurate counts:
 - Include files section with source breakdown and coverage stats
 - Support article upstream removal notes (8 areas emptied April 2026)
 - Deep ingest status for all categories
+
+## [2026-04-08] maintain | Windows setup docs — qmd wrapper fix, path quirks, troubleshooting
+
+Discovered and documented Windows-specific qmd issues from live testing on
+Windows 11 (Node.js v24.14.0, qmd 2.1.0):
+
+1. npm generates broken .ps1 wrapper (tries /bin/sh instead of node.exe)
+   → Fix: PowerShell function in $PROFILE pointing to dist/cli/qmd.js
+2. Git Bash mangles Windows paths (C:\Users → /c/Users → C:\c\Users)
+   → Fix: Never run qmd from Git Bash, use PowerShell only
+3. context add fails with "Collection not found: wiki"
+   → On Windows, collections use full paths as names; must run qmd update first
+4. Context descriptions are optional — search works without them
+
+Updated: docs/new-machine-setup.md (full native Windows section rewritten),
+docs/workflow.md (Windows recovery section), README.md (Windows note).
+Saved findings to Cerebro MCP cloud.

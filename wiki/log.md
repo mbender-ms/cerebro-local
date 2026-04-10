@@ -383,3 +383,10 @@ Azure PowerShell (2,516 blocks, all 21 — highest volume), KQL (70 blocks,
 Not used: SQL, Kotlin, Gremlin, Azure Developer CLI, GitHub Actions, GitHub CLI.
 Filed: raw/articles/networking/tier2-language-survey-2026-04-09.md
 Report: ~/Downloads/reports/question-5-report.md
+
+## [2026-04-09] query | Tier 3 language survey — networking services
+
+5 of 6 tier 3 formats used: JSON (120 blocks, 15 services), JSON-like output
+(143 blocks), YAML (54 blocks, 3 services — mostly App Gateway AGIC), XML
+(8 blocks, VPN device configs), REST (7 blocks, minimal). HTML not used.
+Filed: raw/articles/networking/tier3-language-survey-2026-04-09.md

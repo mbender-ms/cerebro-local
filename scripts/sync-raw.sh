@@ -22,12 +22,32 @@
 #   ./scripts/sync-raw.sh <service-area> --all         # sync all, not just .md
 #
 # Requires: curl, python3, git
+# Optional: gh (GitHub CLI) — if authenticated, uses 5,000 req/hr instead of 60
 #
 set -euo pipefail
 
 BASE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 RAW_DIR="$BASE_DIR/raw/articles"
 REPORT_FILE="$BASE_DIR/pending-changes.md"
+
+# --- GitHub auth ---
+# gh auth token gives 5,000 req/hr BUT MicrosoftDocs org requires SAML SSO
+# which blocks personal tokens. So we use auth only if GITHUB_TOKEN env var is
+# explicitly set (e.g., with a token that has SAML authorized), otherwise unauthenticated.
+GH_AUTH_HEADER=""
+if [ -n "${GITHUB_TOKEN:-}" ]; then
+  GH_AUTH_HEADER="Authorization: token $GITHUB_TOKEN"
+elif [ -n "${GH_TOKEN:-}" ]; then
+  GH_AUTH_HEADER="Authorization: token $GH_TOKEN"
+fi
+
+curl_gh() {
+  if [ -n "$GH_AUTH_HEADER" ]; then
+    curl -s -H "$GH_AUTH_HEADER" "$@"
+  else
+    curl -s "$@"
+  fi
+}
 
 # --- Args ---
 SERVICE="${1:?Usage: sync-raw.sh <service-area> [--dry-run] [--all]}"
@@ -129,10 +149,14 @@ repo = '$REPO'
 branch = '$BRANCH'
 remote_path = '$REMOTE_PATH'
 all_files = '$ALL_FILES' == 'true'
+auth_header = '$GH_AUTH_HEADER'
 
 try:
     url = f'https://api.github.com/repos/{repo}/git/trees/{branch}?recursive=1'
     req = urllib.request.Request(url)
+    if auth_header:
+        key, val = auth_header.split(': ', 1)
+        req.add_header(key, val)
     with urllib.request.urlopen(req) as resp:
         data = json.loads(resp.read())
 
@@ -161,7 +185,7 @@ except Exception as e:
 else
   # Standard single-level directory (MS Learn articles)
 
-  REMOTE_JSON=$(curl -s "https://api.github.com/repos/$REPO/contents/$REMOTE_PATH?ref=$BRANCH")
+  REMOTE_JSON=$(curl_gh "https://api.github.com/repos/$REPO/contents/$REMOTE_PATH?ref=$BRANCH")
 
   # Check for API errors
   if echo "$REMOTE_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); sys.exit(0 if isinstance(d,list) else 1)" 2>/dev/null; then

@@ -405,3 +405,16 @@ Applied sync across all 8 repos. 11 areas with changes:
 - support-partner-solutions: -28 (entire area emptied — upstream removal)
 
 9th support area emptied by upstream cleanup. Entity page updated.
+
+## [2026-04-09] fix | Sync auth — SAML SSO blocks gh token for MicrosoftDocs
+
+Attempted to use gh auth token (5,000/hr) but MicrosoftDocs org has SAML SSO
+enforcement which blocks personal access tokens. Updated sync-raw.sh to only
+use auth if GITHUB_TOKEN or GH_TOKEN env var is explicitly set (for tokens
+with SAML authorized). Falls back to unauthenticated (60/hr) by default.
+
+Full sync requires ~31 API calls (21 flat + ~10 tree). Fits in 60/hr budget
+if not preceded by --dry-run. Running dry-run + sync in same hour exceeds limit.
+
+Recommendation: Don't dry-run before real sync. Or authorize token for SAML at:
+https://github.com/enterprises/microsoftopensource/sso

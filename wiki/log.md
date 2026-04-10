@@ -374,3 +374,12 @@ out of 1,327 (CDN .NET, CDN Node.js, LB Python health probe, DPDK C).
 Networking docs use CLI/PS/Bicep/JSON — infrastructure, not application code.
 Filed: raw/articles/networking/tier1-language-survey-2026-04-09.md
 Report: ~/Downloads/reports/question-4-report.md
+
+## [2026-04-09] query | Tier 2 language survey — networking services
+
+5 of 11 tier 2 languages used: Azure CLI (1,371 blocks, all 21 services),
+Azure PowerShell (2,516 blocks, all 21 — highest volume), KQL (70 blocks,
+11 services), Bicep (53 blocks, 4 services), Terraform (14 blocks, 3 services).
+Not used: SQL, Kotlin, Gremlin, Azure Developer CLI, GitHub Actions, GitHub CLI.
+Filed: raw/articles/networking/tier2-language-survey-2026-04-09.md
+Report: ~/Downloads/reports/question-5-report.md

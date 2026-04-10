@@ -339,3 +339,19 @@ Output format matches qmd (qmd://path, Score: N%) for agent compatibility.
 Caches index to .qmd/search-index.json — first run ~12s, subsequent ~1.7s.
 
 AGENTS.md updated with cerebro-search.js as alternative query tool.
+
+## [2026-04-09] sync | Full sync — networking article consolidation
+
+Microsoft is consolidating troubleshooting articles into *-support-help.md pages.
+
+Networking changes:
+- bastion: -1 (troubleshoot.md removed)
+- dns: +1 (dns-support-help.md) ~1 -1 (dns-troubleshoot.md removed)
+- nat-gateway: +1 (nat-gateway-support-help.md) ~1 -3 (3 troubleshoot articles removed)
+- private-link: +1 (private-link-support-help.md) -2 (2 troubleshoot articles removed)
+- traffic-manager: +1 (traffic-manager-support-help.md) -1 (troubleshooting-degraded removed)
+- virtual-network: ~2 modified
+- vpn-gateway: ~1 modified
+
+Also: aks +2 ~6, virtual-machines ~100, azure-arc ~73 (bulk content updates).
+qmd re-embedded 24 docs.

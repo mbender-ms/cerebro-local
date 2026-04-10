@@ -390,3 +390,18 @@ Report: ~/Downloads/reports/question-5-report.md
 (143 blocks), YAML (54 blocks, 3 services — mostly App Gateway AGIC), XML
 (8 blocks, VPN device configs), REST (7 blocks, minimal). HTML not used.
 Filed: raw/articles/networking/tier3-language-survey-2026-04-09.md
+
+## [2026-04-09] sync | Full sync — support-partner-solutions emptied, bulk updates
+
+Applied sync across all 8 repos. 11 areas with changes:
+- networking: 4 "deleted" are our survey files (kept — not upstream content)
+- service-fabric: ~2 modified
+- virtual-machines: ~96 modified
+- azure-arc: ~73 modified
+- well-architected: ~73 modified
+- cloud-adoption-framework: ~149 modified
+- architecture-center: ~63 modified
+- support-application-gateway: ~1, support-azure-kubernetes: ~2, support-azure-storage: ~1
+- support-partner-solutions: -28 (entire area emptied — upstream removal)
+
+9th support area emptied by upstream cleanup. Entity page updated.

@@ -365,3 +365,12 @@ Raw data: raw/articles/networking/code-survey-2026-04-09.md
 Key findings: 3,503 code blocks across 595 articles (44%).
 CLI + PowerShell dominate (876 blocks). Bicep emerging (52 blocks, 4 services).
 Terraform minimal (14 blocks). 172 unlabeled blocks need tags.
+
+## [2026-04-09] query | Tier 1 language survey — networking services
+
+Surveyed all 21 networking services for tier 1 programming language usage.
+Result: effectively zero. 4 articles have programming language code blocks
+out of 1,327 (CDN .NET, CDN Node.js, LB Python health probe, DPDK C).
+Networking docs use CLI/PS/Bicep/JSON — infrastructure, not application code.
+Filed: raw/articles/networking/tier1-language-survey-2026-04-09.md
+Report: ~/Downloads/reports/question-4-report.md

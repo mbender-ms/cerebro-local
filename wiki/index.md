@@ -1,12 +1,12 @@
 ---
 title: Index
 created: 2026-04-07
-updated: 2026-04-07
+updated: 2026-04-09
 ---
 
 # Knowledge Base Index
 
-> Use `qmd query` for search. Total: 447 pages.
+> Use `qmd query` for search. Total: 448 pages.
 
 ## Entities
 
@@ -198,7 +198,7 @@ _183 Azure services, tools, frameworks._
 
 ## Concepts
 
-_53 Technical concepts, WAF pillars, CAF phases, patterns, troubleshooting._
+_54 Technical concepts, WAF pillars, CAF phases, patterns, troubleshooting._
 
 - [[concepts/aks-networking]] — How networking works in Azure Kubernetes Service — CNI models, egress control, network policies, and DNS. (source: conce...
 - [[concepts/architecture-patterns]] — Key design patterns from the Azure Architecture Center for building reliable, scalable, and secure cloud applications.
@@ -229,6 +229,7 @@ _53 Technical concepts, WAF pillars, CAF phases, patterns, troubleshooting._
 - [[concepts/managed-disks]] — Block-level storage volumes managed by Azure for use with VMs. 99.999% availability with 3 replicas. Eliminates the need...
 - [[concepts/memex]] — A hypothetical device described by Vannevar Bush in his 1945 essay "As We May Think." A personal, curated knowledge stor...
 - [[concepts/network-security-groups]] — Stateful packet filter at L3/L4. Contains security rules that allow or deny inbound/outbound traffic by source, destinat...
+- [[concepts/networking-code-content]] — Survey of code blocks across all 21 Azure networking service doc sets (1,327 articles, April 2026).
 - [[concepts/private-link-dns]] — Private endpoints require DNS to resolve the service FQDN to the private IP instead of the public IP. This is the most c...
 - [[concepts/query]] — One of the four core operations in the [[concepts/llm-wiki-pattern]]. Triggered when you ask a question against the know...
 - [[concepts/reverse-dns]] — Maps IP addresses back to domain names (the opposite of forward DNS). Uses PTR records in special ARPA zones. (source: d...

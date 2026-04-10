@@ -355,3 +355,13 @@ Networking changes:
 
 Also: aks +2 ~6, virtual-machines ~100, azure-arc ~73 (bulk content updates).
 qmd re-embedded 24 docs.
+
+## [2026-04-09] query | Code content survey — networking services
+
+Surveyed all 21 networking service doc sets for code blocks.
+Results filed as: wiki/concepts/networking-code-content.md
+Raw data: raw/articles/networking/code-survey-2026-04-09.md
+
+Key findings: 3,503 code blocks across 595 articles (44%).
+CLI + PowerShell dominate (876 blocks). Bicep emerging (52 blocks, 4 services).
+Terraform minimal (14 blocks). 172 unlabeled blocks need tags.

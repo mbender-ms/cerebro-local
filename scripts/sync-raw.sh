@@ -22,32 +22,12 @@
 #   ./scripts/sync-raw.sh <service-area> --all         # sync all, not just .md
 #
 # Requires: curl, python3, git
-# Optional: gh (GitHub CLI) — if authenticated, uses 5,000 req/hr instead of 60
 #
 set -euo pipefail
 
 BASE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 RAW_DIR="$BASE_DIR/raw/articles"
 REPORT_FILE="$BASE_DIR/pending-changes.md"
-
-# --- GitHub auth ---
-# gh auth token gives 5,000 req/hr BUT MicrosoftDocs org requires SAML SSO
-# which blocks personal tokens. So we use auth only if GITHUB_TOKEN env var is
-# explicitly set (e.g., with a token that has SAML authorized), otherwise unauthenticated.
-GH_AUTH_HEADER=""
-if [ -n "${GITHUB_TOKEN:-}" ]; then
-  GH_AUTH_HEADER="Authorization: token $GITHUB_TOKEN"
-elif [ -n "${GH_TOKEN:-}" ]; then
-  GH_AUTH_HEADER="Authorization: token $GH_TOKEN"
-fi
-
-curl_gh() {
-  if [ -n "$GH_AUTH_HEADER" ]; then
-    curl -s -H "$GH_AUTH_HEADER" "$@"
-  else
-    curl -s "$@"
-  fi
-}
 
 # --- Args ---
 SERVICE="${1:?Usage: sync-raw.sh <service-area> [--dry-run] [--all]}"
@@ -141,24 +121,27 @@ echo "Fetching remote file list..."
 
 if [ "$RECURSIVE" = true ]; then
   # Use git trees API — returns ENTIRE repo tree in 1 API call with SHAs
-  # 1 call per repo instead of 1 call per subdirectory
+  # Check for pre-cached tree file (set by sync-all.sh to avoid duplicate API calls)
+  TREE_CACHE="${TREE_CACHE:-}"
+  
   REMOTE_FILES=$(python3 -c "
-import urllib.request, json, sys
+import urllib.request, json, sys, os
 
 repo = '$REPO'
 branch = '$BRANCH'
 remote_path = '$REMOTE_PATH'
 all_files = '$ALL_FILES' == 'true'
-auth_header = '$GH_AUTH_HEADER'
+tree_cache = '$TREE_CACHE'
 
 try:
-    url = f'https://api.github.com/repos/{repo}/git/trees/{branch}?recursive=1'
-    req = urllib.request.Request(url)
-    if auth_header:
-        key, val = auth_header.split(': ', 1)
-        req.add_header(key, val)
-    with urllib.request.urlopen(req) as resp:
-        data = json.loads(resp.read())
+    if tree_cache and os.path.exists(tree_cache):
+        with open(tree_cache) as f:
+            data = json.load(f)
+    else:
+        url = f'https://api.github.com/repos/{repo}/git/trees/{branch}?recursive=1'
+        req = urllib.request.Request(url)
+        with urllib.request.urlopen(req) as resp:
+            data = json.loads(resp.read())
 
     if data.get('truncated', False):
         print(f'WARNING: tree truncated for {repo}', file=sys.stderr)
@@ -185,7 +168,7 @@ except Exception as e:
 else
   # Standard single-level directory (MS Learn articles)
 
-  REMOTE_JSON=$(curl_gh "https://api.github.com/repos/$REPO/contents/$REMOTE_PATH?ref=$BRANCH")
+  REMOTE_JSON=$(curl -s "https://api.github.com/repos/$REPO/contents/$REMOTE_PATH?ref=$BRANCH")
 
   # Check for API errors
   if echo "$REMOTE_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); sys.exit(0 if isinstance(d,list) else 1)" 2>/dev/null; then

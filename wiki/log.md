@@ -418,3 +418,16 @@ if not preceded by --dry-run. Running dry-run + sync in same hour exceeds limit.
 
 Recommendation: Don't dry-run before real sync. Or authorize token for SAML at:
 https://github.com/enterprises/microsoftopensource/sso
+
+## [2026-04-10] fix | Sync tree caching — 28 API calls instead of 68
+
+Rewrote sync-all.sh to pre-fetch and cache repo trees. Each recursive repo
+fetched once, reused for all services in that repo.
+
+Before: 68 API calls (1 per service) — exceeded 60/hr unauthenticated limit
+After: 28 API calls (21 flat + 7 cached trees) — fits comfortably in 60/hr
+
+No auth needed. All public repos, unauthenticated. Removed SAML/auth code.
+Tree cache via TREE_CACHE env var passed to sync-raw.sh.
+
+Full sync completed: all 68 services across 8 repos. Zero false deletions.

@@ -144,134 +144,105 @@ done
 
 CHANGED_SERVICES=()
 
-# --- Sync MS Learn articles ---
+# --- Tree cache helper ---
+# Pre-fetch repo tree once, reuse for all services in that repo.
+# Drops API calls from 68 to 28 (21 flat + 7 cached trees).
+TREE_CACHE_DIR=$(mktemp -d)
+trap "rm -rf $TREE_CACHE_DIR" EXIT
+
+fetch_tree() {
+  local repo="$1"
+  local cache_file="$TREE_CACHE_DIR/$(echo $repo | tr '/' '_').json"
+  if [ ! -f "$cache_file" ]; then
+    curl -s "https://api.github.com/repos/$repo/git/trees/main?recursive=1" > "$cache_file"
+  fi
+  echo "$cache_file"
+}
+
+sync_service() {
+  local svc="$1"
+  local tree_cache="${2:-}"
+  local result
+  
+  if [ -n "$tree_cache" ]; then
+    result=$(TREE_CACHE="$tree_cache" "$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
+  else
+    result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
+  fi
+
+  if echo "$result" | grep -q "Everything up to date"; then
+    count=$(echo "$result" | grep "Unchanged:" | awk '{print $2}')
+    printf "  ✓ %-35s %s files\n" "$svc" "$count"
+  else
+    added=$(echo "$result" | grep "Added:" | awk '{print $2}')
+    modified=$(echo "$result" | grep "Modified:" | awk '{print $2}')
+    deleted=$(echo "$result" | grep "Deleted:" | awk '{print $2}')
+    printf "  ⚡ %-35s +%s ~%s -%s\n" "$svc" "$added" "$modified" "$deleted"
+    CHANGED_SERVICES+=("$svc")
+  fi
+}
+
+# --- Sync MS Learn articles (flat dirs, 1 API call each) ---
 if [ "$SYNC_LEARN" = true ]; then
   echo "=== Syncing ${#LEARN_SERVICES[@]} MS Learn service areas (MicrosoftDocs/azure-docs) ==="
   echo ""
-
   for svc in "${LEARN_SERVICES[@]}"; do
-    result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
-
-    if echo "$result" | grep -q "Everything up to date"; then
-      count=$(echo "$result" | grep "Unchanged:" | awk '{print $2}')
-      printf "  ✓ %-35s %s files\n" "$svc" "$count"
-    else
-      added=$(echo "$result" | grep "Added:" | awk '{print $2}')
-      modified=$(echo "$result" | grep "Modified:" | awk '{print $2}')
-      deleted=$(echo "$result" | grep "Deleted:" | awk '{print $2}')
-      printf "  ⚡ %-35s +%s ~%s -%s\n" "$svc" "$added" "$modified" "$deleted"
-      CHANGED_SERVICES+=("$svc")
-    fi
+    sync_service "$svc"
   done
   echo ""
 fi
 
-# --- Sync Compute articles ---
+# --- Sync Compute articles (1 tree API call, cached) ---
 if [ "$SYNC_COMPUTE" = true ]; then
   echo "=== Syncing ${#COMPUTE_SERVICES[@]} Compute service areas (MicrosoftDocs/azure-compute-docs) ==="
   echo ""
-
+  CACHE=$(fetch_tree "MicrosoftDocs/azure-compute-docs")
   for svc in "${COMPUTE_SERVICES[@]}"; do
-    result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
-
-    if echo "$result" | grep -q "Everything up to date"; then
-      count=$(echo "$result" | grep "Unchanged:" | awk '{print $2}')
-      printf "  ✓ %-35s %s files\n" "$svc" "$count"
-    else
-      added=$(echo "$result" | grep "Added:" | awk '{print $2}')
-      modified=$(echo "$result" | grep "Modified:" | awk '{print $2}')
-      deleted=$(echo "$result" | grep "Deleted:" | awk '{print $2}')
-      printf "  ⚡ %-35s +%s ~%s -%s\n" "$svc" "$added" "$modified" "$deleted"
-      CHANGED_SERVICES+=("$svc")
-    fi
+    sync_service "$svc" "$CACHE"
   done
   echo ""
 fi
 
-# --- Sync AKS articles ---
+# --- Sync AKS articles (1 tree API call, cached) ---
 if [ "$SYNC_AKS" = true ]; then
   echo "=== Syncing ${#AKS_SERVICES[@]} AKS service areas (MicrosoftDocs/azure-aks-docs) ==="
   echo ""
-
+  CACHE=$(fetch_tree "MicrosoftDocs/azure-aks-docs")
   for svc in "${AKS_SERVICES[@]}"; do
-    result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
-
-    if echo "$result" | grep -q "Everything up to date"; then
-      count=$(echo "$result" | grep "Unchanged:" | awk '{print $2}')
-      printf "  ✓ %-35s %s files\n" "$svc" "$count"
-    else
-      added=$(echo "$result" | grep "Added:" | awk '{print $2}')
-      modified=$(echo "$result" | grep "Modified:" | awk '{print $2}')
-      deleted=$(echo "$result" | grep "Deleted:" | awk '{print $2}')
-      printf "  ⚡ %-35s +%s ~%s -%s\n" "$svc" "$added" "$modified" "$deleted"
-      CHANGED_SERVICES+=("$svc")
-    fi
+    sync_service "$svc" "$CACHE"
   done
   echo ""
 fi
 
-# --- Sync Management articles ---
+# --- Sync Management articles (1 tree API call, cached) ---
 if [ "$SYNC_MGMT" = true ]; then
   echo "=== Syncing ${#MGMT_SERVICES[@]} Management service areas (MicrosoftDocs/azure-management-docs) ==="
   echo ""
-
+  CACHE=$(fetch_tree "MicrosoftDocs/azure-management-docs")
   for svc in "${MGMT_SERVICES[@]}"; do
-    result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
-
-    if echo "$result" | grep -q "Everything up to date"; then
-      count=$(echo "$result" | grep "Unchanged:" | awk '{print $2}')
-      printf "  ✓ %-35s %s files\n" "$svc" "$count"
-    else
-      added=$(echo "$result" | grep "Added:" | awk '{print $2}')
-      modified=$(echo "$result" | grep "Modified:" | awk '{print $2}')
-      deleted=$(echo "$result" | grep "Deleted:" | awk '{print $2}')
-      printf "  ⚡ %-35s +%s ~%s -%s\n" "$svc" "$added" "$modified" "$deleted"
-      CHANGED_SERVICES+=("$svc")
-    fi
+    sync_service "$svc" "$CACHE"
   done
   echo ""
 fi
 
-# --- Sync Framework articles ---
+# --- Sync Framework articles (1 tree API call each, 3 repos) ---
 if [ "$SYNC_FRAMEWORKS" = true ]; then
-  echo "=== Syncing ${#FRAMEWORK_SERVICES[@]} Framework sources (WAF + CAF) ==="
+  echo "=== Syncing ${#FRAMEWORK_SERVICES[@]} Framework sources (WAF + CAF + Architecture Center) ==="
   echo ""
-
   for svc in "${FRAMEWORK_SERVICES[@]}"; do
-    result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
-
-    if echo "$result" | grep -q "Everything up to date"; then
-      count=$(echo "$result" | grep "Unchanged:" | awk '{print $2}')
-      printf "  ✓ %-35s %s files\n" "$svc" "$count"
-    else
-      added=$(echo "$result" | grep "Added:" | awk '{print $2}')
-      modified=$(echo "$result" | grep "Modified:" | awk '{print $2}')
-      deleted=$(echo "$result" | grep "Deleted:" | awk '{print $2}')
-      printf "  ⚡ %-35s +%s ~%s -%s\n" "$svc" "$added" "$modified" "$deleted"
-      CHANGED_SERVICES+=("$svc")
-    fi
+    # Each framework is a separate repo, but only 1 service each so no caching needed
+    sync_service "$svc"
   done
   echo ""
 fi
 
-# --- Sync Support articles ---
+# --- Sync Support articles (1 tree API call, cached for all 29 services) ---
 if [ "$SYNC_SUPPORT" = true ]; then
-  echo "=== Syncing ${#SUPPORT_SERVICES[@]} Support service areas (MicrosoftDocs/SupportArticles-docs-pr) ==="
+  echo "=== Syncing ${#SUPPORT_SERVICES[@]} Support service areas (MicrosoftDocs/SupportArticles-docs) ==="
   echo ""
-
+  CACHE=$(fetch_tree "MicrosoftDocs/SupportArticles-docs")
   for svc in "${SUPPORT_SERVICES[@]}"; do
-    result=$("$SYNC" "$svc" $EXTRA_ARGS 2>&1) || true
-
-    if echo "$result" | grep -q "Everything up to date"; then
-      count=$(echo "$result" | grep "Unchanged:" | awk '{print $2}')
-      printf "  ✓ %-35s %s files\n" "$svc" "$count"
-    else
-      added=$(echo "$result" | grep "Added:" | awk '{print $2}')
-      modified=$(echo "$result" | grep "Modified:" | awk '{print $2}')
-      deleted=$(echo "$result" | grep "Deleted:" | awk '{print $2}')
-      printf "  ⚡ %-35s +%s ~%s -%s\n" "$svc" "$added" "$modified" "$deleted"
-      CHANGED_SERVICES+=("$svc")
-    fi
+    sync_service "$svc" "$CACHE"
   done
   echo ""
 fi
